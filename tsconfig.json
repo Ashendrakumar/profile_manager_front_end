@@ -1,0 +1,44 @@
+{
+  "compilerOptions": {
+    "target": "ES2022",
+    "useDefineForClassFields": true,
+    "module": "ESNext",
+    "lib": ["ES2022", "DOM", "DOM.Iterable"],
+    "types": ["vite/client"],
+    "skipLibCheck": true,
+
+    /* Bundler mode */
+    "moduleResolution": "bundler",
+    "allowImportingTsExtensions": true,
+    "verbatimModuleSyntax": true,
+    "moduleDetection": "force",
+    "noEmit": true,
+
+    /* Path Resolution */
+    "baseUrl": "./",
+    "paths": {
+      "@/*": ["src/*"],
+      "@/modules/*": ["src/modules/*"],
+      "@/common/*": ["src/common/*"],
+      "@/layouts/*": ["src/layouts/*"],
+      "@/hooks/*": ["src/hooks/*"],
+      "@/services/*": ["src/services/*"],
+      "@/utils/*": ["src/utils/*"],
+      "@/constants/*": ["src/constants/*"],
+      "@/theme/*": ["src/theme/*"],
+      "@/routes/*": ["src/routes/*"]
+    },
+
+    /* Linting */
+    "strict": true,
+    "noUnusedLocals": true,
+    "noUnusedParameters": true,
+    "erasableSyntaxOnly": true,
+    "noFallthroughCasesInSwitch": true,
+    "noUncheckedSideEffectImports": true,
+
+    /* JSX */
+    "jsx": "react-jsx"
+  },
+  "include": ["src"]
+}

@@ -1,0 +1,91 @@
+/**
+ * ProfilePage Component
+ * Main profile page with tabs for different sections
+ */
+
+import { useState } from "react";
+import { Box, Container, Typography, Tabs, Tab, Paper } from "@mui/material";
+import { useMetadata } from "@/hooks";
+import { ContactDetailsSection } from "../components/ContactDetailsSection";
+import { EducationSection } from "../components/EducationSection";
+import { ExperienceSection } from "../components/ExperienceSection";
+import { ProjectsSection } from "../components/ProjectsSection";
+import { SkillsSection } from "../components/SkillsSection";
+
+interface TabPanelProps {
+  children?: React.ReactNode;
+  index: number;
+  value: number;
+}
+
+const TabPanel = ({ children, value, index }: TabPanelProps) => {
+  return (
+    <div role="tabpanel" hidden={value !== index}>
+      {value === index && <Box>{children}</Box>}
+    </div>
+  );
+};
+
+/**
+ * Profile page component
+ */
+const ProfilePage = () => {
+  const [activeTab, setActiveTab] = useState(0);
+
+  useMetadata({
+    title: "Profile - Profile Manager",
+    description: "Manage your profile information",
+    keywords: "profile, user, settings",
+  });
+
+  const handleTabChange = (_event: React.SyntheticEvent, newValue: number) => {
+    setActiveTab(newValue);
+  };
+
+  return (
+    <Container maxWidth="lg">
+      <Typography variant="h3" component="h1" gutterBottom>
+        My Profile
+      </Typography>
+      <Typography variant="body1" color="text.secondary" paragraph>
+        Manage your profile information and professional details
+      </Typography>
+
+      <Paper sx={{ mt: 3 }}>
+        <Box sx={{ borderBottom: 1, borderColor: "divider" }}>
+          <Tabs
+            value={activeTab}
+            onChange={handleTabChange}
+            aria-label="profile tabs"
+          >
+            <Tab label="Contact Details" />
+            <Tab label="Education" />
+            <Tab label="Experience" />
+            <Tab label="Projects" />
+            <Tab label="Skills" />
+          </Tabs>
+        </Box>
+
+        <Box sx={{ p: 3 }}>
+          <TabPanel value={activeTab} index={0}>
+            <ContactDetailsSection />
+          </TabPanel>
+          <TabPanel value={activeTab} index={1}>
+            <EducationSection />
+          </TabPanel>
+          <TabPanel value={activeTab} index={2}>
+            <ExperienceSection />
+          </TabPanel>
+          <TabPanel value={activeTab} index={3}>
+            <ProjectsSection />
+          </TabPanel>
+          <TabPanel value={activeTab} index={4}>
+            <SkillsSection />
+          </TabPanel>
+        </Box>
+      </Paper>
+    </Container>
+  );
+};
+
+export default ProfilePage;
