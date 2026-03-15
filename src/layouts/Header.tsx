@@ -3,18 +3,17 @@
  * Application header with navigation and profile menu
  */
 
-import { AppBar, Toolbar, Typography, Button, Box } from '@mui/material';
-import { useNavigate } from 'react-router-dom';
-import { ROUTES } from '@/constants';
-import { useAuth } from '@/contexts';
-import { NavigationItems } from './NavigationItems';
-import { ProfileMenu } from './ProfileMenu';
+import { AppBar, Toolbar, Typography, Box } from "@mui/material";
+import { ROUTES } from "@/constants";
+import { useAuth } from "@/contexts";
+import { NavigationItems } from "./NavigationItems";
+import { ProfileMenu } from "./ProfileMenu";
 
 const allNavigationItems = [
-  { label: 'Home', path: ROUTES.HOME, adminOnly: false },
-  { label: 'About', path: ROUTES.ABOUT, adminOnly: false },
-  { label: 'Profile', path: ROUTES.PROFILE, adminOnly: false },
-  { label: 'Users', path: ROUTES.USERS, adminOnly: true },
+  { label: "Home", path: ROUTES.HOME, adminOnly: false },
+  { label: "About", path: ROUTES.ABOUT, adminOnly: false },
+  { label: "Profile", path: ROUTES.PROFILE, adminOnly: false },
+  { label: "Users", path: ROUTES.USERS, adminOnly: true },
 ];
 
 interface HeaderProps {
@@ -25,14 +24,13 @@ interface HeaderProps {
  * Header Component
  */
 export const Header = ({ isAuthPage }: HeaderProps) => {
-  const navigate = useNavigate();
   const { isAuthenticated, user } = useAuth();
 
   // Filter navigation items based on user role
   const navigationItems = isAuthenticated
     ? allNavigationItems.filter((item) => {
         if (item.adminOnly) {
-          return user?.role === 'admin';
+          return user?.role === "admin";
         }
         return true;
       })
@@ -56,7 +54,7 @@ export const Header = ({ isAuthPage }: HeaderProps) => {
         <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
           Profile Manager
         </Typography>
-        <Box sx={{ display: 'flex', gap: 1, alignItems: 'center' }}>
+        <Box sx={{ display: "flex", gap: 1, alignItems: "center" }}>
           {isAuthenticated && (
             <>
               <NavigationItems items={navigationItems} />
@@ -68,4 +66,3 @@ export const Header = ({ isAuthPage }: HeaderProps) => {
     </AppBar>
   );
 };
-

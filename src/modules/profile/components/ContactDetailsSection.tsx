@@ -11,14 +11,14 @@ import {
   TextField,
   Grid,
   IconButton,
-  Card,
-  CardContent,
-  CardActions,
+  // Card,
+  // CardContent,
+  // CardActions,
+  // Chip,
   MenuItem,
-  Chip,
   Stack,
 } from "@mui/material";
-import { Add, Delete, Edit } from "@mui/icons-material";
+import { Add, Delete } from "@mui/icons-material";
 import { useForm, useFieldArray } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useToast } from "@/contexts/toastContext";
@@ -28,7 +28,7 @@ import {
 } from "../services/profileService";
 import { contactDetailsSchema } from "../utils/validation";
 import { LoadingSpinner } from "@/common/components";
-import { ConfirmDialog } from "@/common/components";
+// import { ConfirmDialog } from "@/common/components";
 
 type ContactDetailsFormData = {
   email: string;
@@ -51,6 +51,7 @@ export const ContactDetailsSection = () => {
   const [contactDetails, setContactDetails] = useState<ContactDetails | null>(
     null,
   );
+  console.log(contactDetails);
 
   const {
     register,

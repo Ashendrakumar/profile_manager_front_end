@@ -17,7 +17,6 @@ import {
   CardActions,
 } from '@mui/material';
 import { Add, Edit, Delete } from '@mui/icons-material';
-import { useNavigate } from 'react-router-dom';
 import { useMetadata } from '@/hooks';
 import { useAuth } from '@/contexts';
 import { useToast } from '@/contexts/toastContext';
@@ -31,7 +30,6 @@ import { UserForm } from '../components/UserForm';
  * Users page component
  */
 const UsersPage = () => {
-  const navigate = useNavigate();
   const { user: currentUser } = useAuth();
   const { showSuccess, showError } = useToast();
   const [users, setUsers] = useState<User[]>([]);

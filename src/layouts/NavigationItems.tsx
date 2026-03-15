@@ -3,9 +3,9 @@
  * Navigation buttons for the header
  */
 
-import { Button, Box } from '@mui/material';
-import { useNavigate, useLocation } from 'react-router-dom';
-import { ROUTES } from '@/constants';
+import { Button, Box } from "@mui/material";
+import { useNavigate, useLocation } from "react-router-dom";
+// import { ROUTES } from '@/constants';
 
 interface NavigationItem {
   label: string;
@@ -24,15 +24,16 @@ export const NavigationItems = ({ items }: NavigationItemsProps) => {
   const location = useLocation();
 
   return (
-    <Box sx={{ display: 'flex', gap: 1 }}>
+    <Box sx={{ display: "flex", gap: 1 }}>
       {items.map((item) => {
         // Check if the current path matches the navigation item
         // For root path '/', match exactly
         // For other paths, check if pathname starts with the path (for nested routes)
         const isActive =
-          item.path === '/'
+          item.path === "/"
             ? location.pathname === item.path
-            : location.pathname === item.path || location.pathname.startsWith(item.path + '/');
+            : location.pathname === item.path ||
+              location.pathname.startsWith(item.path + "/");
 
         return (
           <Button
@@ -40,7 +41,9 @@ export const NavigationItems = ({ items }: NavigationItemsProps) => {
             color="inherit"
             onClick={() => navigate(item.path)}
             sx={{
-              backgroundColor: isActive ? 'rgba(255, 255, 255, 0.1)' : 'transparent',
+              backgroundColor: isActive
+                ? "rgba(255, 255, 255, 0.1)"
+                : "transparent",
             }}
           >
             {item.label}
@@ -50,4 +53,3 @@ export const NavigationItems = ({ items }: NavigationItemsProps) => {
     </Box>
   );
 };
-

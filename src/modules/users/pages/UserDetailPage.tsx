@@ -3,7 +3,7 @@
  * Displays detailed information about a user
  */
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect } from "react";
 import {
   Typography,
   Box,
@@ -14,12 +14,12 @@ import {
   Container,
   Chip,
   Divider,
-} from '@mui/material';
-import { useParams, useNavigate } from 'react-router-dom';
-import { useMetadata } from '@/hooks';
-import { userService } from '../services/userService';
-import type { User } from '../services/userService';
-import { LoadingSpinner } from '@/common/components';
+} from "@mui/material";
+import { useParams, useNavigate } from "react-router-dom";
+import { useMetadata } from "@/hooks";
+import { userService } from "../services/userService";
+// import type { User } from "../services/userService";
+import { LoadingSpinner } from "@/common/components";
 
 /**
  * User detail page component
@@ -27,21 +27,23 @@ import { LoadingSpinner } from '@/common/components';
 const UserDetailPage = () => {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
-  const [user, setUser] = useState<User | null>(null);
+  const [user, setUser] = useState<any | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
   // Set page metadata
   useMetadata({
-    title: user ? `${user.name} - User Details` : 'User Details - Profile Manager',
-    description: user ? `View details for ${user.name}` : 'View user details',
-    keywords: 'user, details, profile',
+    title: user
+      ? `${user.name} - User Details`
+      : "User Details - Profile Manager",
+    description: user ? `View details for ${user.name}` : "View user details",
+    keywords: "user, details, profile",
   });
 
   useEffect(() => {
     const fetchUser = async () => {
       if (!id) {
-        setError('User ID is required');
+        setError("User ID is required");
         setLoading(false);
         return;
       }
@@ -49,11 +51,11 @@ const UserDetailPage = () => {
       try {
         setLoading(true);
         setError(null);
-        const data = await userService.getUserById(Number(id));
+        const data = await userService.getUserById(id);
         setUser(data);
       } catch (err) {
-        setError(err instanceof Error ? err.message : 'Failed to fetch user');
-        console.error('Error fetching user:', err);
+        setError(err instanceof Error ? err.message : "Failed to fetch user");
+        console.error("Error fetching user:", err);
       } finally {
         setLoading(false);
       }
@@ -70,9 +72,13 @@ const UserDetailPage = () => {
     return (
       <Container maxWidth="md">
         <Alert severity="error" sx={{ mb: 2 }}>
-          {error || 'User not found'}
+          {error || "User not found"}
         </Alert>
-        <Button variant="contained" size="medium" onClick={() => navigate('/users')}>
+        <Button
+          variant="contained"
+          size="medium"
+          onClick={() => navigate("/users")}
+        >
           Back to Users
         </Button>
       </Container>
@@ -84,7 +90,7 @@ const UserDetailPage = () => {
       <Button
         variant="outlined"
         size="medium"
-        onClick={() => navigate('/users')}
+        onClick={() => navigate("/users")}
         sx={{ mb: 3 }}
       >
         ← Back to Users
