@@ -73,8 +73,8 @@ const AppContent = () => {
     <MuiThemeProvider theme={theme}>
       <LocalizationProvider dateAdapter={AdapterDayjs}>
         <CssBaseline />
-        <BrowserRouter>
-          <AuthProvider>
+        <AuthProvider>
+          <BrowserRouter>
             <ToastProvider>
               <MainLayout>
                 <Suspense fallback={<LoadingSpinner fullScreen />}>
@@ -82,8 +82,8 @@ const AppContent = () => {
                 </Suspense>
               </MainLayout>
             </ToastProvider>
-          </AuthProvider>
-        </BrowserRouter>
+          </BrowserRouter>
+        </AuthProvider>
       </LocalizationProvider>
     </MuiThemeProvider>
   );
