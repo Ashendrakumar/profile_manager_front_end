@@ -14,6 +14,7 @@ import { MainLayout } from '@/layouts';
 import { ErrorBoundary, LoadingSpinner } from '@/common/components';
 import { routes } from '@/routes';
 import { setPageMetadata } from '@/utils/metadata';
+import { ROUTES } from "@/constants";
 
 /**
  * RouteMetadata Component
