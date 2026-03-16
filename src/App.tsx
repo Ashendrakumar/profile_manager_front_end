@@ -14,6 +14,7 @@ import { MainLayout } from '@/layouts';
 import { ErrorBoundary, LoadingSpinner } from '@/common/components';
 import { routes } from '@/routes';
 import { setPageMetadata } from '@/utils/metadata';
+import { ROUTES } from "@/constants";
 
 /**
  * RouteMetadata Component
@@ -56,6 +57,9 @@ const Router = () => {
         {routes.map((route) => (
           <Route key={route.path} path={route.path} element={route.element} />
         ))}
+
+        {/* Fallback route */}
+        <Route path="*" element={<Navigate to={ROUTES.HOME} replace />} />
       </Routes>
     </>
   );
@@ -73,8 +77,8 @@ const AppContent = () => {
     <MuiThemeProvider theme={theme}>
       <LocalizationProvider dateAdapter={AdapterDayjs}>
         <CssBaseline />
-        <BrowserRouter>
-          <AuthProvider>
+        <AuthProvider>
+          <BrowserRouter>
             <ToastProvider>
               <MainLayout>
                 <Suspense fallback={<LoadingSpinner fullScreen />}>
@@ -82,8 +86,8 @@ const AppContent = () => {
                 </Suspense>
               </MainLayout>
             </ToastProvider>
-          </AuthProvider>
-        </BrowserRouter>
+          </BrowserRouter>
+        </AuthProvider>
       </LocalizationProvider>
     </MuiThemeProvider>
   );

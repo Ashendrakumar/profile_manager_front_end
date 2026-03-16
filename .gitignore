@@ -133,7 +133,7 @@ dist
 !.yarn/releases
 !.yarn/sdks
 
-public/_redirects
+# public/_redirects
 !.yarn/versions
 
 # Vite logs files
