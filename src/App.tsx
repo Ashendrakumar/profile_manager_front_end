@@ -56,6 +56,9 @@ const Router = () => {
         {routes.map((route) => (
           <Route key={route.path} path={route.path} element={route.element} />
         ))}
+
+        {/* Fallback route */}
+        <Route path="*" element={<Navigate to={ROUTES.HOME} replace />} />
       </Routes>
     </>
   );
