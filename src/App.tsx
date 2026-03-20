@@ -3,18 +3,22 @@
  * Root application component with routing
  */
 
-import { Suspense, useEffect } from 'react';
-import { BrowserRouter, Routes, Route, Navigate, useLocation } from 'react-router-dom';
-import { ThemeProvider as MuiThemeProvider, CssBaseline } from '@mui/material';
-import { LocalizationProvider } from '@mui/x-date-pickers';
-import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
-import { lightTheme, darkTheme } from '@/theme';
-import { ThemeProvider, useThemeMode, AuthProvider, ToastProvider } from '@/contexts';
-import { MainLayout } from '@/layouts';
-import { ErrorBoundary, LoadingSpinner } from '@/common/components';
-import { routes } from '@/routes';
-import { setPageMetadata } from '@/utils/metadata';
-import { ROUTES } from "@/constants";
+import { Suspense, useEffect } from "react";
+import { BrowserRouter, Routes, Route, useLocation } from "react-router-dom";
+import { ThemeProvider as MuiThemeProvider, CssBaseline } from "@mui/material";
+import { LocalizationProvider } from "@mui/x-date-pickers";
+import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
+import { lightTheme, darkTheme } from "@/theme";
+import {
+  ThemeProvider,
+  useThemeMode,
+  AuthProvider,
+  ToastProvider,
+} from "@/contexts";
+import { MainLayout } from "@/layouts";
+import { ErrorBoundary, LoadingSpinner } from "@/common/components";
+import { routes } from "@/routes";
+import { setPageMetadata } from "@/utils/metadata";
 
 /**
  * RouteMetadata Component
@@ -28,9 +32,9 @@ const RouteMetadata = () => {
     const currentRoute = routes.find((route) => {
       if (!route.path) return false;
       if (route.path === location.pathname) return true;
-      if (route.path.includes(':')) {
+      if (route.path.includes(":")) {
         // Handle dynamic routes (basic pattern matching)
-        const routePattern = route.path.replace(/:[^/]+/g, '[^/]+');
+        const routePattern = route.path.replaceAll(/:[^/]+/g, "[^/]+");
         const regex = new RegExp(`^${routePattern}$`);
         return regex.test(location.pathname);
       }
@@ -57,9 +61,6 @@ const Router = () => {
         {routes.map((route) => (
           <Route key={route.path} path={route.path} element={route.element} />
         ))}
-
-        {/* Fallback route */}
-        <Route path="*" element={<Navigate to={ROUTES.HOME} replace />} />
       </Routes>
     </>
   );
@@ -71,7 +72,7 @@ const Router = () => {
  */
 const AppContent = () => {
   const { mode } = useThemeMode();
-  const theme = mode === 'light' ? lightTheme : darkTheme;
+  const theme = mode === "light" ? lightTheme : darkTheme;
 
   return (
     <MuiThemeProvider theme={theme}>
