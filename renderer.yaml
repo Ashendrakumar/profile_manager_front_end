@@ -1,16 +1,4 @@
 routes:
   - type: rewrite
-    source: /login/*
-    destination: /index.html
-  - type: rewrite
-    source: /login
-    destination: /index.html
-  - type: rewrite
-    source: /about/*
-    destination: /index.html
-  - type: rewrite
-    source: /users/*
-    destination: /index.html
-  - type: rewrite
-    source: /profile
+    source: /*
     destination: /index.html
