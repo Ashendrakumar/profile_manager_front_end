@@ -5,6 +5,7 @@
 
 import { apiService } from "@/services/api";
 import { STORAGE_KEYS } from "@/constants";
+import type { Portfolio } from "@/modules/profile";
 
 /**
  * Login request payload
@@ -41,6 +42,7 @@ export interface User {
   name: string;
   email: string;
   role?: "admin" | "user";
+  portfolio: Portfolio;
   [key: string]: unknown;
 }
 

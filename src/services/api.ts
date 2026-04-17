@@ -70,7 +70,6 @@ apiClient.interceptors.request.use(
  */
 apiClient.interceptors.response.use(
   (response: AxiosResponse) => {
-    debugger;
     // Log response in development
     if (import.meta.env.DEV) {
       console.log(

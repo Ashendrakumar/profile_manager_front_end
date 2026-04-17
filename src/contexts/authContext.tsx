@@ -27,6 +27,7 @@ interface AuthContextType {
   login: (credentials: LoginRequest) => Promise<void>;
   register: (userData: RegisterRequest) => Promise<void>;
   logout: () => Promise<void>;
+  updateUser: (userData: User) => void;
   error: string | null;
   clearError: () => void;
 }
@@ -153,6 +154,13 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
   }, [navigate]);
 
   /**
+   * Update user function
+   */
+  const updateUser = useCallback((updatedUser: User) => {
+    setUser((preVious) => ({ ...preVious, ...updatedUser }));
+  }, []);
+
+  /**
    * Clear error function
    */
   const clearError = useCallback(() => {
@@ -166,6 +174,7 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
     login,
     register,
     logout,
+    updateUser,
     error,
     clearError,
   };
