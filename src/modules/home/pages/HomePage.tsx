@@ -3,12 +3,12 @@
  * Home page of the application with graphs and filters
  */
 
-import { useState } from 'react';
-import { Box, Card, CardContent, Grid, Typography, Paper } from '@mui/material';
-import { DatePicker } from '@mui/x-date-pickers/DatePicker';
-import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
-import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
-import dayjs, { Dayjs } from 'dayjs';
+import { useState } from "react";
+import { Box, Card, CardContent, Grid, Typography, Paper } from "@mui/material";
+import { DatePicker } from "@mui/x-date-pickers/DatePicker";
+import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
+import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
+import dayjs, { Dayjs } from "dayjs";
 import {
   LineChart,
   Line,
@@ -22,14 +22,27 @@ import {
   Tooltip,
   Legend,
   ResponsiveContainer,
-} from 'recharts';
-import { useMetadata } from '@/hooks';
+} from "recharts";
+import { useMetadata } from "@/hooks";
 
 /**
  * Generate dummy data for charts
  */
 const generateLineChartData = () => {
-  const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+  const months = [
+    "Jan",
+    "Feb",
+    "Mar",
+    "Apr",
+    "May",
+    "Jun",
+    "Jul",
+    "Aug",
+    "Sep",
+    "Oct",
+    "Nov",
+    "Dec",
+  ];
   return months.map((month) => ({
     name: month,
     value: Math.floor(Math.random() * 1000) + 200,
@@ -38,7 +51,13 @@ const generateLineChartData = () => {
 };
 
 const generateBarChartData = () => {
-  const categories = ['Category A', 'Category B', 'Category C', 'Category D', 'Category E'];
+  const categories = [
+    "Category A",
+    "Category B",
+    "Category C",
+    "Category D",
+    "Category E",
+  ];
   return categories.map((category) => ({
     name: category,
     value: Math.floor(Math.random() * 500) + 100,
@@ -59,14 +78,16 @@ const generateAreaChartData = () => {
  * Home page component
  */
 const HomePage = () => {
-  const [startDate, setStartDate] = useState<Dayjs | null>(dayjs().subtract(30, 'day'));
+  const [startDate, setStartDate] = useState<Dayjs | null>(
+    dayjs().subtract(30, "day"),
+  );
   const [endDate, setEndDate] = useState<Dayjs | null>(dayjs());
 
   // Set page metadata
   useMetadata({
-    title: 'Home - Profile Manager',
-    description: 'Dashboard with graphs and analytics',
-    keywords: 'dashboard, graphs, analytics',
+    title: "Home - Profile Manager",
+    description: "Dashboard with graphs and analytics",
+    keywords: "dashboard, graphs, analytics",
   });
 
   const lineChartData = generateLineChartData();
@@ -81,10 +102,10 @@ const HomePage = () => {
           sx={{
             p: 2,
             mb: 2,
-            display: 'flex',
+            display: "flex",
             gap: 2,
-            alignItems: 'center',
-            flexWrap: 'wrap',
+            alignItems: "center",
+            flexWrap: "wrap",
           }}
         >
           {/* <Typography variant="h6" sx={{ minWidth: 'fit-content' }}>
@@ -94,13 +115,13 @@ const HomePage = () => {
             label="Start Date"
             value={startDate}
             onChange={(newValue) => setStartDate(newValue)}
-            slotProps={{ textField: { size: 'small' } }}
+            slotProps={{ textField: { size: "small" } }}
           />
           <DatePicker
             label="End Date"
             value={endDate}
             onChange={(newValue) => setEndDate(newValue)}
-            slotProps={{ textField: { size: 'small' } }}
+            slotProps={{ textField: { size: "small" } }}
             minDate={startDate || undefined}
           />
         </Paper>
@@ -121,8 +142,18 @@ const HomePage = () => {
                     <YAxis />
                     <Tooltip />
                     <Legend />
-                    <Line type="monotone" dataKey="value" stroke="#8884d8" strokeWidth={2} />
-                    <Line type="monotone" dataKey="sales" stroke="#82ca9d" strokeWidth={2} />
+                    <Line
+                      type="monotone"
+                      dataKey="value"
+                      stroke="#8884d8"
+                      strokeWidth={2}
+                    />
+                    <Line
+                      type="monotone"
+                      dataKey="sales"
+                      stroke="#82ca9d"
+                      strokeWidth={2}
+                    />
                   </LineChart>
                 </ResponsiveContainer>
               </CardContent>

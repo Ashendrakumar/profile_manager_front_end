@@ -27,7 +27,7 @@ import {
   type ContactDetails,
 } from "../services/profileService";
 import { contactDetailsSchema } from "../utils/validation";
-import { LoadingSpinner } from "@/common/components";
+import { LoadingSpinner, ResumeUpload } from "@/common/components";
 // import { ConfirmDialog } from "@/common/components";
 
 type ContactDetailsFormData = {
@@ -174,6 +174,7 @@ export const ContactDetailsSection = () => {
               {...register("email")}
               error={!!errors.email}
               helperText={errors.email?.message}
+              disabled
             />
           </Grid>
 

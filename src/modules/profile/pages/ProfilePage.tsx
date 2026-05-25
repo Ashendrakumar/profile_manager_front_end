@@ -6,6 +6,7 @@
 import { useState } from "react";
 import { Box, Container, Typography, Tabs, Tab, Paper } from "@mui/material";
 import { useMetadata } from "@/hooks";
+import { PersonalDetailsSection } from "../components/PersonalDetailsSection";
 import { ContactDetailsSection } from "../components/ContactDetailsSection";
 import { EducationSection } from "../components/EducationSection";
 import { ExperienceSection } from "../components/ExperienceSection";
@@ -58,6 +59,7 @@ const ProfilePage = () => {
             onChange={handleTabChange}
             aria-label="profile tabs"
           >
+            <Tab label="Personal Details" />
             <Tab label="Contact Details" />
             <Tab label="Education" />
             <Tab label="Experience" />
@@ -68,18 +70,21 @@ const ProfilePage = () => {
 
         <Box sx={{ p: 3 }}>
           <TabPanel value={activeTab} index={0}>
-            <ContactDetailsSection />
+            <PersonalDetailsSection />
           </TabPanel>
           <TabPanel value={activeTab} index={1}>
-            <EducationSection />
+            <ContactDetailsSection />
           </TabPanel>
           <TabPanel value={activeTab} index={2}>
-            <ExperienceSection />
+            <EducationSection />
           </TabPanel>
           <TabPanel value={activeTab} index={3}>
-            <ProjectsSection />
+            <ExperienceSection />
           </TabPanel>
           <TabPanel value={activeTab} index={4}>
+            <ProjectsSection />
+          </TabPanel>
+          <TabPanel value={activeTab} index={5}>
             <SkillsSection />
           </TabPanel>
         </Box>

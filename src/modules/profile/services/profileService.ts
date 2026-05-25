@@ -5,6 +5,24 @@
 
 import { apiService } from "@/services/api";
 
+// ==================== Personal Details ====================
+
+export interface PersonalDetails {
+  firstName: string;
+  lastName: string;
+  profileName: string;
+  jobRole: string;
+  profileImage?: string;
+  resume?: string;
+}
+
+export interface UpdatePersonalDetailsRequest {
+  firstName?: string;
+  lastName?: string;
+  profileName?: string;
+  jobRole?: string;
+}
+
 // ==================== Contact Details ====================
 
 export interface Phone {
@@ -31,6 +49,7 @@ export interface ContactDetails {
   phones: Phone[];
   addresses: Address[];
   socialLinks: SocialLink[];
+  resumeDownloadUrl?: string;
 }
 
 export interface UpdateContactDetailsRequest {
@@ -164,6 +183,24 @@ export interface UpdateSkillRequest {
  * Provides methods to interact with profile API endpoints
  */
 export const profileService = {
+  // Personal Details
+  getPersonalDetails: async (): Promise<{
+    personalDetails: PersonalDetails;
+  }> => {
+    return apiService.get<{ personalDetails: PersonalDetails }>(
+      "/profile/personal-details",
+    );
+  },
+
+  updatePersonalDetails: async (
+    data: UpdatePersonalDetailsRequest,
+  ): Promise<{ message: string; personalDetails: PersonalDetails }> => {
+    return apiService.post<{
+      message: string;
+      personalDetails: PersonalDetails;
+    }>("/profile/save-personal-details", data);
+  },
+
   // Contact Details
   getContactDetails: async (): Promise<{
     contactDetails: ContactDetails | null;
@@ -312,5 +349,38 @@ export const profileService = {
 
   generatePortfolioLink: async (): Promise<{ data: Portfolio }> => {
     return apiService.post<{ data: Portfolio }>(`/portfolio/generate`);
+  },
+
+  uploadProfileImage: async (
+    file: File,
+  ): Promise<{ message: string; filePath: string }> => {
+    const formData = new FormData();
+    formData.append("resume", file);
+    return apiService.post<{ message: string; filePath: string }>(
+      "/upload/profile-upload",
+      formData,
+      {
+        headers: {
+          "Content-Type": "multipart/form-data",
+        },
+      },
+    );
+  },
+
+  // Resume
+  uploadResume: async (
+    file: File,
+  ): Promise<{ message: string; filePath: string }> => {
+    const formData = new FormData();
+    formData.append("resume", file);
+    return apiService.post<{ message: string; filePath: string }>(
+      "/upload/resume-upload",
+      formData,
+      {
+        headers: {
+          "Content-Type": "multipart/form-data",
+        },
+      },
+    );
   },
 };
