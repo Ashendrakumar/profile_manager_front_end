@@ -130,4 +130,9 @@ export const personalDetailsSchema = z.object({
     .min(1, "Profile name is required")
     .min(3, "Profile name must be at least 3 characters"),
   jobRole: z.string().min(1, "Job role is required"),
+  profileDescription: z
+    .string()
+    .max(160, "Profile description must be at most 160 characters")
+    .optional()
+    .or(z.literal("")),
 });

@@ -12,6 +12,7 @@ export interface PersonalDetails {
   lastName: string;
   profileName: string;
   jobRole: string;
+  profileDescription: string;
   profileImage?: string;
   resume?: string;
 }

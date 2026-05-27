@@ -25,6 +25,7 @@ type PersonalDetailsFormData = {
   lastName: string;
   profileName: string;
   jobRole: string;
+  profileDescription: string;
 };
 
 export const PersonalDetailsSection = () => {
@@ -46,6 +47,7 @@ export const PersonalDetailsSection = () => {
       lastName: "",
       profileName: "",
       jobRole: "",
+      profileDescription: "",
     },
   });
 
@@ -64,6 +66,7 @@ export const PersonalDetailsSection = () => {
         lastName: personalDetailsData.lastName || "",
         profileName: personalDetailsData.profileName || "",
         jobRole: personalDetailsData.jobRole || "",
+        profileDescription: personalDetailsData.profileDescription || "",
         // resume: personalDetailsData.resume || "",
         // profileImage: personalDetailsData.profileImage || "",
       });
@@ -172,6 +175,18 @@ export const PersonalDetailsSection = () => {
                     {...register("jobRole")}
                     error={!!errors.jobRole}
                     helperText={errors.jobRole?.message}
+                  />
+                </Grid>
+                <Grid item sm={12}>
+                  <TextField
+                    fullWidth
+                    label="Profile Description"
+                    placeholder="Enter a brief description about yourself (max 160 characters)"
+                    multiline
+                    rows={4}
+                    {...register("profileDescription")}
+                    error={!!errors.profileDescription}
+                    helperText={errors.profileDescription?.message}
                   />
                 </Grid>
               </Grid>
