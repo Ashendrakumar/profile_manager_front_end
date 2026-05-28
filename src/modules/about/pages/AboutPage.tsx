@@ -152,9 +152,18 @@ const AboutPage = () => {
                         <Typography variant="h6" gutterBottom>
                           {feature.title}
                         </Typography>
-                        <Typography variant="body2" color="text.secondary">
-                          {feature.description}
-                        </Typography>
+                        <Box
+                          sx={{
+                            "& p": { mb: 0.5 },
+                            "& ul": { mb: 0.5, pl: 2 },
+                            "& li": { mb: 0.25 },
+                            "& strong": { fontWeight: "bold" },
+                            "& em": { fontStyle: "italic" },
+                          }}
+                          dangerouslySetInnerHTML={{
+                            __html: feature.description,
+                          }}
+                        />
                       </CardContent>
                     </Card>
                   </Grid>

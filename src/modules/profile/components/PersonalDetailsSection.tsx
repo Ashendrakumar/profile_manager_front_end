@@ -59,8 +59,6 @@ export const PersonalDetailsSection = () => {
         profileName: personalDetailsData.profileName || "",
         jobRole: personalDetailsData.jobRole || "",
         profileDescription: personalDetailsData.profileDescription || "",
-        // resume: personalDetailsData.resume || "",
-        // profileImage: personalDetailsData.profileImage || "",
       });
     } catch (err) {
       showError(

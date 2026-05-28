@@ -8,7 +8,7 @@
 
 body {
   margin: 0;
-  font-family: 'Roboto', 'Helvetica', 'Arial', sans-serif;
+  font-family: "Roboto", "Helvetica", "Arial", sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
@@ -20,4 +20,17 @@ body {
 /* Remove default button styles */
 button {
   font-family: inherit;
+}
+
+.my-text-editor {
+  border-radius: 16px;
+}
+
+.my-text-editor .ql-toolbar {
+  border-radius: 16px 16px 0 0;
+}
+
+.my-text-editor .ql-container {
+  border-radius: 0 0 16px 16px;
+  min-height: 100px;
 }

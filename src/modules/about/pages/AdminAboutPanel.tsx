@@ -26,6 +26,7 @@ import { Save, Edit, Delete, Add, ArrowBack } from "@mui/icons-material";
 import { useNavigate } from "react-router-dom";
 import { useToast } from "@/contexts/toastContext";
 import { aboutService, type Feature } from "../services/aboutService";
+import TextEditor from "@/common/components/TextEditor";
 
 interface FormData {
   title: string;
@@ -215,17 +216,29 @@ const AdminAboutPanel = () => {
                     placeholder="Enter the About page title"
                   />
 
-                  <TextField
-                    fullWidth
-                    label="Description"
-                    name="description"
-                    value={formData.description}
-                    onChange={handleInputChange}
-                    placeholder="Enter the About page description (supports basic HTML tags like <p>, <ul>, <li>, <strong>, <em>, etc.)"
-                    multiline
-                    rows={8}
-                    helperText="You can use basic HTML formatting. Example: <strong>Bold text</strong>, <em>Italic text</em>, <ul><li>List item</li></ul>"
-                  />
+                  <Box>
+                    <Typography variant="subtitle2" sx={{ mb: 1 }}>
+                      Description
+                    </Typography>
+                    <TextEditor
+                      value={formData.description}
+                      onChange={(value) =>
+                        setFormData((prev) => ({
+                          ...prev,
+                          description: value,
+                        }))
+                      }
+                      placeholder="Enter the About page description"
+                    />
+                    <Typography
+                      variant="caption"
+                      color="text.secondary"
+                      sx={{ mt: 1, display: "block" }}
+                    >
+                      You can use formatting tools in the editor to style your
+                      content
+                    </Typography>
+                  </Box>
 
                   <Box>
                     <Typography variant="subtitle2" gutterBottom>
@@ -314,13 +327,19 @@ const AdminAboutPanel = () => {
                             >
                               {feature.title}
                             </Typography>
-                            <Typography
-                              variant="body2"
-                              color="text.secondary"
-                              sx={{ wordBreak: "break-word" }}
-                            >
-                              {feature.description}
-                            </Typography>
+                            <Box
+                              sx={{
+                                "& p": { mb: 0.5 },
+                                "& ul": { mb: 0.5, pl: 2 },
+                                "& li": { mb: 0.25 },
+                                "& strong": { fontWeight: "bold" },
+                                "& em": { fontStyle: "italic" },
+                                wordBreak: "break-word",
+                              }}
+                              dangerouslySetInnerHTML={{
+                                __html: feature.description,
+                              }}
+                            />
                           </CardContent>
                           <Box
                             sx={{
@@ -403,20 +422,22 @@ const AdminAboutPanel = () => {
               }
               placeholder="Enter feature title"
             />
-            <TextField
-              fullWidth
-              label="Feature Description"
-              value={newFeature.description}
-              onChange={(e) =>
-                setNewFeature((prev) => ({
-                  ...prev,
-                  description: e.target.value,
-                }))
-              }
-              placeholder="Enter feature description"
-              multiline
-              rows={3}
-            />
+            <Box>
+              <Typography variant="subtitle2" sx={{ mb: 1 }}>
+                Feature Description
+              </Typography>
+              <TextEditor
+                isNormalField
+                value={newFeature.description}
+                onChange={(value) =>
+                  setNewFeature((prev) => ({
+                    ...prev,
+                    description: value,
+                  }))
+                }
+                placeholder="Enter feature description"
+              />
+            </Box>
           </Stack>
         </DialogContent>
         <DialogActions>

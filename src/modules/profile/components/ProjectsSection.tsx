@@ -183,9 +183,18 @@ export const ProjectsSection = () => {
                       </IconButton>
                     </Box>
                   </Box>
-                  <Typography variant="body2" color="text.secondary" paragraph>
-                    {project.description}
-                  </Typography>
+                  <Box
+                    sx={{
+                      "& p": { mb: 1 },
+                      "& ul": { mb: 1 },
+                      "& li": { mb: 0.5 },
+                      "& strong": { fontWeight: "bold" },
+                      "& em": { fontStyle: "italic" },
+                    }}
+                    dangerouslySetInnerHTML={{
+                      __html: project.description,
+                    }}
+                  />
                   {project.technologies && project.technologies.length > 0 && (
                     <Box
                       sx={{

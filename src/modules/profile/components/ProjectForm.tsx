@@ -16,11 +16,12 @@ import {
   Typography,
   IconButton,
 } from "@mui/material";
-import { useForm, useFieldArray } from "react-hook-form";
+import { useForm, useFieldArray, Controller } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { projectSchema } from "../utils/validation";
 import type { Project } from "../services/profileService";
 import { Add, Remove } from "@mui/icons-material";
+import TextEditor from "@/common/components/TextEditor";
 
 type ProjectFormData = {
   title: string;
@@ -110,15 +111,36 @@ export const ProjectForm = ({
               helperText={errors.title?.message}
               disabled={loading}
             />
-            <TextField
-              label="Description"
-              fullWidth
-              multiline
-              rows={3}
-              {...register("description")}
-              error={!!errors.description}
-              helperText={errors.description?.message}
-              disabled={loading}
+            <Controller
+              control={control}
+              name="description"
+              render={({ field, fieldState }) => (
+                <Box>
+                  <Typography variant="subtitle2" sx={{ mb: 1 }}>
+                    Description
+                  </Typography>
+                  <TextEditor
+                    isNormalField
+                    value={field.value}
+                    onChange={field.onChange}
+                    placeholder="Enter project description"
+                    className={fieldState.error ? "editor-error" : ""}
+                    style={{
+                      border: fieldState.error ? "1px solid #d32f2f" : "none",
+                      borderRadius: "4px",
+                    }}
+                  />
+                  {fieldState.error && (
+                    <Typography
+                      variant="caption"
+                      color="error"
+                      sx={{ mt: 0.5 }}
+                    >
+                      {fieldState.error.message}
+                    </Typography>
+                  )}
+                </Box>
+              )}
             />
             <Box>
               <Box
