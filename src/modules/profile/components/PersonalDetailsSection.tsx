@@ -20,14 +20,6 @@ import {
   ProfileImageUpload,
 } from "@/common/components";
 
-type PersonalDetailsFormData = {
-  firstName: string;
-  lastName: string;
-  profileName: string;
-  jobRole: string;
-  profileDescription: string;
-};
-
 export const PersonalDetailsSection = () => {
   const { showSuccess, showError } = useToast();
   const [loading, setLoading] = useState(true);
@@ -40,7 +32,7 @@ export const PersonalDetailsSection = () => {
     handleSubmit,
     formState: { errors },
     reset,
-  } = useForm<PersonalDetailsFormData>({
+  } = useForm<PersonalDetails>({
     resolver: zodResolver(personalDetailsSchema),
     defaultValues: {
       firstName: "",
@@ -90,7 +82,7 @@ export const PersonalDetailsSection = () => {
     );
   };
 
-  const onSubmit = async (data: PersonalDetailsFormData) => {
+  const onSubmit = async (data: PersonalDetails) => {
     try {
       setSaving(true);
       const response = await profileService.updatePersonalDetails(data);

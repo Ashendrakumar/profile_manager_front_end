@@ -27,7 +27,7 @@ import {
   type ContactDetails,
 } from "../services/profileService";
 import { contactDetailsSchema } from "../utils/validation";
-import { LoadingSpinner, ResumeUpload } from "@/common/components";
+import { LoadingSpinner } from "@/common/components";
 // import { ConfirmDialog } from "@/common/components";
 
 type ContactDetailsFormData = {

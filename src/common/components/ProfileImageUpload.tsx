@@ -8,7 +8,6 @@ import {
   Button,
   CircularProgress,
   Typography,
-  Alert,
   Paper,
   LinearProgress,
   Stack,
@@ -21,9 +20,6 @@ import {
   type DragEvent,
   useEffect,
 } from "react";
-import CloudUploadIcon from "@mui/icons-material/CloudUpload";
-import CheckCircleIcon from "@mui/icons-material/CheckCircle";
-import ErrorIcon from "@mui/icons-material/Error";
 import { toastService } from "@/contexts";
 import { profileService } from "@/modules/profile";
 import { Person } from "@mui/icons-material";
@@ -96,6 +92,7 @@ export const ProfileImageUpload = ({
   };
 
   const handleFileUpload = async (file: File) => {
+    console.log(fileName);
     // Reset states
     setError(null);
     setSuccess(false);
