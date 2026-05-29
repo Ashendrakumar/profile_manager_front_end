@@ -139,7 +139,12 @@ export const EducationSection = () => {
           startIcon={<Add />}
           onClick={handleAdd}
         >
-          Add Education
+          <Typography
+            sx={{ display: { xs: "none", sm: "block" } }}
+            variant="body2"
+          >
+            Add Education
+          </Typography>
         </Button>
       </Box>
 

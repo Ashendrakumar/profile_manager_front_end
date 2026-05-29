@@ -8,9 +8,10 @@ import { ROUTES } from "@/constants";
 import { useAuth } from "@/contexts";
 import { NavigationItems } from "./NavigationItems";
 import { ProfileMenu } from "./ProfileMenu";
+import { Link } from "react-router-dom";
 
 const allNavigationItems = [
-  { label: "Home", path: ROUTES.HOME, adminOnly: false },
+  // { label: "Home", path: ROUTES.HOME, adminOnly: false },
   { label: "About", path: ROUTES.ABOUT, adminOnly: false },
   { label: "Profile", path: ROUTES.PROFILE, adminOnly: false },
   { label: "Users", path: ROUTES.USERS, adminOnly: true },
@@ -51,7 +52,16 @@ export const Header = ({ isAuthPage }: HeaderProps) => {
       }}
     >
       <Toolbar>
-        <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
+        <Typography
+          variant="h6"
+          component={Link}
+          to="/"
+          sx={{
+            flexGrow: 1,
+            textDecoration: "none",
+            color: "inherit",
+          }}
+        >
           Profile Manager
         </Typography>
         <Box sx={{ display: "flex", gap: 1, alignItems: "center" }}>

@@ -132,7 +132,12 @@ export const ExperienceSection = () => {
           </Typography>
         </Box>
         <Button variant="contained" startIcon={<Add />} onClick={handleAdd}>
-          Add Experience
+          <Typography
+            sx={{ display: { xs: "none", sm: "block" } }}
+            variant="body2"
+          >
+            Add Experience
+          </Typography>
         </Button>
       </Box>
 

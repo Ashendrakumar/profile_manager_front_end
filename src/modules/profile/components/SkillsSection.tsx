@@ -157,7 +157,12 @@ export const SkillsSection = () => {
           startIcon={<Add />}
           onClick={handleAdd}
         >
-          Add Skill
+          <Typography
+            sx={{ display: { xs: "none", sm: "block" } }}
+            variant="body2"
+          >
+            Add Skill
+          </Typography>
         </Button>
       </Box>
 

@@ -134,7 +134,12 @@ export const ProjectsSection = () => {
           startIcon={<Add />}
           onClick={handleAdd}
         >
-          Add Project
+          <Typography
+            sx={{ display: { xs: "none", sm: "block" } }}
+            variant="body2"
+          >
+            Add Project
+          </Typography>
         </Button>
       </Box>
 
