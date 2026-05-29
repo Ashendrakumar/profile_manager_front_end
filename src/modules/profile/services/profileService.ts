@@ -96,6 +96,7 @@ export interface Experience {
   _id?: string;
   companyName: string;
   role: string;
+  roleDescription?: string;
   startDate: string;
   endDate?: string;
   isCurrentlyWorking: boolean;
@@ -106,6 +107,7 @@ export interface Experience {
 export interface CreateExperienceRequest {
   companyName: string;
   role: string;
+  roleDescription?: string;
   startDate: string;
   endDate?: string | null;
   isCurrentlyWorking?: boolean;
@@ -116,6 +118,7 @@ export interface CreateExperienceRequest {
 export interface UpdateExperienceRequest {
   companyName?: string;
   role?: string;
+  roleDescription?: string;
   startDate?: string;
   endDate?: string | null;
   isCurrentlyWorking?: boolean;

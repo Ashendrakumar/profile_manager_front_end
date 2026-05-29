@@ -3,8 +3,8 @@
  * Main content area with scrollable container
  */
 
-import { Box, Container } from '@mui/material';
-import type { ReactNode } from 'react';
+import { Box } from "@mui/material";
+import type { ReactNode } from "react";
 
 interface BodyProps {
   children: ReactNode;
@@ -20,23 +20,20 @@ export const Body = ({ children, isAuthPage }: BodyProps) => {
     <Box
       sx={{
         flex: 1,
-        overflowY: 'auto',
-        display: 'flex',
-        flexDirection: 'column',
+        overflowY: "auto",
+        display: "flex",
+        flexDirection: "column",
       }}
     >
-      <Container
+      <Box
         component="main"
         sx={{
           flex: 1,
           py: isAuthPage ? 0 : 2,
-          maxWidth: isAuthPage ? '100%' : undefined,
-          px: isAuthPage ? 0 : undefined,
         }}
       >
         {children}
-      </Container>
+      </Box>
     </Box>
   );
 };
-

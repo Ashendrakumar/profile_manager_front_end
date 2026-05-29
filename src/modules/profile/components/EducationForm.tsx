@@ -129,7 +129,13 @@ export const EducationForm = ({
               helperText={errors.passingYear?.message}
               disabled={loading}
             />
-            <Box sx={{ display: "flex", flexDirection: "row", gap: 2 }}>
+            <Box
+              sx={{
+                display: "flex",
+                flexDirection: { xs: "column", sm: "row" },
+                gap: 2,
+              }}
+            >
               <TextField
                 label="Specialization"
                 fullWidth

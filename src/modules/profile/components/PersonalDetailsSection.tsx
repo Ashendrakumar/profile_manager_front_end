@@ -4,7 +4,7 @@
  */
 
 import { useState, useEffect } from "react";
-import { Box, Typography, Button, TextField, Grid, Stack } from "@mui/material";
+import { Box, Typography, Button, TextField, Grid } from "@mui/material";
 import { Edit } from "@mui/icons-material";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -114,7 +114,7 @@ export const PersonalDetailsSection = () => {
       <form onSubmit={handleSubmit(onSubmit)}>
         <Grid container spacing={3}>
           {/* Profile Image Section */}
-          <Grid item sm={12} md={4}>
+          <Grid item xs={12} md={4}>
             <ProfileImageUpload
               onSuccess={handleProfileImageSuccess}
               initialImage={personalDetails?.profileImage}
@@ -124,76 +124,76 @@ export const PersonalDetailsSection = () => {
           </Grid>
 
           {/* Name Fields Section */}
-          <Grid item sm={12} md={8}>
-            <Stack spacing={2}>
-              <Grid container spacing={2}>
-                <Grid item sm={12} md={6}>
-                  <TextField
-                    fullWidth
-                    label="First Name"
-                    placeholder="Enter your first name"
-                    {...register("firstName")}
-                    error={!!errors.firstName}
-                    helperText={errors.firstName?.message}
-                  />
-                </Grid>
-                <Grid item sm={12} md={6}>
-                  <TextField
-                    fullWidth
-                    label="Last Name"
-                    placeholder="Enter your last name"
-                    {...register("lastName")}
-                    error={!!errors.lastName}
-                    helperText={errors.lastName?.message}
-                  />
-                </Grid>
-                <Grid item sm={12} md={6}>
-                  <TextField
-                    fullWidth
-                    label="Profile Name"
-                    placeholder="Enter your profile name (for display)"
-                    {...register("profileName")}
-                    error={!!errors.profileName}
-                    helperText={errors.profileName?.message}
-                  />
-                </Grid>
-                <Grid item sm={12} md={6}>
-                  <TextField
-                    fullWidth
-                    label="Job Role"
-                    placeholder="Enter your job role (for display)"
-                    {...register("jobRole")}
-                    error={!!errors.jobRole}
-                    helperText={errors.jobRole?.message}
-                  />
-                </Grid>
-                <Grid item sm={12}>
-                  <TextField
-                    fullWidth
-                    label="Profile Description"
-                    placeholder="Enter a brief description about yourself (max 160 characters)"
-                    multiline
-                    rows={4}
-                    {...register("profileDescription")}
-                    error={!!errors.profileDescription}
-                    helperText={errors.profileDescription?.message}
-                  />
-                </Grid>
+          <Grid item xs={12} md={8}>
+            <Grid
+              container
+              spacing={2}
+              alignItems="stretch"
+              justifyContent="center"
+              sx={{ height: "100%", width: "100%" }}
+            >
+              <Grid item xs={12} md={6}>
+                <TextField
+                  fullWidth
+                  label="First Name"
+                  placeholder="Enter your first name"
+                  {...register("firstName")}
+                  error={!!errors.firstName}
+                  helperText={errors.firstName?.message}
+                />
               </Grid>
-            </Stack>
+              <Grid item xs={12} md={6}>
+                <TextField
+                  fullWidth
+                  label="Last Name"
+                  placeholder="Enter your last name"
+                  {...register("lastName")}
+                  error={!!errors.lastName}
+                  helperText={errors.lastName?.message}
+                />
+              </Grid>
+              <Grid item xs={12} md={6}>
+                <TextField
+                  fullWidth
+                  label="Profile Name"
+                  placeholder="Enter your profile name (for display)"
+                  {...register("profileName")}
+                  error={!!errors.profileName}
+                  helperText={errors.profileName?.message}
+                />
+              </Grid>
+              <Grid item xs={12} md={6}>
+                <TextField
+                  fullWidth
+                  label="Job Role"
+                  placeholder="Enter your job role (for display)"
+                  {...register("jobRole")}
+                  error={!!errors.jobRole}
+                  helperText={errors.jobRole?.message}
+                />
+              </Grid>
+              <Grid item xs={12} md={12}>
+                <TextField
+                  fullWidth
+                  label="Profile Description"
+                  placeholder="Enter a brief description about yourself (max 160 characters)"
+                  multiline
+                  rows={4}
+                  {...register("profileDescription")}
+                  error={!!errors.profileDescription}
+                  helperText={errors.profileDescription?.message}
+                />
+              </Grid>
+            </Grid>
           </Grid>
 
           {/* Resume Section */}
-          <Grid item sm={12} md={6}>
+          <Grid item xs={12} md={6}>
             <ResumeUpload />
           </Grid>
 
-          <Grid item sm={12} md={6}>
-            {/* <ResumeUpload /> */}
-          </Grid>
-
           {/* Submit Button */}
-          <Grid item sm={12}>
+          <Grid item xs={12}>
             <Button
               size="medium"
               type="submit"

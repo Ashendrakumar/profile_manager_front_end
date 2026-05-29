@@ -53,11 +53,22 @@ const ProfilePage = () => {
       </Typography>
 
       <Paper sx={{ mt: 3 }}>
-        <Box sx={{ borderBottom: 1, borderColor: "divider" }}>
+        <Box
+          sx={{ borderBottom: 1, borderColor: "divider", overflow: "hidden" }}
+        >
           <Tabs
             value={activeTab}
             onChange={handleTabChange}
             aria-label="profile tabs"
+            variant="scrollable"
+            scrollButtons="auto"
+            sx={{
+              "& .MuiTabs-scrollButtons": {
+                "&.Mui-disabled": {
+                  opacity: 0.3,
+                },
+              },
+            }}
           >
             <Tab label="Personal Details" />
             <Tab label="Contact Details" />

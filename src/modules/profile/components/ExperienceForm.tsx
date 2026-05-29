@@ -25,10 +25,12 @@ import type { Experience } from "../services/profileService";
 import { Add, Remove } from "@mui/icons-material";
 import { DatePicker } from "@mui/x-date-pickers";
 import dayjs from "dayjs";
+import TextEditor from "@/common/components/TextEditor";
 
 type ExperienceFormData = {
   companyName: string;
   role: string;
+  roleDescription?: string;
   startDate: string;
   endDate?: string;
   isCurrentlyWorking?: boolean;
@@ -63,6 +65,7 @@ export const ExperienceForm = ({
     defaultValues: {
       companyName: "",
       role: "",
+      roleDescription: "",
       startDate: "",
       endDate: "",
       isCurrentlyWorking: false,
@@ -96,6 +99,7 @@ export const ExperienceForm = ({
       reset({
         companyName: experience.companyName || "",
         role: experience.role || "",
+        roleDescription: experience.roleDescription || "",
         startDate: experience.startDate
           ? experience.startDate.split("T")[0]
           : "",
@@ -108,6 +112,7 @@ export const ExperienceForm = ({
       reset({
         companyName: "",
         role: "",
+        roleDescription: "",
         startDate: "",
         endDate: "",
         isCurrentlyWorking: false,
@@ -146,7 +151,44 @@ export const ExperienceForm = ({
               helperText={errors.role?.message}
               disabled={loading}
             />
-            <Box sx={{ display: "flex", gap: 2 }}>
+            <Controller
+              control={control}
+              name="roleDescription"
+              render={({ field, fieldState }) => (
+                <Box>
+                  <Typography variant="subtitle2" sx={{ mb: 1 }}>
+                    Role Description
+                  </Typography>
+                  <TextEditor
+                    isNormalField
+                    value={field.value}
+                    onChange={field.onChange}
+                    placeholder="Enter role description"
+                    className={fieldState.error ? "editor-error" : ""}
+                    style={{
+                      border: fieldState.error ? "1px solid #d32f2f" : "none",
+                      borderRadius: "4px",
+                    }}
+                  />
+                  {fieldState.error && (
+                    <Typography
+                      variant="caption"
+                      color="error"
+                      sx={{ mt: 0.5 }}
+                    >
+                      {fieldState.error.message}
+                    </Typography>
+                  )}
+                </Box>
+              )}
+            />
+            <Box
+              sx={{
+                display: "flex",
+                flexDirection: { xs: "column", sm: "row" },
+                gap: 2,
+              }}
+            >
               <Controller
                 control={control}
                 name="startDate"

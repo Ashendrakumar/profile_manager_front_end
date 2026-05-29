@@ -4,7 +4,14 @@
  */
 
 import { useState } from "react";
-import { Box, Card, CardContent, Grid, Typography, Paper } from "@mui/material";
+import {
+  Card,
+  CardContent,
+  Grid,
+  Typography,
+  Paper,
+  Container,
+} from "@mui/material";
 import { DatePicker } from "@mui/x-date-pickers/DatePicker";
 import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
@@ -96,7 +103,7 @@ const HomePage = () => {
 
   return (
     <LocalizationProvider dateAdapter={AdapterDayjs}>
-      <Box>
+      <Container maxWidth="lg">
         {/* Filter Row */}
         <Paper
           sx={{
@@ -216,7 +223,7 @@ const HomePage = () => {
             </Card>
           </Grid>
         </Grid>
-      </Box>
+      </Container>
     </LocalizationProvider>
   );
 };

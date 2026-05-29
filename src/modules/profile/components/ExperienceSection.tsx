@@ -184,6 +184,19 @@ export const ExperienceSection = () => {
                   <Typography variant="body2" color="text.secondary" paragraph>
                     {HelperFunctions.capitalizeString(exp.companyName)}
                   </Typography>
+                  {exp.roleDescription && (
+                    <Box
+                      sx={{
+                        mb: 2,
+                        fontSize: "0.875rem",
+                        "& p": { margin: 0 },
+                        "& ol, & ul": { marginLeft: "1.5rem" },
+                      }}
+                      dangerouslySetInnerHTML={{
+                        __html: exp.roleDescription,
+                      }}
+                    />
+                  )}
                   <Box
                     sx={{ display: "flex", gap: 1, flexWrap: "wrap", mb: 2 }}
                   >

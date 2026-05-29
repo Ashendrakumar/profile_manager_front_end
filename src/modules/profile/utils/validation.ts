@@ -57,6 +57,7 @@ export const experienceSchema = z
   .object({
     companyName: z.string().min(1, "Company name is required"),
     role: z.string().min(1, "Role is required"),
+    roleDescription: z.string().optional().or(z.literal("")),
     startDate: z.string().min(1, "Start date is required"),
     endDate: z.string().optional(),
     isCurrentlyWorking: z.boolean().default(false),

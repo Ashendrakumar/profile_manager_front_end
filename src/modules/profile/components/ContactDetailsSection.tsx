@@ -11,10 +11,6 @@ import {
   TextField,
   Grid,
   IconButton,
-  // Card,
-  // CardContent,
-  // CardActions,
-  // Chip,
   MenuItem,
   Stack,
 } from "@mui/material";
@@ -166,7 +162,7 @@ export const ContactDetailsSection = () => {
       <form onSubmit={handleSubmit(onSubmit)}>
         <Grid container spacing={1.5}>
           {/* Email */}
-          <Grid item xs={8}>
+          <Grid item xs={12}>
             <TextField
               fullWidth
               label="Email"
@@ -200,7 +196,7 @@ export const ContactDetailsSection = () => {
             {phoneFields.map((field, index) => (
               <Stack key={field.id} sx={{ mb: 2 }}>
                 <Grid container spacing={2}>
-                  <Grid item xs={7}>
+                  <Grid item xs={12} sm={7}>
                     <TextField
                       fullWidth
                       label="Phone Number"
@@ -209,7 +205,7 @@ export const ContactDetailsSection = () => {
                       helperText={errors.phones?.[index]?.number?.message}
                     />
                   </Grid>
-                  <Grid item xs={3}>
+                  <Grid item xs={12} sm={3}>
                     <TextField
                       fullWidth
                       select
@@ -224,7 +220,8 @@ export const ContactDetailsSection = () => {
                   </Grid>
                   <Grid
                     item
-                    xs={2}
+                    xs={12}
+                    sm={2}
                     sx={{
                       display: "flex",
                       alignItems: "center",
@@ -341,7 +338,8 @@ export const ContactDetailsSection = () => {
                 </Grid>
                 <Grid
                   item
-                  xs={4}
+                  xs={12}
+                  sm={4}
                   sx={{
                     display: "flex",
                     alignItems: "center",
@@ -384,7 +382,10 @@ export const ContactDetailsSection = () => {
                 key={field.id}
                 sx={{
                   display: "grid",
-                  gridTemplateColumns: "3fr 7fr 2fr",
+                  gridTemplateColumns: {
+                    xs: "1fr",
+                    sm: "3fr 7fr 2fr",
+                  },
                   gap: 2,
                   mb: 2,
                 }}
