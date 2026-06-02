@@ -188,6 +188,21 @@ export const ProjectsSection = () => {
                       </IconButton>
                     </Box>
                   </Box>
+                  <Box sx={{ mb: 1 }}>
+                    {project.projectType && (
+                      <Chip
+                        label={project.projectType}
+                        size="small"
+                        color={project.projectType === "Professional" ? "primary" : "default"}
+                        sx={{ mr: 1 }}
+                      />
+                    )}
+                  </Box>
+                  {project.company && (
+                    <Typography variant="caption" color="text.secondary" sx={{ display: "block", mb: 1 }}>
+                      Company: {project.company}
+                    </Typography>
+                  )}
                   <Box
                     sx={{
                       "& p": { mb: 1 },

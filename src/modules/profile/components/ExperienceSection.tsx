@@ -218,6 +218,14 @@ export const ExperienceSection = () => {
                     {exp.isCurrentlyWorking && (
                       <Chip label="Current" size="small" color="success" />
                     )}
+                    {exp.projects && exp.projects.length > 0 && (
+                      <Chip
+                        label={`${exp.projects.length} Project${exp.projects.length !== 1 ? "s" : ""}`}
+                        size="small"
+                        color="info"
+                        variant="outlined"
+                      />
+                    )}
                   </Box>
                   {exp.technologiesUsed && exp.technologiesUsed.length > 0 && (
                     <Box

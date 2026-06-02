@@ -102,6 +102,7 @@ export interface Experience {
   isCurrentlyWorking: boolean;
   responsibilities: string[];
   technologiesUsed: string[];
+  projects?: string[];
 }
 
 export interface CreateExperienceRequest {
@@ -113,6 +114,7 @@ export interface CreateExperienceRequest {
   isCurrentlyWorking?: boolean;
   responsibilities?: string[];
   technologiesUsed?: string[];
+  projects?: string[];
 }
 
 export interface UpdateExperienceRequest {
@@ -124,6 +126,7 @@ export interface UpdateExperienceRequest {
   isCurrentlyWorking?: boolean;
   responsibilities?: string[];
   technologiesUsed?: string[];
+  projects?: string[];
 }
 
 // ==================== Projects ====================
@@ -132,6 +135,8 @@ export interface Project {
   _id?: string;
   title: string;
   description: string;
+  projectType: "Personal" | "Professional";
+  company?: string;
   technologies: string[];
   projectUrl?: string;
   githubRepo?: string;
@@ -140,6 +145,8 @@ export interface Project {
 export interface CreateProjectRequest {
   title: string;
   description: string;
+  projectType: "Personal" | "Professional";
+  company?: string;
   technologies?: string[];
   projectUrl?: string;
   githubRepo?: string;
@@ -148,6 +155,8 @@ export interface CreateProjectRequest {
 export interface UpdateProjectRequest {
   title?: string;
   description?: string;
+  projectType?: "Personal" | "Professional";
+  company?: string;
   technologies?: string[];
   projectUrl?: string;
   githubRepo?: string;
@@ -290,6 +299,12 @@ export const profileService = {
   ): Promise<{ message: string; }> => {
     return apiService.delete<{ message: string; }>(
       `/profile/experience/${experienceId}`,
+    );
+  },
+
+  getCompanies: async (): Promise<{ companies: Array<{ companyName: string; id: string }> }> => {
+    return apiService.get<{ companies: Array<{ companyName: string; id: string }> }>(
+      "/profile/experience/companies",
     );
   },
 

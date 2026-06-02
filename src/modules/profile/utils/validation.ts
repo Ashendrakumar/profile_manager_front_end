@@ -63,10 +63,10 @@ export const experienceSchema = z
     isCurrentlyWorking: z.boolean().default(false),
     responsibilities: z.array(z.string()),
     technologiesUsed: z.array(z.string()),
+    projects: z.array(z.string()).optional(),
   })
   .refine(
     (data) => {
-      // If currently working, endDate should be empty
       if (data.isCurrentlyWorking && data.endDate) {
         return false;
       }
@@ -79,7 +79,6 @@ export const experienceSchema = z
   )
   .refine(
     (data) => {
-      // If not currently working, endDate is required
       if (!data.isCurrentlyWorking && !data.endDate) {
         return false;
       }
@@ -92,21 +91,36 @@ export const experienceSchema = z
   );
 
 // Project Schema
-export const projectSchema = z.object({
-  title: z.string().min(1, "Title is required"),
-  description: z.string().min(1, "Description is required"),
-  technologies: z.array(z.string()),
-  projectUrl: z
-    .string()
-    .url("Please enter a valid URL")
-    .optional()
-    .or(z.literal("")),
-  githubRepo: z
-    .string()
-    .url("Please enter a valid URL")
-    .optional()
-    .or(z.literal("")),
-});
+export const projectSchema = z
+  .object({
+    title: z.string().min(1, "Title is required"),
+    description: z.string().min(1, "Description is required"),
+    projectType: z.enum(["Personal", "Professional"]),
+    company: z.string().optional().or(z.literal("")),
+    technologies: z.array(z.string()),
+    projectUrl: z
+      .string()
+      .url("Please enter a valid URL")
+      .optional()
+      .or(z.literal("")),
+    githubRepo: z
+      .string()
+      .url("Please enter a valid URL")
+      .optional()
+      .or(z.literal("")),
+  })
+  .refine(
+    (data) => {
+      if (data.projectType === "Professional" && !data.company) {
+        return false;
+      }
+      return true;
+    },
+    {
+      message: "Company is required for Professional projects",
+      path: ["company"],
+    },
+  );
 
 // Skill Schema
 export const skillSchema = z.object({

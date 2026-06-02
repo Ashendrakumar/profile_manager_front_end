@@ -3,13 +3,14 @@
  * Form for creating and editing projects
  */
 
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import {
   Dialog,
   DialogTitle,
   DialogContent,
   DialogActions,
   TextField,
+  MenuItem,
   Button,
   Box,
   CircularProgress,
@@ -19,13 +20,15 @@ import {
 import { useForm, useFieldArray, Controller } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { projectSchema } from "../utils/validation";
-import type { Project } from "../services/profileService";
+import { profileService, type Project } from "../services/profileService";
 import { Add, Remove } from "@mui/icons-material";
 import TextEditor from "@/common/components/TextEditor";
 
 type ProjectFormData = {
   title: string;
   description: string;
+  projectType: "Personal" | "Professional";
+  company?: string;
   technologies: string[];
   projectUrl?: string;
   githubRepo?: string;
@@ -46,22 +49,32 @@ export const ProjectForm = ({
   onSubmit,
   loading = false,
 }: ProjectFormProps) => {
+  const [companies, setCompanies] = useState<
+    Array<{ companyName: string; id: string }>
+  >([]);
+  const [companiesLoading, setCompaniesLoading] = useState(false);
+
   const {
     register,
     handleSubmit,
     control,
     formState: { errors },
     reset,
+    watch,
   } = useForm<ProjectFormData>({
     resolver: zodResolver(projectSchema),
     defaultValues: {
       title: "",
       description: "",
+      projectType: "Personal",
+      company: "",
       technologies: [],
       projectUrl: "",
       githubRepo: "",
     },
   });
+
+  const projectType = watch("projectType");
 
   const {
     fields: technologyFields,
@@ -73,10 +86,31 @@ export const ProjectForm = ({
   });
 
   useEffect(() => {
+    const fetchCompanies = async () => {
+      try {
+        setCompaniesLoading(true);
+        const response = await profileService.getCompanies();
+        setCompanies(response.companies);
+      } catch (err) {
+        console.error("Failed to fetch companies");
+        setCompanies([]);
+      } finally {
+        setCompaniesLoading(false);
+      }
+    };
+
+    if (open) {
+      fetchCompanies();
+    }
+  }, [open]);
+
+  useEffect(() => {
     if (project) {
       reset({
         title: project.title || "",
         description: project.description || "",
+        projectType: project.projectType || "Personal",
+        company: project.company || "",
         technologies: project.technologies || [],
         projectUrl: project.projectUrl || "",
         githubRepo: project.githubRepo || "",
@@ -85,6 +119,8 @@ export const ProjectForm = ({
       reset({
         title: "",
         description: "",
+        projectType: "Personal",
+        company: "",
         technologies: [],
         projectUrl: "",
         githubRepo: "",
@@ -116,9 +152,9 @@ export const ProjectForm = ({
               name="description"
               render={({ field, fieldState }) => (
                 <Box>
-                  <Typography variant="subtitle2" sx={{ mb: 1 }}>
+                  {/* <Typography variant="subtitle2" sx={{ mb: 1 }}>
                     Description
-                  </Typography>
+                  </Typography> */}
                   <TextEditor
                     isNormalField
                     value={field.value}
@@ -142,6 +178,51 @@ export const ProjectForm = ({
                 </Box>
               )}
             />
+            <Controller
+              control={control}
+              name="projectType"
+              render={({ field }) => (
+                <TextField
+                  select
+                  label="Project Type"
+                  fullWidth
+                  {...field}
+                  disabled={loading}
+                  error={!!errors.projectType}
+                  helperText={errors.projectType?.message}
+                >
+                  <MenuItem value="Personal">Personal</MenuItem>
+                  <MenuItem value="Professional">Professional</MenuItem>
+                </TextField>
+              )}
+            />
+            {projectType === "Professional" && (
+              <Controller
+                control={control}
+                name="company"
+                render={({ field }) => (
+                  <TextField
+                    select
+                    label="Company"
+                    fullWidth
+                    {...field}
+                    disabled={loading || companiesLoading}
+                    error={!!errors.company}
+                    helperText={errors.company?.message}
+                  >
+                    {companies.length === 0 ? (
+                      <MenuItem disabled>No companies available</MenuItem>
+                    ) : (
+                      companies.map((company) => (
+                        <MenuItem key={company.id} value={company.companyName}>
+                          {company.companyName}
+                        </MenuItem>
+                      ))
+                    )}
+                  </TextField>
+                )}
+              />
+            )}
             <Box>
               <Box
                 sx={{
