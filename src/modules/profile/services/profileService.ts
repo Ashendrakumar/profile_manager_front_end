@@ -92,6 +92,11 @@ export interface UpdateEducationRequest {
 
 // ==================== Experience ====================
 
+export interface ExperienceProjectLink {
+  projectId: string;
+  title: string;
+}
+
 export interface Experience {
   _id?: string;
   companyName: string;
@@ -102,7 +107,7 @@ export interface Experience {
   isCurrentlyWorking: boolean;
   responsibilities: string[];
   technologiesUsed: string[];
-  projects?: string[];
+  projects?: ExperienceProjectLink[];
 }
 
 export interface CreateExperienceRequest {
@@ -114,7 +119,7 @@ export interface CreateExperienceRequest {
   isCurrentlyWorking?: boolean;
   responsibilities?: string[];
   technologiesUsed?: string[];
-  projects?: string[];
+  projects?: ExperienceProjectLink[];
 }
 
 export interface UpdateExperienceRequest {
@@ -126,7 +131,7 @@ export interface UpdateExperienceRequest {
   isCurrentlyWorking?: boolean;
   responsibilities?: string[];
   technologiesUsed?: string[];
-  projects?: string[];
+  projects?: ExperienceProjectLink[];
 }
 
 // ==================== Projects ====================
@@ -200,14 +205,14 @@ export const profileService = {
   getPersonalDetails: async (): Promise<{
     personalDetails: PersonalDetails;
   }> => {
-    return apiService.get<{ personalDetails: PersonalDetails; }>(
+    return apiService.get<{ personalDetails: PersonalDetails }>(
       "/profile/personal-details",
     );
   },
 
   updatePersonalDetails: async (
     data: UpdatePersonalDetailsRequest,
-  ): Promise<{ message: string; personalDetails: PersonalDetails; }> => {
+  ): Promise<{ message: string; personalDetails: PersonalDetails }> => {
     return apiService.post<{
       message: string;
       personalDetails: PersonalDetails;
@@ -218,29 +223,29 @@ export const profileService = {
   getContactDetails: async (): Promise<{
     contactDetails: ContactDetails | null;
   }> => {
-    return apiService.get<{ contactDetails: ContactDetails | null; }>(
+    return apiService.get<{ contactDetails: ContactDetails | null }>(
       "/profile/contact",
     );
   },
 
   updateContactDetails: async (
     data: UpdateContactDetailsRequest,
-  ): Promise<{ message: string; contactDetails: ContactDetails; }> => {
-    return apiService.put<{ message: string; contactDetails: ContactDetails; }>(
+  ): Promise<{ message: string; contactDetails: ContactDetails }> => {
+    return apiService.put<{ message: string; contactDetails: ContactDetails }>(
       "/profile/contact",
       data,
     );
   },
 
   // Education
-  getEducation: async (): Promise<{ education: Education[]; }> => {
-    return apiService.get<{ education: Education[]; }>("/profile/education");
+  getEducation: async (): Promise<{ education: Education[] }> => {
+    return apiService.get<{ education: Education[] }>("/profile/education");
   },
 
   addEducation: async (
     data: CreateEducationRequest,
-  ): Promise<{ message: string; education: Education; }> => {
-    return apiService.post<{ message: string; education: Education; }>(
+  ): Promise<{ message: string; education: Education }> => {
+    return apiService.post<{ message: string; education: Education }>(
       "/profile/education",
       data,
     );
@@ -249,8 +254,8 @@ export const profileService = {
   updateEducation: async (
     educationId: string,
     data: UpdateEducationRequest,
-  ): Promise<{ message: string; education: Education; }> => {
-    return apiService.put<{ message: string; education: Education; }>(
+  ): Promise<{ message: string; education: Education }> => {
+    return apiService.put<{ message: string; education: Education }>(
       `/profile/education/${educationId}`,
       data,
     );
@@ -258,24 +263,24 @@ export const profileService = {
 
   deleteEducation: async (
     educationId: string,
-  ): Promise<{ message: string; }> => {
-    return apiService.delete<{ message: string; }>(
+  ): Promise<{ message: string }> => {
+    return apiService.delete<{ message: string }>(
       `/profile/education/${educationId}`,
     );
   },
 
   // Experience
-  getExperience: async (): Promise<{ experience: Experience[]; }> => {
-    return apiService.get<{ experience: Experience[]; }>("/profile/experience");
+  getExperience: async (): Promise<{ experience: Experience[] }> => {
+    return apiService.get<{ experience: Experience[] }>("/profile/experience");
   },
 
   addExperience: async (
     data: CreateExperienceRequest,
-  ): Promise<{ message: string; experience: Experience; }> => {
+  ): Promise<{ message: string; experience: Experience }> => {
     if (!data.endDate || data.isCurrentlyWorking) {
       delete data.endDate;
     }
-    return apiService.post<{ message: string; experience: Experience; }>(
+    return apiService.post<{ message: string; experience: Experience }>(
       "/profile/experience",
       data,
     );
@@ -284,11 +289,11 @@ export const profileService = {
   updateExperience: async (
     experienceId: string,
     data: UpdateExperienceRequest,
-  ): Promise<{ message: string; experience: Experience; }> => {
+  ): Promise<{ message: string; experience: Experience }> => {
     if (!data.endDate || data.isCurrentlyWorking) {
       delete data.endDate;
     }
-    return apiService.put<{ message: string; experience: Experience; }>(
+    return apiService.put<{ message: string; experience: Experience }>(
       `/profile/experience/${experienceId}`,
       data,
     );
@@ -296,27 +301,29 @@ export const profileService = {
 
   deleteExperience: async (
     experienceId: string,
-  ): Promise<{ message: string; }> => {
-    return apiService.delete<{ message: string; }>(
+  ): Promise<{ message: string }> => {
+    return apiService.delete<{ message: string }>(
       `/profile/experience/${experienceId}`,
     );
   },
 
-  getCompanies: async (): Promise<{ companies: Array<{ companyName: string; id: string }> }> => {
-    return apiService.get<{ companies: Array<{ companyName: string; id: string }> }>(
-      "/profile/experience/companies",
-    );
+  getCompanies: async (): Promise<{
+    companies: Array<{ companyName: string; id: string }>;
+  }> => {
+    return apiService.get<{
+      companies: Array<{ companyName: string; id: string }>;
+    }>("/profile/experience/companies");
   },
 
   // Projects
-  getProjects: async (): Promise<{ projects: Project[]; }> => {
-    return apiService.get<{ projects: Project[]; }>("/profile/projects");
+  getProjects: async (): Promise<{ projects: Project[] }> => {
+    return apiService.get<{ projects: Project[] }>("/profile/projects");
   },
 
   addProject: async (
     data: CreateProjectRequest,
-  ): Promise<{ message: string; project: Project; }> => {
-    return apiService.post<{ message: string; project: Project; }>(
+  ): Promise<{ message: string; project: Project }> => {
+    return apiService.post<{ message: string; project: Project }>(
       "/profile/projects",
       data,
     );
@@ -325,28 +332,28 @@ export const profileService = {
   updateProject: async (
     projectId: string,
     data: UpdateProjectRequest,
-  ): Promise<{ message: string; project: Project; }> => {
-    return apiService.put<{ message: string; project: Project; }>(
+  ): Promise<{ message: string; project: Project }> => {
+    return apiService.put<{ message: string; project: Project }>(
       `/profile/projects/${projectId}`,
       data,
     );
   },
 
-  deleteProject: async (projectId: string): Promise<{ message: string; }> => {
-    return apiService.delete<{ message: string; }>(
+  deleteProject: async (projectId: string): Promise<{ message: string }> => {
+    return apiService.delete<{ message: string }>(
       `/profile/projects/${projectId}`,
     );
   },
 
   // Skills
-  getSkills: async (): Promise<{ skills: Skill[]; }> => {
-    return apiService.get<{ skills: Skill[]; }>("/profile/skills");
+  getSkills: async (): Promise<{ skills: Skill[] }> => {
+    return apiService.get<{ skills: Skill[] }>("/profile/skills");
   },
 
   addSkill: async (
     data: CreateSkillRequest,
-  ): Promise<{ message: string; skill: Skill; }> => {
-    return apiService.post<{ message: string; skill: Skill; }>(
+  ): Promise<{ message: string; skill: Skill }> => {
+    return apiService.post<{ message: string; skill: Skill }>(
       "/profile/skills",
       data,
     );
@@ -355,27 +362,27 @@ export const profileService = {
   updateSkill: async (
     skillId: string,
     data: UpdateSkillRequest,
-  ): Promise<{ message: string; skill: Skill; }> => {
-    return apiService.put<{ message: string; skill: Skill; }>(
+  ): Promise<{ message: string; skill: Skill }> => {
+    return apiService.put<{ message: string; skill: Skill }>(
       `/profile/skills/${skillId}`,
       data,
     );
   },
 
-  deleteSkill: async (skillId: string): Promise<{ message: string; }> => {
-    return apiService.delete<{ message: string; }>(`/profile/skills/${skillId}`);
+  deleteSkill: async (skillId: string): Promise<{ message: string }> => {
+    return apiService.delete<{ message: string }>(`/profile/skills/${skillId}`);
   },
 
-  generatePortfolioLink: async (): Promise<{ data: Portfolio; }> => {
-    return apiService.post<{ data: Portfolio; }>(`/portfolio/generate`);
+  generatePortfolioLink: async (): Promise<{ data: Portfolio }> => {
+    return apiService.post<{ data: Portfolio }>(`/portfolio/generate`);
   },
 
   uploadProfileImage: async (
     file: File,
-  ): Promise<{ message: string; filePath: string; }> => {
+  ): Promise<{ message: string; filePath: string }> => {
     const formData = new FormData();
     formData.append("resume", file);
-    return apiService.post<{ message: string; filePath: string; }>(
+    return apiService.post<{ message: string; filePath: string }>(
       "/upload/profile-upload",
       formData,
       {
@@ -389,10 +396,10 @@ export const profileService = {
   // Resume
   uploadResume: async (
     file: File,
-  ): Promise<{ message: string; filePath: string; }> => {
+  ): Promise<{ message: string; filePath: string }> => {
     const formData = new FormData();
     formData.append("resume", file);
-    return apiService.post<{ message: string; filePath: string; }>(
+    return apiService.post<{ message: string; filePath: string }>(
       "/upload/resume-upload",
       formData,
       {
