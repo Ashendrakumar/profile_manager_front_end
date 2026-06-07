@@ -13,3 +13,4 @@ export { ProjectsSection } from "./ProjectsSection";
 export { ProjectForm } from "./ProjectForm";
 export { SkillsSection } from "./SkillsSection";
 export { SkillForm } from "./SkillForm";
+export { ProfileCompletionDashboard } from "./ProfileCompletionDashboard";

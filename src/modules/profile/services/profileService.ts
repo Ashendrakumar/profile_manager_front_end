@@ -182,6 +182,15 @@ export interface Portfolio {
   isGenerated: boolean;
 }
 
+// ==================== Profile Completion ====================
+
+export interface ProfileCompletion {
+  percentage: number;
+  completedSections: string[];
+  missingSections: { label: string; key: string }[];
+  lastCalculatedAt: Date;
+}
+
 export interface CreateSkillRequest {
   name: string;
   category: string;
@@ -407,6 +416,15 @@ export const profileService = {
           "Content-Type": "multipart/form-data",
         },
       },
+    );
+  },
+
+  // Profile Completion
+  getProfileCompletion: async (): Promise<{
+    profileCompletion: ProfileCompletion;
+  }> => {
+    return apiService.get<{ profileCompletion: ProfileCompletion }>(
+      "/profile/completion",
     );
   },
 };
