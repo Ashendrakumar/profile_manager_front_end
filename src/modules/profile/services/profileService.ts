@@ -390,7 +390,7 @@ export const profileService = {
     file: File,
   ): Promise<{ message: string; filePath: string }> => {
     const formData = new FormData();
-    formData.append("resume", file);
+    formData.append("profiles", file);
     return apiService.post<{ message: string; filePath: string }>(
       "/upload/profile-upload",
       formData,

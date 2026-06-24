@@ -1,35 +1,38 @@
-/**
- * ProfileImageUpload Component
- * Reusable profile image upload component with preview
- */
-
 import {
+  Avatar,
   Box,
   Button,
   CircularProgress,
-  Typography,
-  Paper,
   LinearProgress,
+  Paper,
   Stack,
-  Avatar,
+  Typography,
 } from "@mui/material";
+import { Person } from "@mui/icons-material";
 import {
-  useState,
-  useRef,
   type ChangeEvent,
   type DragEvent,
   useEffect,
+  useRef,
+  useState,
 } from "react";
-import { toastService } from "@/contexts";
 import { profileService } from "@/modules/profile";
-import { Person } from "@mui/icons-material";
+import { toastService } from "@/contexts";
 
-export interface ProfileImageUploadProps {
-  onSuccess?: (imagePath: string, fileName: string) => void;
-  onError?: (error: string) => void;
-  initialImage?: string; // Initial image URL or path
-  initialFileName?: string; // Initial file name for display
-  maxFileSize?: number; // in MB
+const DEFAULT_MAX_SIZE = 5; // MB
+const ALLOWED_IMAGE_TYPES = new Set([
+  "image/jpeg",
+  "image/png",
+  "image/gif",
+  "image/webp",
+]);
+
+interface ProfileImageUploadProps {
+  onSuccess?: (imageUrl: string, fileName: string) => void;
+  onError?: (message: string) => void;
+  initialImage?: string;
+  initialFileName?: string;
+  maxFileSize?: number;
   accept?: string;
   disabled?: boolean;
   label?: string;
@@ -37,18 +40,6 @@ export interface ProfileImageUploadProps {
   showPreview?: boolean;
 }
 
-const ALLOWED_IMAGE_TYPES = new Set([
-  "image/jpeg",
-  "image/png",
-  "image/gif",
-  "image/webp",
-]);
-const DEFAULT_MAX_SIZE = 5; // MB
-
-/**
- * Profile Image Upload Component
- * Handles image file upload with drag-and-drop support and preview
- */
 export const ProfileImageUpload = ({
   onSuccess,
   onError,
@@ -71,29 +62,37 @@ export const ProfileImageUpload = ({
     initialImage || null,
   );
   const [uploadProgress, setUploadProgress] = useState(0);
+
+  // FIX: Use state for drag-over so hover styles actually re-render
+  const [isDragOver, setIsDragOver] = useState(false);
+
   const fileInputRef = useRef<HTMLInputElement>(null);
-  const dragOverRef = useRef(false);
+  // Keep a ref to the progress interval so we can clear it on error/unmount
+  const progressIntervalRef = useRef<ReturnType<typeof setInterval> | null>(
+    null,
+  );
+
+  const clearProgressInterval = () => {
+    if (progressIntervalRef.current) {
+      clearInterval(progressIntervalRef.current);
+      progressIntervalRef.current = null;
+    }
+  };
 
   const validateFile = (file: File): boolean => {
-    // Check file size
     const maxBytes = maxFileSize * 1024 * 1024;
     if (file.size > maxBytes) {
       setError(`File size exceeds ${maxFileSize}MB limit`);
       return false;
     }
-
-    // Check file type
     if (!ALLOWED_IMAGE_TYPES.has(file.type)) {
       setError("Invalid file format. Please upload JPG, PNG, GIF, or WebP");
       return false;
     }
-
     return true;
   };
 
   const handleFileUpload = async (file: File) => {
-    console.log(fileName);
-    // Reset states
     setError(null);
     setSuccess(false);
     setUploadProgress(0);
@@ -107,32 +106,34 @@ export const ProfileImageUpload = ({
       setLoading(true);
       setFileName(file.name);
 
-      // Create preview
-      const reader = new FileReader();
-      reader.onload = (e) => {
-        setImagePreview(e.target?.result as string);
-      };
-      reader.readAsDataURL(file);
+      // FIX: Resolve the preview URL before the upload call so onSuccess
+      // receives the real data-URL, not a potentially-null snapshot.
+      const previewUrl = await new Promise<string>((resolve, reject) => {
+        const reader = new FileReader();
+        reader.onload = (e) => resolve(e.target?.result as string);
+        reader.onerror = () => reject(new Error("Failed to read file"));
+        reader.readAsDataURL(file);
+      });
 
-      // Simulate progress
-      const progressInterval = setInterval(() => {
+      setImagePreview(previewUrl);
+
+      progressIntervalRef.current = setInterval(() => {
         setUploadProgress((prev) => (prev < 90 ? prev + 10 : prev));
       }, 200);
 
       await profileService.uploadProfileImage(file);
 
-      clearInterval(progressInterval);
+      clearProgressInterval();
       setUploadProgress(100);
       setSuccess(true);
       setLoading(false);
 
-      if (onSuccess) onSuccess(imagePreview || "", file.name);
+      // FIX: Pass the resolved previewUrl, not the possibly-stale state value
+      if (onSuccess) onSuccess(previewUrl, file.name);
 
-      // Reset success message after 3 seconds
-      setTimeout(() => {
-        setSuccess(false);
-      }, 3000);
+      setTimeout(() => setSuccess(false), 3000);
     } catch (err) {
+      clearProgressInterval();
       setLoading(false);
       setUploadProgress(0);
       const errorMessage = err instanceof Error ? err.message : "Upload failed";
@@ -146,22 +147,23 @@ export const ProfileImageUpload = ({
     if (files && files.length > 0) {
       handleFileUpload(files[0]);
     }
+    // Reset input value so the same file can be re-selected after an error
+    e.currentTarget.value = "";
   };
 
   const handleDragOver = (e: DragEvent<HTMLDivElement>) => {
     e.preventDefault();
-    dragOverRef.current = true;
+    setIsDragOver(true);
   };
 
   const handleDragLeave = (e: DragEvent<HTMLDivElement>) => {
     e.preventDefault();
-    dragOverRef.current = false;
+    setIsDragOver(false);
   };
 
   const handleDrop = (e: DragEvent<HTMLDivElement>) => {
     e.preventDefault();
-    dragOverRef.current = false;
-
+    setIsDragOver(false);
     const files = e.dataTransfer.files;
     if (files && files.length > 0) {
       handleFileUpload(files[0]);
@@ -172,14 +174,14 @@ export const ProfileImageUpload = ({
     fileInputRef.current?.click();
   };
 
+  // Cleanup interval on unmount
   useEffect(() => {
-    if (success) {
-      toastService.success("Profile image uploaded successfully");
-    }
+    return () => clearProgressInterval();
+  }, []);
 
-    if (error) {
-      toastService.error(error);
-    }
+  useEffect(() => {
+    if (success) toastService.success("Profile image uploaded successfully");
+    if (error) toastService.error(error);
   }, [success, error]);
 
   return (
@@ -192,10 +194,9 @@ export const ProfileImageUpload = ({
           p: 3,
           textAlign: "center",
           border: "2px dashed",
-          borderColor: dragOverRef.current ? "primary.main" : "divider",
-          backgroundColor: dragOverRef.current
-            ? "action.hover"
-            : "background.paper",
+          // FIX: isDragOver is now state — MUI will re-render with correct color
+          borderColor: isDragOver ? "primary.main" : "divider",
+          backgroundColor: isDragOver ? "action.hover" : "background.paper",
           transition: "all 0.3s ease",
           cursor: "pointer",
           "&:hover": {
@@ -214,7 +215,6 @@ export const ProfileImageUpload = ({
         />
 
         <Stack spacing={2} alignItems="center">
-          {/* Image Preview */}
           {showPreview && (
             <Avatar
               src={imagePreview || ""}
@@ -240,19 +240,16 @@ export const ProfileImageUpload = ({
 
           {loading && <CircularProgress />}
 
-          {/* Label */}
           <Typography variant="h6" component="div">
             {label}
           </Typography>
 
-          {/* Helper Text */}
           {!loading && !success && (
             <Typography variant="body2" color="textSecondary">
               {helperText}
             </Typography>
           )}
 
-          {/* Upload Button */}
           {!loading && !success && (
             <Button
               variant="contained"
@@ -264,7 +261,6 @@ export const ProfileImageUpload = ({
             </Button>
           )}
 
-          {/* Progress */}
           {loading && uploadProgress > 0 && (
             <Box sx={{ width: "100%", maxWidth: 300 }}>
               <LinearProgress variant="determinate" value={uploadProgress} />
@@ -272,6 +268,13 @@ export const ProfileImageUpload = ({
                 {uploadProgress}%
               </Typography>
             </Box>
+          )}
+
+          {/* Show selected file name when not loading */}
+          {!loading && fileName !== "No image selected" && (
+            <Typography variant="caption" color="textSecondary">
+              {fileName}
+            </Typography>
           )}
         </Stack>
       </Paper>
