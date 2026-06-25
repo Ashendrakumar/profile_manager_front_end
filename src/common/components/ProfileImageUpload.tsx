@@ -27,7 +27,7 @@ const ALLOWED_IMAGE_TYPES = new Set([
   "image/webp",
 ]);
 
-interface ProfileImageUploadProps {
+export interface ProfileImageUploadProps {
   onSuccess?: (imageUrl: string, fileName: string) => void;
   onError?: (message: string) => void;
   initialImage?: string;
