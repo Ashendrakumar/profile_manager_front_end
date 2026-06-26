@@ -7,6 +7,15 @@ import { apiService } from "@/services/api";
 
 // ==================== Personal Details ====================
 
+export interface ResumeItem {
+  _id: string;
+  fileName: string;
+  filePath: string;
+  downloadUrl: string;
+  isPrimary: boolean;
+  uploadedAt?: string;
+}
+
 export interface PersonalDetails {
   firstName: string;
   lastName: string;
@@ -14,7 +23,7 @@ export interface PersonalDetails {
   jobRole: string;
   profileDescription?: string;
   profileImage?: string;
-  resume?: string;
+  resumes?: ResumeItem[];
 }
 
 export interface UpdatePersonalDetailsRequest {
@@ -388,34 +397,62 @@ export const profileService = {
 
   uploadProfileImage: async (
     file: File,
-  ): Promise<{ message: string; filePath: string }> => {
+    onProgress?: (percent: number) => void,
+  ): Promise<{ message: string; profileImage: string }> => {
     const formData = new FormData();
     formData.append("profiles", file);
-    return apiService.post<{ message: string; filePath: string }>(
+    return apiService.post<{ message: string; profileImage: string }>(
       "/upload/profile-upload",
       formData,
       {
-        headers: {
-          "Content-Type": "multipart/form-data",
+        headers: { "Content-Type": "multipart/form-data" },
+        onUploadProgress: (event) => {
+          if (onProgress && event.total) {
+            onProgress(Math.round((event.loaded * 100) / event.total));
+          }
         },
       },
     );
   },
 
-  // Resume
+  // Resume (multiple resumes per user, one marked primary)
   uploadResume: async (
     file: File,
-  ): Promise<{ message: string; filePath: string }> => {
+    onProgress?: (percent: number) => void,
+  ): Promise<{ message: string; resumes: ResumeItem[] }> => {
     const formData = new FormData();
     formData.append("resume", file);
-    return apiService.post<{ message: string; filePath: string }>(
+    return apiService.post<{ message: string; resumes: ResumeItem[] }>(
       "/upload/resume-upload",
       formData,
       {
-        headers: {
-          "Content-Type": "multipart/form-data",
+        headers: { "Content-Type": "multipart/form-data" },
+        onUploadProgress: (event) => {
+          if (onProgress && event.total) {
+            onProgress(Math.round((event.loaded * 100) / event.total));
+          }
         },
       },
+    );
+  },
+
+  getResumes: async (): Promise<{ resumes: ResumeItem[] }> => {
+    return apiService.get<{ resumes: ResumeItem[] }>("/upload/resumes");
+  },
+
+  setPrimaryResume: async (
+    resumeId: string,
+  ): Promise<{ message: string; resumes: ResumeItem[] }> => {
+    return apiService.patch<{ message: string; resumes: ResumeItem[] }>(
+      `/upload/resume/${resumeId}/primary`,
+    );
+  },
+
+  deleteResume: async (
+    resumeId: string,
+  ): Promise<{ message: string; resumes: ResumeItem[] }> => {
+    return apiService.delete<{ message: string; resumes: ResumeItem[] }>(
+      `/upload/resume/${resumeId}`,
     );
   },
 

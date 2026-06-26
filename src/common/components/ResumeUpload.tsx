@@ -22,11 +22,16 @@ import {
 import CloudUploadIcon from "@mui/icons-material/CloudUpload";
 import CheckCircleIcon from "@mui/icons-material/CheckCircle";
 import ErrorIcon from "@mui/icons-material/Error";
-import { profileService } from "@/modules/profile/services/profileService";
+import {
+  profileService,
+  type ResumeItem,
+} from "@/modules/profile/services/profileService";
 import { toastService } from "@/contexts";
 
 export interface ResumeUploadProps {
   onSuccess?: (fileName: string) => void;
+  /** Called after a successful upload with the user's full, updated resume list. */
+  onUploaded?: (resumes: ResumeItem[]) => void;
   onError?: (error: string) => void;
   maxFileSize?: number; // in MB
   accept?: string;
@@ -48,6 +53,7 @@ const DEFAULT_MAX_SIZE = 5; // MB
  */
 export const ResumeUpload = ({
   onSuccess,
+  onUploaded,
   onError,
   maxFileSize = DEFAULT_MAX_SIZE,
   accept = ".pdf,.doc,.docx",
@@ -60,8 +66,11 @@ export const ResumeUpload = ({
   const [success, setSuccess] = useState(false);
   const [fileName, setFileName] = useState<string>("");
   const [uploadProgress, setUploadProgress] = useState(0);
+  const [isDragOver, setIsDragOver] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
-  const dragOverRef = useRef(false);
+  const successTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  const ALLOWED_EXTENSIONS = [".pdf", ".doc", ".docx"];
 
   const validateFile = (file: File): boolean => {
     // Check file size
@@ -71,8 +80,13 @@ export const ResumeUpload = ({
       return false;
     }
 
-    // Check file type
-    if (!ALLOWED_MIME_TYPES.includes(file.type)) {
+    // Check file type. Some mobile browsers report an empty MIME type, so we
+    // fall back to the file extension when the MIME type is missing/unknown.
+    const hasValidMime = ALLOWED_MIME_TYPES.includes(file.type);
+    const hasValidExt = ALLOWED_EXTENSIONS.some((ext) =>
+      file.name.toLowerCase().endsWith(ext),
+    );
+    if (!hasValidMime && !hasValidExt) {
       setError("Invalid file format. Please upload PDF, DOC, or DOCX file");
       return false;
     }
@@ -95,23 +109,20 @@ export const ResumeUpload = ({
       setLoading(true);
       setFileName(file.name);
 
-      // Simulate progress
-      const progressInterval = setInterval(() => {
-        setUploadProgress((prev) => (prev < 90 ? prev + 10 : prev));
-      }, 200);
+      // Call profile service to upload resume with real upload progress
+      const result = await profileService.uploadResume(file, (percent) =>
+        setUploadProgress(percent),
+      );
 
-      // Call profile service to upload resume
-      await profileService.uploadResume(file);
-
-      clearInterval(progressInterval);
       setUploadProgress(100);
       setSuccess(true);
       setLoading(false);
 
       if (onSuccess) onSuccess(file.name);
+      if (onUploaded) onUploaded(result.resumes);
 
       // Reset success message after 3 seconds
-      setTimeout(() => {
+      successTimeoutRef.current = setTimeout(() => {
         setSuccess(false);
         setFileName("");
       }, 3000);
@@ -129,21 +140,23 @@ export const ResumeUpload = ({
     if (files && files.length > 0) {
       handleFileUpload(files[0]);
     }
+    // Reset so selecting the same file again re-triggers onChange
+    e.currentTarget.value = "";
   };
 
   const handleDragOver = (e: DragEvent<HTMLDivElement>) => {
     e.preventDefault();
-    dragOverRef.current = true;
+    if (!isDragOver) setIsDragOver(true);
   };
 
   const handleDragLeave = (e: DragEvent<HTMLDivElement>) => {
     e.preventDefault();
-    dragOverRef.current = false;
+    setIsDragOver(false);
   };
 
   const handleDrop = (e: DragEvent<HTMLDivElement>) => {
     e.preventDefault();
-    dragOverRef.current = false;
+    setIsDragOver(false);
 
     const files = e.dataTransfer.files;
     if (files && files.length > 0) {
@@ -152,6 +165,7 @@ export const ResumeUpload = ({
   };
 
   const handleClickUpload = () => {
+    if (disabled || loading) return;
     fileInputRef.current?.click();
   };
 
@@ -165,22 +179,29 @@ export const ResumeUpload = ({
     }
   }, [success, error]);
 
+  // Clear the success auto-reset timer on unmount.
+  useEffect(() => {
+    return () => {
+      if (successTimeoutRef.current) clearTimeout(successTimeoutRef.current);
+    };
+  }, []);
+
   return (
     <Box width="100%">
       <Paper
         onDragOver={handleDragOver}
         onDragLeave={handleDragLeave}
         onDrop={handleDrop}
+        onClick={handleClickUpload}
         sx={{
           p: 3,
           textAlign: "center",
           border: "2px dashed",
-          borderColor: dragOverRef.current ? "primary.main" : "divider",
-          backgroundColor: dragOverRef.current
-            ? "action.hover"
-            : "background.paper",
+          borderColor: isDragOver ? "primary.main" : "divider",
+          backgroundColor: isDragOver ? "action.hover" : "background.paper",
           transition: "all 0.3s ease",
-          cursor: "pointer",
+          cursor: disabled || loading ? "not-allowed" : "pointer",
+          opacity: disabled ? 0.6 : 1,
           "&:hover": {
             borderColor: "primary.main",
             backgroundColor: "action.hover",
@@ -231,7 +252,10 @@ export const ResumeUpload = ({
             <Button
               variant="contained"
               color="primary"
-              onClick={handleClickUpload}
+              onClick={(e) => {
+                e.stopPropagation();
+                handleClickUpload();
+              }}
               disabled={disabled}
             >
               Choose File

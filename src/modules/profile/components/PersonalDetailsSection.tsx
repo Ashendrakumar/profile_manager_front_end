@@ -4,14 +4,36 @@
  */
 
 import { useState, useEffect } from "react";
-import { Box, Typography, Button, TextField, Grid } from "@mui/material";
-import { Edit } from "@mui/icons-material";
+import {
+  Box,
+  Typography,
+  Button,
+  TextField,
+  Grid,
+  List,
+  ListItem,
+  ListItemText,
+  ListItemIcon,
+  IconButton,
+  Chip,
+  Tooltip,
+  Paper,
+} from "@mui/material";
+import {
+  Edit,
+  Delete,
+  Star,
+  StarBorder,
+  Download,
+  Description,
+} from "@mui/icons-material";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useToast } from "@/contexts/toastContext";
 import {
   profileService,
   type PersonalDetails,
+  type ResumeItem,
 } from "../services/profileService";
 import { personalDetailsSchema } from "../utils/validation";
 import {
@@ -26,6 +48,8 @@ export const PersonalDetailsSection = () => {
   const [saving, setSaving] = useState(false);
   const [personalDetails, setPersonalDetails] =
     useState<PersonalDetails | null>(null);
+  const [resumes, setResumes] = useState<ResumeItem[]>([]);
+  const [resumeActionId, setResumeActionId] = useState<string | null>(null);
 
   const {
     register,
@@ -53,6 +77,7 @@ export const PersonalDetailsSection = () => {
       const response = await profileService.getPersonalDetails();
       const personalDetailsData = response.personalDetails;
       setPersonalDetails(personalDetailsData);
+      setResumes(personalDetailsData.resumes || []);
       reset({
         firstName: personalDetailsData.firstName || "",
         lastName: personalDetailsData.lastName || "",
@@ -80,11 +105,44 @@ export const PersonalDetailsSection = () => {
     );
   };
 
+  const handleSetPrimaryResume = async (resumeId: string) => {
+    try {
+      setResumeActionId(resumeId);
+      const response = await profileService.setPrimaryResume(resumeId);
+      setResumes(response.resumes);
+      showSuccess("Primary resume updated");
+    } catch (err) {
+      showError(
+        err instanceof Error ? err.message : "Failed to update primary resume",
+      );
+    } finally {
+      setResumeActionId(null);
+    }
+  };
+
+  const handleDeleteResume = async (resumeId: string) => {
+    try {
+      setResumeActionId(resumeId);
+      const response = await profileService.deleteResume(resumeId);
+      setResumes(response.resumes);
+      showSuccess("Resume deleted");
+    } catch (err) {
+      showError(err instanceof Error ? err.message : "Failed to delete resume");
+    } finally {
+      setResumeActionId(null);
+    }
+  };
+
   const onSubmit = async (data: PersonalDetails) => {
     try {
       setSaving(true);
       const response = await profileService.updatePersonalDetails(data);
       setPersonalDetails(response.personalDetails);
+      // Keep the resume list in sync if the save response carries it, so the
+      // two state sources don't diverge.
+      if (response.personalDetails.resumes) {
+        setResumes(response.personalDetails.resumes);
+      }
       showSuccess("Personal details updated successfully");
     } catch (err) {
       showError(
@@ -189,7 +247,101 @@ export const PersonalDetailsSection = () => {
 
           {/* Resume Section */}
           <Grid item xs={12} md={6}>
-            <ResumeUpload />
+            <ResumeUpload onUploaded={setResumes} />
+
+            {resumes.length > 0 && (
+              <Paper variant="outlined" sx={{ mt: 2 }}>
+                <Typography variant="subtitle2" sx={{ px: 2, pt: 2 }}>
+                  Your Resumes ({resumes.length})
+                </Typography>
+                <List dense>
+                  {resumes.map((resume) => {
+                    const busy = resumeActionId === resume._id;
+                    return (
+                      <ListItem
+                        key={resume._id}
+                        secondaryAction={
+                          <Box sx={{ display: "flex", gap: 0.5 }}>
+                            <Tooltip title="Download">
+                              <IconButton
+                                edge="end"
+                                size="small"
+                                component="a"
+                                href={resume.downloadUrl}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                              >
+                                <Download fontSize="small" />
+                              </IconButton>
+                            </Tooltip>
+                            <Tooltip
+                              title={
+                                resume.isPrimary
+                                  ? "Primary resume"
+                                  : "Set as primary"
+                              }
+                            >
+                              {/* span keeps Tooltip working while the button is disabled */}
+                              <span>
+                                <IconButton
+                                  edge="end"
+                                  size="small"
+                                  color={resume.isPrimary ? "warning" : "default"}
+                                  disabled={busy || resume.isPrimary}
+                                  onClick={() =>
+                                    handleSetPrimaryResume(resume._id)
+                                  }
+                                >
+                                  {resume.isPrimary ? (
+                                    <Star fontSize="small" />
+                                  ) : (
+                                    <StarBorder fontSize="small" />
+                                  )}
+                                </IconButton>
+                              </span>
+                            </Tooltip>
+                            <Tooltip title="Delete">
+                              <span>
+                                <IconButton
+                                  edge="end"
+                                  size="small"
+                                  color="error"
+                                  disabled={busy}
+                                  onClick={() => handleDeleteResume(resume._id)}
+                                >
+                                  <Delete fontSize="small" />
+                                </IconButton>
+                              </span>
+                            </Tooltip>
+                          </Box>
+                        }
+                      >
+                        <ListItemIcon sx={{ minWidth: 36 }}>
+                          <Description fontSize="small" />
+                        </ListItemIcon>
+                        <ListItemText
+                          primary={resume.fileName}
+                          secondary={
+                            resume.isPrimary ? (
+                              <Chip
+                                label="Primary"
+                                size="small"
+                                color="primary"
+                                sx={{ height: 18, fontSize: "0.65rem" }}
+                              />
+                            ) : null
+                          }
+                          primaryTypographyProps={{
+                            noWrap: true,
+                            sx: { maxWidth: { xs: 140, sm: 220 } },
+                          }}
+                        />
+                      </ListItem>
+                    );
+                  })}
+                </List>
+              </Paper>
+            )}
           </Grid>
 
           {/* Submit Button */}

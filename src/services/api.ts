@@ -176,18 +176,22 @@ export const apiService = {
    */
 
   get: <T = unknown>(url: string, config?: AxiosRequestConfig): Promise<T> => {
-    if (inFlight.has(url)) {
-      return inFlight.get(url)!;
+    // Key on URL + query params so requests to the same path with different
+    // params are NOT collapsed into one shared (wrong) response.
+    const key = `${url}?${JSON.stringify(config?.params ?? {})}`;
+
+    if (inFlight.has(key)) {
+      return inFlight.get(key)!;
     }
 
     const request = apiClient
       .get<T>(url, config)
       .then((res) => res.data)
       .finally(() => {
-        inFlight.delete(url);
+        inFlight.delete(key);
       });
 
-    inFlight.set(url, request);
+    inFlight.set(key, request);
 
     return request;
   },

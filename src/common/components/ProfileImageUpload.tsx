@@ -67,17 +67,8 @@ export const ProfileImageUpload = ({
   const [isDragOver, setIsDragOver] = useState(false);
 
   const fileInputRef = useRef<HTMLInputElement>(null);
-  // Keep a ref to the progress interval so we can clear it on error/unmount
-  const progressIntervalRef = useRef<ReturnType<typeof setInterval> | null>(
-    null,
-  );
-
-  const clearProgressInterval = () => {
-    if (progressIntervalRef.current) {
-      clearInterval(progressIntervalRef.current);
-      progressIntervalRef.current = null;
-    }
-  };
+  // Track the "success" auto-reset timer so we can clear it on unmount.
+  const successTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   const validateFile = (file: File): boolean => {
     const maxBytes = maxFileSize * 1024 * 1024;
@@ -117,23 +108,20 @@ export const ProfileImageUpload = ({
 
       setImagePreview(previewUrl);
 
-      progressIntervalRef.current = setInterval(() => {
-        setUploadProgress((prev) => (prev < 90 ? prev + 10 : prev));
-      }, 200);
+      // Real upload progress (the service forwards axios onUploadProgress).
+      const res = await profileService.uploadProfileImage(file, (percent) =>
+        setUploadProgress(percent),
+      );
 
-      await profileService.uploadProfileImage(file);
-
-      clearProgressInterval();
       setUploadProgress(100);
       setSuccess(true);
       setLoading(false);
 
-      // FIX: Pass the resolved previewUrl, not the possibly-stale state value
-      if (onSuccess) onSuccess(previewUrl, file.name);
+      // Prefer the persisted server URL; fall back to the local preview.
+      if (onSuccess) onSuccess(res.profileImage || previewUrl, file.name);
 
-      setTimeout(() => setSuccess(false), 3000);
+      successTimeoutRef.current = setTimeout(() => setSuccess(false), 3000);
     } catch (err) {
-      clearProgressInterval();
       setLoading(false);
       setUploadProgress(0);
       const errorMessage = err instanceof Error ? err.message : "Upload failed";
@@ -174,9 +162,23 @@ export const ProfileImageUpload = ({
     fileInputRef.current?.click();
   };
 
-  // Cleanup interval on unmount
+  // Sync preview when the saved image arrives (e.g. after the parent's async
+  // fetch resolves). Without this the initially-saved image never shows,
+  // because initialImage is only read into state on first mount.
   useEffect(() => {
-    return () => clearProgressInterval();
+    if (initialImage) {
+      setImagePreview(initialImage);
+    }
+    if (initialFileName) {
+      setFileName(initialFileName);
+    }
+  }, [initialImage, initialFileName]);
+
+  // Clear the success auto-reset timer on unmount.
+  useEffect(() => {
+    return () => {
+      if (successTimeoutRef.current) clearTimeout(successTimeoutRef.current);
+    };
   }, []);
 
   useEffect(() => {
