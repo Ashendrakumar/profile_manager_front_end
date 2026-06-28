@@ -12,8 +12,7 @@ import {
   ListItemText,
   Box,
   Typography,
-  IconButton,
-  Tooltip,
+  Button,
 } from "@mui/material";
 import {
   Brightness4,
@@ -74,18 +73,49 @@ export const ProfileMenu = () => {
 
   return (
     <>
-      <Tooltip title="Profile">
-        <IconButton
-          color="inherit"
-          onClick={handleProfileClick}
-          aria-label="profile"
-          aria-controls={open ? "profile-menu" : undefined}
-          aria-haspopup="true"
-          aria-expanded={open ? "true" : undefined}
+      <Button
+        id="profile-button"
+        startIcon={<AccountCircle />}
+        onClick={handleProfileClick}
+        color="inherit"
+        size="medium"
+        aria-label="profile"
+        aria-controls={open ? "profile-menu" : undefined}
+        aria-haspopup="true"
+        aria-expanded={open ? "true" : undefined}
+        sx={{
+          display: {
+            xs: "inline-block",
+            sm: "inline-block",
+            md: "flex",
+          },
+          alignItems: "center",
+          gap: 0,
+        }}
+      >
+        <Box
+          sx={{
+            display: {
+              sm: "none",
+              xs: "none",
+              md: "inline-block",
+            },
+          }}
         >
-          <AccountCircle />
-        </IconButton>
-      </Tooltip>
+          <Typography
+            sx={{ fontWeight: "500", margin: 0, lineHeight: 1 }}
+            variant="body1"
+          >
+            {user?.name.slice(0, 8)}
+          </Typography>
+          <Typography
+            sx={{ margin: 0, lineHeight: 1, textAlign: "left" }}
+            variant="subtitle2"
+          >
+            {user?.role}
+          </Typography>
+        </Box>
+      </Button>
       <Menu
         id="profile-menu"
         anchorEl={anchorEl}
@@ -97,17 +127,13 @@ export const ProfileMenu = () => {
       >
         {user && (
           <>
-            <MenuItem disabled>
+            <MenuItem aria-readonly={true} disabled>
               <Box>
-                <Typography variant="subtitle2" sx={{ fontWeight: "bold" }}>
-                  {user.name}
-                </Typography>
-                <Typography variant="caption" color="text.secondary">
-                  {user.email}
-                </Typography>
+                <Typography sx={{ fontWeight: "bold" }}>{user.name}</Typography>
+                <Typography variant="subtitle2">{user.email}</Typography>
               </Box>
             </MenuItem>
-            {/* <Divider /> */}
+            <Divider />
           </>
         )}
         <MenuItem
@@ -151,9 +177,9 @@ export const ProfileMenu = () => {
           </ListItemText>
         </MenuItem>
         <Divider />
-        <MenuItem onClick={handleLogout}>
-          <ListItemIcon>
-            <Logout fontSize="small" />
+        <MenuItem onClick={handleLogout} sx={{ color: "error.light" }}>
+          <ListItemIcon sx={{ color: "error.light" }}>
+            <Logout color="inherit" fontSize="small" />
           </ListItemIcon>
           <ListItemText>Logout</ListItemText>
         </MenuItem>

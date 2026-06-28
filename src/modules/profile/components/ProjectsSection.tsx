@@ -10,7 +10,6 @@ import {
   Button,
   Card,
   CardContent,
-  // CardActions,
   Grid,
   IconButton,
   Chip,
@@ -19,14 +18,12 @@ import {
 import { Add, Edit, Delete, Launch, Code } from "@mui/icons-material";
 import { useToast } from "@/contexts/toastContext";
 import { profileService, type Project } from "../services/profileService";
-import { LoadingSpinner } from "@/common/components";
 import { ConfirmDialog } from "@/common/components";
 import { ProjectForm } from "./ProjectForm";
 import { HelperFunctions } from "@/utils/helpers";
 
 export const ProjectsSection = () => {
   const { showSuccess, showError } = useToast();
-  const [loading, setLoading] = useState(true);
   const [projects, setProjects] = useState<Project[]>([]);
   const [formOpen, setFormOpen] = useState(false);
   const [selectedProject, setSelectedProject] = useState<Project | null>(null);
@@ -40,7 +37,7 @@ export const ProjectsSection = () => {
 
   const fetchProjects = async () => {
     try {
-      setLoading(true);
+      // setLoading(true)
       const response = await profileService.getProjects();
       setProjects(response.projects);
     } catch (err) {
@@ -48,7 +45,7 @@ export const ProjectsSection = () => {
         err instanceof Error ? err.message : "Failed to fetch projects",
       );
     } finally {
-      setLoading(false);
+      // setLoading(false);
     }
   };
 
@@ -106,10 +103,6 @@ export const ProjectsSection = () => {
     }
   };
 
-  if (loading) {
-    return <LoadingSpinner />;
-  }
-
   return (
     <Box>
       <Box
@@ -128,17 +121,9 @@ export const ProjectsSection = () => {
             Showcase your projects and work
           </Typography>
         </Box>
-        <Button
-          variant="contained"
-          size="medium"
-          startIcon={<Add />}
-          onClick={handleAdd}
-        >
-          <Typography
-            sx={{ display: { xs: "none", sm: "block" } }}
-            variant="body2"
-          >
-            Add Project
+        <Button variant="contained" startIcon={<Add />} onClick={handleAdd}>
+          <Typography sx={{ display: { xs: "none", sm: "block" } }}>
+            Add
           </Typography>
         </Button>
       </Box>
@@ -193,13 +178,21 @@ export const ProjectsSection = () => {
                       <Chip
                         label={project.projectType}
                         size="small"
-                        color={project.projectType === "Professional" ? "primary" : "default"}
+                        color={
+                          project.projectType === "Professional"
+                            ? "primary"
+                            : "default"
+                        }
                         sx={{ mr: 1 }}
                       />
                     )}
                   </Box>
                   {project.company && (
-                    <Typography variant="caption" color="text.secondary" sx={{ display: "block", mb: 1 }}>
+                    <Typography
+                      variant="caption"
+                      color="text.secondary"
+                      sx={{ display: "block", mb: 1 }}
+                    >
                       Company: {project.company}
                     </Typography>
                   )}

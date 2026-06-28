@@ -19,6 +19,9 @@ export const STORAGE_KEYS = {
   AUTH_TOKEN: "auth_token",
   REFRESH_TOKEN: "refresh_token",
   USER_DATA: "user_data",
+  PORTFOLIO_DATA: "portfolio_data",
+  PORTFOLIO_ID: "portfolio_id",
+  SIDE_BAR: "is_side_bar_open",
 } as const;
 
 // HTTP Status Codes
@@ -37,9 +40,34 @@ export const HTTP_STATUS = {
 export const ROUTES = {
   HOME: "/",
   ABOUT: "/about",
+  ADMIN_ABOUT: "admin/about",
   USERS: "/users",
+  USER: "/users/:id",
+  PERSONAL_DETAILS: "/personal-details",
+  EDUCATION: "/education",
+  EXPERIENCE: "/experience",
+  PROJECTS: "/projects",
+  SKILLS: "/skills",
+  ACHIEVEMENTS: "/achievements",
+  PORTFOLIO: "/portfolio",
+  SETTINGS: "/settings",
+  CONTACT: "/contact-details",
   PROFILE: "/profile",
+  PROFILE_COMPLETION: "/profile-completion",
+  // auth_ROUTES
   LOGIN: "/login",
   REGISTER: "/register",
+  VERIFY_OTP: "/verify-otp",
   NOT_FOUND: "/404",
+} as const;
+
+export const ROLES = {
+  ADMIN: "admin",
+  USER: "user",
+} as const;
+
+export const DIMENSIONS = {
+  HEADER_HEIGHT: 64,
+  SIDE_BAR_WIDTH: "15rem",
+  SIDE_BAR_WIDTH_ICON: "4rem",
 } as const;

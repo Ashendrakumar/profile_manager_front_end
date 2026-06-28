@@ -26,6 +26,8 @@ interface AuthContextType {
   isLoading: boolean;
   login: (credentials: LoginRequest) => Promise<void>;
   register: (userData: RegisterRequest) => Promise<void>;
+  verifyOtp: (email: string, otp: string) => Promise<void>;
+  resendOtp: (email: string) => Promise<void>;
   logout: () => Promise<void>;
   updateUser: (userData: User) => void;
   error: string | null;
@@ -60,7 +62,6 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
         if (isAuth && storedUser) {
           setUser(storedUser);
         } else {
-          // Clear invalid auth data
           authService.clearAuth();
         }
       } catch (err) {
@@ -86,7 +87,6 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
         const response = await authService.login(credentials);
         setUser(response.user);
 
-        // Redirect to home or previous location
         navigate(ROUTES.HOME, { replace: true });
       } catch (err) {
         const errorMessage =
@@ -103,7 +103,8 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
   );
 
   /**
-   * Register function
+   * Register function — Step 1
+   * Sends OTP, then redirects to the OTP verification page
    */
   const register = useCallback(
     async (userData: RegisterRequest) => {
@@ -112,11 +113,13 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
         setError(null);
 
         const response = await authService.register(userData);
-        debugger;
-        if (response) setUser(response.user);
-
-        // Redirect to home after registration
-        navigate(ROUTES.HOME, { replace: true });
+        // Redirect to OTP verification page, passing the email as a query param
+        navigate(
+          `${ROUTES.VERIFY_OTP}?email=${encodeURIComponent(response.email)}`,
+          {
+            replace: true,
+          },
+        );
       } catch (err) {
         const errorMessage =
           err instanceof Error
@@ -132,6 +135,51 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
   );
 
   /**
+   * Verify OTP — Step 2
+   * Validates OTP, receives JWT, logs user in
+   */
+  const verifyOtp = useCallback(
+    async (email: string, otp: string) => {
+      try {
+        setIsLoading(true);
+        setError(null);
+
+        const response = await authService.verifyOtp(email, otp);
+        setUser(response.user);
+
+        navigate(ROUTES.HOME, { replace: true });
+      } catch (err) {
+        const errorMessage =
+          err instanceof Error
+            ? err.message
+            : "OTP verification failed. Please try again.";
+        setError(errorMessage);
+        throw err;
+      } finally {
+        setIsLoading(false);
+      }
+    },
+    [navigate],
+  );
+
+  /**
+   * Resend OTP
+   */
+  const resendOtp = useCallback(async (email: string) => {
+    try {
+      setError(null);
+      await authService.resendOtp(email);
+    } catch (err) {
+      const errorMessage =
+        err instanceof Error
+          ? err.message
+          : "Failed to resend OTP. Please try again.";
+      setError(errorMessage);
+      throw err;
+    }
+  }, []);
+
+  /**
    * Logout function
    */
   const logout = useCallback(async () => {
@@ -139,12 +187,9 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
       setIsLoading(true);
       await authService.logout();
       setUser(null);
-
-      // Redirect to login
       navigate(ROUTES.LOGIN, { replace: true });
     } catch (err) {
       console.error("Logout error:", err);
-      // Clear local state even if API call fails
       setUser(null);
       authService.clearAuth();
       navigate(ROUTES.LOGIN, { replace: true });
@@ -173,6 +218,8 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
     isLoading,
     login,
     register,
+    verifyOtp,
+    resendOtp,
     logout,
     updateUser,
     error,

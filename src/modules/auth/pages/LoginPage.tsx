@@ -8,19 +8,10 @@ import { useNavigate, Link as RouterLink } from "react-router-dom";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
-import {
-  Box,
-  Paper,
-  TextField,
-  Button,
-  Typography,
-  Link,
-  Alert,
-  CircularProgress,
-  Grid,
-} from "@mui/material";
+import { Box, Button, Typography, Link, CircularProgress } from "@mui/material";
 import { useAuth } from "@/contexts";
 import { ROUTES } from "@/constants";
+import { Input } from "@/common/components/Input";
 
 /**
  * Login form validation schema
@@ -90,135 +81,72 @@ const LoginPage = () => {
     try {
       await login(data);
     } catch (err) {
-      // Error is handled by auth context
       console.error("Login error:", err);
     }
   };
 
-  // Show loading spinner while checking auth state
-  if (isLoading && !isSubmitting) {
-    return (
-      <Box
-        display="flex"
-        justifyContent="center"
-        alignItems="center"
-        minHeight="100vh"
-      >
-        <CircularProgress />
-      </Box>
-    );
-  }
-
   return (
-    <Grid container sx={{ height: "100vh" }}>
-      {/* Left Side - Image */}
-      <Grid
-        item
-        xs={false}
-        sm={false}
-        md={6}
-        sx={{
-          backgroundImage: "url(https://readymadeui.com/signin-image.webp)", // Replace with your image path
-          backgroundRepeat: "no-repeat",
-          backgroundColor: (t) =>
-            t.palette.mode === "light"
-              ? t.palette.grey[50]
-              : t.palette.grey[900],
-          backgroundSize: "cover",
-          backgroundPosition: "center",
-          height: "100vh",
-        }}
-      />
-
-      {/* Right Side - Form */}
-      <Grid
-        item
-        xs={12}
-        md={6}
-        sx={{
-          display: "flex",
-          alignItems: "center",
-          justifyContent: "center",
-          height: "100vh",
-          px: { xs: 2, sm: 4 },
-          py: 4,
-        }}
-      >
-        <Paper
-          elevation={3}
-          sx={{
-            p: 4,
-            width: "100%",
-            maxWidth: 450,
-          }}
+    <>
+      <Typography component="h1" variant="h4" align="center" gutterBottom>
+        Welcome back to{" "}
+        <Typography
+          component="span"
+          variant="h4"
+          sx={{ color: "primary.main" }}
         >
-          <Typography component="h1" variant="h4" align="center" gutterBottom>
-            Login
-          </Typography>
+          {" "}
+          Profile Manager
+        </Typography>
+      </Typography>
 
-          <Typography
-            variant="body2"
-            color="text.secondary"
-            align="center"
-            sx={{ mb: 3 }}
-          >
-            Sign in to your account
-          </Typography>
+      <Typography
+        variant="body2"
+        color="text.secondary"
+        align="center"
+        sx={{ mb: 3 }}
+      >
+        Sign in to your account to continue ...
+      </Typography>
 
-          {error && (
-            <Alert severity="error" sx={{ mb: 2 }} onClose={clearError}>
-              {error}
-            </Alert>
-          )}
+      <Box component="form" onSubmit={handleSubmit(onSubmit)} noValidate>
+        <Input
+          label="Email"
+          name="email"
+          register={register}
+          errors={errors}
+          isSubmitting={isSubmitting}
+          required
+        />
 
-          <Box component="form" onSubmit={handleSubmit(onSubmit)} noValidate>
-            <TextField
-              margin="normal"
-              required
-              fullWidth
-              id="email"
-              label="Email Address"
-              autoComplete="email"
-              autoFocus
-              {...register("email")}
-              error={!!errors.email}
-              helperText={errors.email?.message}
-              disabled={isSubmitting}
-            />
+        <Input
+          label="Password"
+          name="password"
+          type="password"
+          register={register}
+          errors={errors}
+          isSubmitting={isSubmitting}
+          required
+        />
 
-            <TextField
-              margin="normal"
-              required
-              fullWidth
-              label="Password"
-              type="password"
-              id="password"
-              autoComplete="current-password"
-              {...register("password")}
-              error={!!errors.password}
-              helperText={errors.password?.message}
-              disabled={isSubmitting}
-            />
+        <Button
+          type="submit"
+          fullWidth
+          variant="contained"
+          sx={{ mt: 5, mb: 2 }}
+          disabled={isSubmitting}
+        >
+          {isSubmitting ? <CircularProgress size={24} /> : "Sign In"}
+        </Button>
 
-            <Button
-              type="submit"
-              fullWidth
-              variant="contained"
-              sx={{ mt: 3, mb: 2 }}
-              disabled={isSubmitting}
-            >
-              {isSubmitting ? <CircularProgress size={24} /> : "Sign In"}
-            </Button>
-
-            <Box textAlign="center">
-              <Link component={RouterLink} to={ROUTES.REGISTER} variant="body2">
-                Don't have an account? Sign Up
-              </Link>
-            </Box>
-          </Box>
-        </Paper>
-      </Grid>
-    </Grid>
+        <Box textAlign="center">
+          Don't have an account?
+          <Link component={RouterLink} to={ROUTES.REGISTER} variant="button">
+            {" "}
+            Sign Up
+          </Link>
+        </Box>
+      </Box>
+    </>
   );
 };
 

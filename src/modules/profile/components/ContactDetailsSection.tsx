@@ -13,9 +13,10 @@ import {
   IconButton,
   MenuItem,
   Stack,
+  CircularProgress,
 } from "@mui/material";
-import { Add, Delete } from "@mui/icons-material";
-import { useForm, useFieldArray } from "react-hook-form";
+import { Add, Delete, Save } from "@mui/icons-material";
+import { useForm, useFieldArray, Controller } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useToast } from "@/contexts/toastContext";
 import {
@@ -23,8 +24,6 @@ import {
   type ContactDetails,
 } from "../services/profileService";
 import { contactDetailsSchema } from "../utils/validation";
-import { LoadingSpinner } from "@/common/components";
-// import { ConfirmDialog } from "@/common/components";
 
 type ContactDetailsFormData = {
   email: string;
@@ -37,12 +36,14 @@ type ContactDetailsFormData = {
     country: string;
     type: "home" | "work";
   }[];
-  socialLinks: { platform: string; url: string }[];
+  socialLinks: {
+    platform: "linkedin" | "github" | "twitter" | "portfolio";
+    url: string;
+  }[];
 };
 
 export const ContactDetailsSection = () => {
   const { showSuccess, showError } = useToast();
-  const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [contactDetails, setContactDetails] = useState<ContactDetails | null>(
     null,
@@ -61,7 +62,7 @@ export const ContactDetailsSection = () => {
       email: "",
       phones: [{ number: "", type: "mobile" }],
       addresses: [{ street: "", city: "", country: "", type: "home" }],
-      socialLinks: [{ platform: "", url: "" }],
+      socialLinks: [{ platform: "linkedin", url: "" }],
     },
   });
 
@@ -98,7 +99,6 @@ export const ContactDetailsSection = () => {
 
   const fetchContactDetails = async () => {
     try {
-      setLoading(true);
       const response = await profileService.getContactDetails();
       setContactDetails(response.contactDetails);
       if (response.contactDetails) {
@@ -118,15 +118,13 @@ export const ContactDetailsSection = () => {
             response.contactDetails.socialLinks &&
             response.contactDetails.socialLinks.length > 0
               ? response.contactDetails.socialLinks
-              : [{ platform: "", url: "" }],
+              : [{ platform: "linkedin", url: "" }],
         });
       }
     } catch (err) {
       showError(
         err instanceof Error ? err.message : "Failed to fetch contact details",
       );
-    } finally {
-      setLoading(false);
     }
   };
 
@@ -144,10 +142,6 @@ export const ContactDetailsSection = () => {
       setSaving(false);
     }
   };
-
-  if (loading) {
-    return <LoadingSpinner />;
-  }
 
   return (
     <Box>
@@ -206,17 +200,24 @@ export const ContactDetailsSection = () => {
                     />
                   </Grid>
                   <Grid item xs={12} sm={3}>
-                    <TextField
-                      fullWidth
-                      select
-                      label="Type"
-                      {...register(`phones.${index}.type`)}
-                      error={!!errors.phones?.[index]?.type}
-                    >
-                      <MenuItem value="mobile">Mobile</MenuItem>
-                      <MenuItem value="home">Home</MenuItem>
-                      <MenuItem value="work">Work</MenuItem>
-                    </TextField>
+                    <Controller
+                      name={`phones.${index}.type`}
+                      control={control}
+                      render={({ field }) => (
+                        <TextField
+                          {...field}
+                          fullWidth
+                          select
+                          label="Type"
+                          error={!!errors.phones?.[index]?.type}
+                          helperText={errors.phones?.[index]?.type?.message}
+                        >
+                          <MenuItem value="mobile">Mobile</MenuItem>
+                          <MenuItem value="home">Home</MenuItem>
+                          <MenuItem value="work">Work</MenuItem>
+                        </TextField>
+                      )}
+                    />
                   </Grid>
                   <Grid
                     item
@@ -325,16 +326,23 @@ export const ContactDetailsSection = () => {
                   />
                 </Grid>
                 <Grid>
-                  <TextField
-                    fullWidth
-                    select
-                    label="Type"
-                    {...register(`addresses.${index}.type`)}
-                    error={!!errors.addresses?.[index]?.type}
-                  >
-                    <MenuItem value="home">Home</MenuItem>
-                    <MenuItem value="work">Work</MenuItem>
-                  </TextField>
+                  <Controller
+                    name={`addresses.${index}.type`}
+                    control={control}
+                    render={({ field }) => (
+                      <TextField
+                        {...field}
+                        fullWidth
+                        select
+                        label="Type"
+                        error={!!errors.addresses?.[index]?.type}
+                        helperText={errors.addresses?.[index]?.type?.message}
+                      >
+                        <MenuItem value="home">Home</MenuItem>
+                        <MenuItem value="work">Work</MenuItem>
+                      </TextField>
+                    )}
+                  />
                 </Grid>
                 <Grid
                   item
@@ -368,11 +376,13 @@ export const ContactDetailsSection = () => {
                 mb: 2,
               }}
             >
-              {/* <Typography variant="h6">Social Links</Typography> */}
               <Button
                 startIcon={<Add />}
-                onClick={() => appendSocialLink({ platform: "", url: "" })}
+                onClick={() =>
+                  appendSocialLink({ platform: "linkedin", url: "" })
+                }
                 size="small"
+                disabled={socialLinkFields.length >= 6}
               >
                 Add Social Link
               </Button>
@@ -391,13 +401,26 @@ export const ContactDetailsSection = () => {
                 }}
               >
                 <Grid>
-                  <TextField
-                    fullWidth
-                    label="Platform"
-                    placeholder="e.g., LinkedIn, GitHub"
-                    {...register(`socialLinks.${index}.platform`)}
-                    error={!!errors.socialLinks?.[index]?.platform}
-                    helperText={errors.socialLinks?.[index]?.platform?.message}
+                  <Controller
+                    name={`socialLinks.${index}.platform`}
+                    control={control}
+                    render={({ field }) => (
+                      <TextField
+                        {...field}
+                        fullWidth
+                        select
+                        label="Platform"
+                        error={!!errors.socialLinks?.[index]?.platform}
+                        helperText={
+                          errors.socialLinks?.[index]?.platform?.message
+                        }
+                      >
+                        <MenuItem value="linkedin">LinkedIn</MenuItem>
+                        <MenuItem value="github">GitHub</MenuItem>
+                        <MenuItem value="twitter">Twitter / X</MenuItem>
+                        <MenuItem value="portfolio">Portfolio</MenuItem>
+                      </TextField>
+                    )}
                   />
                 </Grid>
                 <Grid>
@@ -430,10 +453,10 @@ export const ContactDetailsSection = () => {
           {/* Submit Button */}
           <Grid item xs={12}>
             <Button
-              size="medium"
               type="submit"
               variant="contained"
               disabled={saving}
+              startIcon={saving ? <CircularProgress size={20} /> : <Save />}
               sx={{ mt: 2 }}
             >
               {saving ? "Saving..." : "Save Contact Details"}

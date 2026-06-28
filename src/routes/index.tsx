@@ -9,6 +9,7 @@ import type { PageMetadata } from "@/utils/metadata";
 import { AuthGuard } from "./AuthGuard";
 import { AdminGuard } from "./AdminGuard";
 import { PublicRouteGuard } from "./PublicRouteGuard";
+import { ROUTES } from "@/constants";
 
 /**
  * Route configuration interface
@@ -30,10 +31,13 @@ export interface AppRoute extends Omit<RouteObject, "path" | "element"> {
 // Public routes
 const LoginPage = lazy(() => import("@/modules/auth/pages/LoginPage"));
 const RegisterPage = lazy(() => import("@/modules/auth/pages/RegisterPage"));
+const OtpVerificationPage = lazy(
+  () => import("@/modules/auth/pages/OtpVerificationPage"),
+);
 
 // Protected routes
 const HomePage = lazy(() => import("@/modules/home/pages/HomePage"));
-const AboutPage = lazy(() => import("@/modules/about/pages/AboutPage"));
+// const AboutPage = lazy(() => import("@/modules/about/pages/AboutPage"));
 const AdminAboutPanel = lazy(
   () => import("@/modules/about/pages/AdminAboutPanel"),
 );
@@ -43,7 +47,44 @@ const UserDetailPage = lazy(
 );
 const ProfilePage = lazy(() => import("@/modules/profile/pages/ProfilePage"));
 
-// Other routes
+const PersonalDetailsSection = lazy(() =>
+  import("@/modules/profile/components/PersonalDetailsSection").then(
+    (module) => ({ default: module.PersonalDetailsSection }),
+  ),
+);
+
+const ContactDetailsSection = lazy(() =>
+  import("@/modules/profile/components/ContactDetailsSection").then(
+    (module) => ({ default: module.ContactDetailsSection }),
+  ),
+);
+const EducationSection = lazy(() =>
+  import("@/modules/profile/components/EducationSection").then((module) => ({
+    default: module.EducationSection,
+  })),
+);
+const ExperienceSection = lazy(() =>
+  import("@/modules/profile/components/ExperienceSection").then((module) => ({
+    default: module.ExperienceSection,
+  })),
+);
+const ProjectsSection = lazy(() =>
+  import("@/modules/profile/components/ProjectsSection").then((module) => ({
+    default: module.ProjectsSection,
+  })),
+);
+const SkillsSection = lazy(() =>
+  import("@/modules/profile/components/SkillsSection").then((module) => ({
+    default: module.SkillsSection,
+  })),
+);
+
+const ProfileCompletionDashboard = lazy(() =>
+  import("@/modules/profile/components/ProfileCompletionDashboard").then(
+    (module) => ({ default: module.ProfileCompletionDashboard }),
+  ),
+);
+
 const NotFoundPage = lazy(
   () => import("@/modules/notFound/pages/NotFoundPage"),
 );
@@ -55,7 +96,7 @@ const NotFoundPage = lazy(
 export const routes: AppRoute[] = [
   // Public routes (login, register)
   {
-    path: "/login",
+    path: ROUTES.LOGIN,
     element: (
       <PublicRouteGuard>
         <LoginPage />
@@ -69,7 +110,7 @@ export const routes: AppRoute[] = [
     },
   },
   {
-    path: "/register",
+    path: ROUTES.REGISTER,
     element: (
       <PublicRouteGuard>
         <RegisterPage />
@@ -82,10 +123,24 @@ export const routes: AppRoute[] = [
       keywords: "register, sign up, create account",
     },
   },
+  {
+    path: ROUTES.VERIFY_OTP,
+    element: (
+      <PublicRouteGuard>
+        <OtpVerificationPage />
+      </PublicRouteGuard>
+    ),
+    isPublic: true,
+    metadata: {
+      title: "Verify Email - Profile Manager",
+      description: "Verify your email address with OTP",
+      keywords: "otp, verify, email verification",
+    },
+  },
 
   // Protected routes (require authentication)
   {
-    path: "/",
+    path: ROUTES.HOME,
     element: (
       <AuthGuard>
         <HomePage />
@@ -99,20 +154,20 @@ export const routes: AppRoute[] = [
       keywords: "react, home, welcome",
     },
   },
-  {
-    path: "/about",
-    element: (
-      <AuthGuard>
-        <AboutPage />
-      </AuthGuard>
-    ),
-    isProtected: true,
-    metadata: {
-      title: "About Us - Profile Manager",
-      description: "Learn more about Profile Manager and our mission",
-      keywords: "about, information, company",
-    },
-  },
+  // {
+  //   path: ROUTES.ABOUT,
+  //   element: (
+  //     <AuthGuard>
+  //       <AboutPage />
+  //     </AuthGuard>
+  //   ),
+  //   isProtected: true,
+  //   metadata: {
+  //     title: "About Us - Profile Manager",
+  //     description: "Learn more about Profile Manager and our mission",
+  //     keywords: "about, information, company",
+  //   },
+  // },
   {
     path: "/admin/about",
     element: (
@@ -131,7 +186,7 @@ export const routes: AppRoute[] = [
     },
   },
   {
-    path: "/users",
+    path: ROUTES.USERS,
     element: (
       <AuthGuard>
         <AdminGuard>
@@ -148,7 +203,7 @@ export const routes: AppRoute[] = [
     },
   },
   {
-    path: "/users/:id",
+    path: ROUTES.USER,
     element: (
       <AuthGuard>
         <AdminGuard>
@@ -165,7 +220,7 @@ export const routes: AppRoute[] = [
     },
   },
   {
-    path: "/profile",
+    path: ROUTES.PROFILE,
     element: (
       <AuthGuard>
         <ProfilePage />
@@ -174,6 +229,108 @@ export const routes: AppRoute[] = [
     isProtected: true,
     metadata: {
       title: "Profile - Profile Manager",
+      description: "Manage your profile information",
+      keywords: "profile, user, settings",
+    },
+  },
+  {
+    path: ROUTES.PERSONAL_DETAILS,
+    element: (
+      <AuthGuard>
+        <PersonalDetailsSection />
+      </AuthGuard>
+    ),
+    isProtected: true,
+    metadata: {
+      title: "Profile Details - Profile Manager",
+      description: "Manage your profile information",
+      keywords: "profile, user, settings",
+    },
+  },
+  {
+    path: ROUTES.PROJECTS,
+    element: (
+      <AuthGuard>
+        <ProjectsSection />
+      </AuthGuard>
+    ),
+    isProtected: true,
+    metadata: {
+      title: "Profile Details - Profile Manager",
+      description: "Manage your profile information",
+      keywords: "profile, user, settings",
+    },
+  },
+  {
+    path: ROUTES.SKILLS,
+    element: (
+      <AuthGuard>
+        <SkillsSection />
+      </AuthGuard>
+    ),
+    isProtected: true,
+    metadata: {
+      title: "Profile Details - Profile Manager",
+      description: "Manage your profile information",
+      keywords: "profile, user, settings",
+    },
+  },
+
+  {
+    path: ROUTES.EDUCATION,
+    element: (
+      <AuthGuard>
+        <EducationSection />
+      </AuthGuard>
+    ),
+    isProtected: true,
+    metadata: {
+      title: "Profile Details - Profile Manager",
+      description: "Manage your profile information",
+      keywords: "profile, user, settings",
+    },
+  },
+
+  {
+    path: ROUTES.EXPERIENCE,
+    element: (
+      <AuthGuard>
+        <ExperienceSection />
+      </AuthGuard>
+    ),
+    isProtected: true,
+    metadata: {
+      title: "Profile Details - Profile Manager",
+      description: "Manage your profile information",
+      keywords: "profile, user, settings",
+    },
+  },
+
+  {
+    path: ROUTES.CONTACT,
+    element: (
+      <AuthGuard>
+        <ContactDetailsSection />
+      </AuthGuard>
+    ),
+    isProtected: true,
+    metadata: {
+      title: "Profile Details - Profile Manager",
+      description: "Manage your profile information",
+      keywords: "profile, user, settings",
+    },
+  },
+
+  {
+    path: ROUTES.PROFILE_COMPLETION,
+    element: (
+      <AuthGuard>
+        <ProfileCompletionDashboard />
+      </AuthGuard>
+    ),
+    isProtected: true,
+    metadata: {
+      title: "Profile Details - Profile Manager",
       description: "Manage your profile information",
       keywords: "profile, user, settings",
     },

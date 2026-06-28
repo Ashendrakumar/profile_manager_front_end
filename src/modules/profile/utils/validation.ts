@@ -33,7 +33,7 @@ export const contactDetailsSchema = z.object({
     .max(2, "Maximum 2 addresses allowed"),
   socialLinks: z.array(
     z.object({
-      platform: z.string().min(1, "Platform is required"),
+      platform: z.enum(["linkedin", "github", "twitter", "portfolio"]),
       url: z.string().url("Please enter a valid URL"),
     }),
   ),

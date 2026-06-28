@@ -3,43 +3,25 @@
  * Application header with navigation and profile menu
  */
 
-import { AppBar, Toolbar, Typography, Box } from "@mui/material";
-import { ROUTES } from "@/constants";
+import { AppBar, Toolbar, Typography, Box, IconButton } from "@mui/material";
 import { useAuth } from "@/contexts";
-import { NavigationItems } from "./NavigationItems";
 import { ProfileMenu } from "./ProfileMenu";
 import { Link } from "react-router-dom";
-
-const allNavigationItems = [
-  // { label: "Home", path: ROUTES.HOME, adminOnly: false },
-  { label: "About", path: ROUTES.ABOUT, adminOnly: false },
-  { label: "Profile", path: ROUTES.PROFILE, adminOnly: false },
-  { label: "Users", path: ROUTES.USERS, adminOnly: true },
-];
+import MenuIcon from "@mui/icons-material/Menu";
 
 interface HeaderProps {
-  isAuthPage: boolean;
+  setOpen: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
 /**
  * Header Component
  */
-export const Header = ({ isAuthPage }: HeaderProps) => {
-  const { isAuthenticated, user } = useAuth();
+export const Header = ({ setOpen }: HeaderProps) => {
+  const { isAuthenticated } = useAuth();
 
-  // Filter navigation items based on user role
-  const navigationItems = isAuthenticated
-    ? allNavigationItems.filter((item) => {
-        if (item.adminOnly) {
-          return user?.role === "admin";
-        }
-        return true;
-      })
-    : [];
-
-  if (isAuthPage) {
-    return null;
-  }
+  const handleIsOpen = () => {
+    setOpen((prev: boolean) => !prev);
+  };
 
   return (
     <AppBar
@@ -48,10 +30,23 @@ export const Header = ({ isAuthPage }: HeaderProps) => {
       sx={{
         backgroundColor: (theme) => theme.palette.primary.main,
         top: 0,
-        zIndex: (theme) => theme.zIndex.drawer + 1,
+        // zIndex: (theme) => theme.zIndex.drawer + 1,
       }}
     >
       <Toolbar>
+        <IconButton
+          color="inherit"
+          aria-label="open drawer"
+          onClick={handleIsOpen}
+          edge="start"
+          sx={[
+            {
+              marginRight: 2,
+            },
+          ]}
+        >
+          <MenuIcon />
+        </IconButton>
         <Typography
           variant="h6"
           component={Link}
@@ -65,12 +60,7 @@ export const Header = ({ isAuthPage }: HeaderProps) => {
           Profile Manager
         </Typography>
         <Box sx={{ display: "flex", gap: 1, alignItems: "center" }}>
-          {isAuthenticated && (
-            <>
-              <NavigationItems items={navigationItems} />
-              <ProfileMenu />
-            </>
-          )}
+          {isAuthenticated && <ProfileMenu />}
         </Box>
       </Toolbar>
     </AppBar>

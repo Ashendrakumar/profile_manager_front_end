@@ -34,3 +34,7 @@ button {
   border-radius: 0 0 16px 16px;
   min-height: 100px;
 }
+
+::root {
+  --header-height: 64px;
+}

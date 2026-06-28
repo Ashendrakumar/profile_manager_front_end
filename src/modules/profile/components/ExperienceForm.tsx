@@ -5,14 +5,8 @@
 
 import { useEffect } from "react";
 import {
-  Dialog,
-  DialogTitle,
-  DialogContent,
-  DialogActions,
   TextField,
-  Button,
   Box,
-  CircularProgress,
   Checkbox,
   FormControlLabel,
   Typography,
@@ -26,6 +20,7 @@ import { Add, Remove } from "@mui/icons-material";
 import { DatePicker } from "@mui/x-date-pickers";
 import dayjs from "dayjs";
 import TextEditor from "@/common/components/TextEditor";
+import { SideDrawer } from "@/common/components/SideDrawer";
 
 type ExperienceFormData = {
   companyName: string;
@@ -123,245 +118,211 @@ export const ExperienceForm = ({
   }, [experience, reset, open]);
 
   return (
-    <Dialog
+    <SideDrawer
       open={open}
       onClose={loading ? undefined : onClose}
-      maxWidth="xs"
-      fullWidth
+      title={experience ? "Edit Experience" : "Add Experience"}
+      subTitle={experience ? experience.companyName : ""}
+      loading={loading}
+      footerActionClick={handleSubmit(onSubmit)}
+      footerActionName={experience ? "Save" : "Add"}
     >
-      <DialogTitle>
-        {experience ? "Edit Experience" : "Add Experience"}
-      </DialogTitle>
-      <form onSubmit={handleSubmit(onSubmit)}>
-        <DialogContent>
-          <Box sx={{ display: "flex", flexDirection: "column", gap: 3, pt: 1 }}>
-            <TextField
-              label="Company Name"
-              fullWidth
-              {...register("companyName")}
-              error={!!errors.companyName}
-              helperText={errors.companyName?.message}
-              disabled={loading}
-            />
-            <TextField
-              label="Role/Position"
-              fullWidth
-              {...register("role")}
-              error={!!errors.role}
-              helperText={errors.role?.message}
-              disabled={loading}
-            />
-            <Controller
-              control={control}
-              name="roleDescription"
-              render={({ field, fieldState }) => (
-                <Box>
-                  <Typography variant="subtitle2" sx={{ mb: 1 }}>
-                    Role Description
-                  </Typography>
-                  <TextEditor
-                    isNormalField
-                    value={field.value}
-                    onChange={field.onChange}
-                    placeholder="Enter role description"
-                    className={fieldState.error ? "editor-error" : ""}
-                    style={{
-                      border: fieldState.error ? "1px solid #d32f2f" : "none",
-                      borderRadius: "4px",
-                    }}
-                  />
-                  {fieldState.error && (
-                    <Typography
-                      variant="caption"
-                      color="error"
-                      sx={{ mt: 0.5 }}
-                    >
-                      {fieldState.error.message}
-                    </Typography>
-                  )}
-                </Box>
+      <Box sx={{ display: "flex", flexDirection: "column", gap: 3, pt: 1 }}>
+        <TextField
+          label="Company Name"
+          fullWidth
+          {...register("companyName")}
+          error={!!errors.companyName}
+          helperText={errors.companyName?.message}
+          disabled={loading}
+        />
+        <TextField
+          label="Role/Position"
+          fullWidth
+          {...register("role")}
+          error={!!errors.role}
+          helperText={errors.role?.message}
+          disabled={loading}
+        />
+        <Controller
+          control={control}
+          name="roleDescription"
+          render={({ field, fieldState }) => (
+            <Box>
+              <TextEditor
+                isNormalField
+                value={field.value}
+                onChange={field.onChange}
+                placeholder="Enter role description"
+                className={fieldState.error ? "editor-error" : ""}
+                style={{
+                  border: fieldState.error ? "1px solid #d32f2f" : "none",
+                  borderRadius: "4px",
+                }}
+              />
+              {fieldState.error && (
+                <Typography variant="caption" color="error" sx={{ mt: 0.5 }}>
+                  {fieldState.error.message}
+                </Typography>
               )}
-            />
+            </Box>
+          )}
+        />
+        <Box
+          sx={{
+            display: "flex",
+            flexDirection: { xs: "column", sm: "row" },
+            gap: 2,
+          }}
+        >
+          <Controller
+            control={control}
+            name="startDate"
+            render={({ field, fieldState }) => (
+              <DatePicker
+                label="Start Date"
+                value={field.value ? dayjs(field.value) : null}
+                onChange={(date) =>
+                  field.onChange(date ? date.format("YYYY-MM-DD") : "")
+                }
+                slotProps={{
+                  textField: {
+                    error: !!fieldState.error,
+                    helperText: fieldState.error?.message,
+                    fullWidth: true, // Ensuring it matches the layout expectation
+                  },
+                }}
+                disabled={loading}
+              />
+            )}
+          />
+          <Controller
+            control={control}
+            name="endDate"
+            render={({ field, fieldState }) => (
+              <DatePicker
+                label="End Date"
+                value={field.value ? dayjs(field.value) : null}
+                onChange={(date) =>
+                  field.onChange(date ? date.format("YYYY-MM-DD") : "")
+                }
+                slotProps={{
+                  field: { clearable: true },
+                  textField: {
+                    error: !!fieldState.error,
+                    helperText: fieldState.error?.message,
+                    fullWidth: true, // Ensuring it matches the layout expectation
+                  },
+                }}
+                disabled={loading || isCurrentlyWorking}
+              />
+            )}
+          />
+        </Box>
+        <FormControlLabel
+          control={<Checkbox {...register("isCurrentlyWorking")} />}
+          label="Currently Working Here"
+          disabled={loading}
+        />
+        <Box>
+          <Box
+            sx={{
+              display: "flex",
+              justifyContent: "space-between",
+              alignItems: "center",
+              mb: 1,
+            }}
+          >
+            <Typography variant="subtitle2">Responsibilities</Typography>
+            <IconButton
+              size="small"
+              color="primary"
+              onClick={() => appendResponsibility("")}
+              disabled={loading}
+            >
+              <Add />
+            </IconButton>
+          </Box>
+          {responsibilityFields.map((field, index) => (
             <Box
+              key={field.id}
               sx={{
                 display: "flex",
-                flexDirection: { xs: "column", sm: "row" },
-                gap: 2,
+                gap: 1,
+                mb: 1,
+                alignItems: "center",
+                justifyContent: "end",
               }}
             >
-              <Controller
-                control={control}
-                name="startDate"
-                render={({ field, fieldState }) => (
-                  <DatePicker
-                    label="Start Date"
-                    value={field.value ? dayjs(field.value) : null}
-                    onChange={(date) =>
-                      field.onChange(date ? date.format("YYYY-MM-DD") : "")
-                    }
-                    slotProps={{
-                      textField: {
-                        size: "small",
-                        error: !!fieldState.error,
-                        helperText: fieldState.error?.message,
-                        fullWidth: true, // Ensuring it matches the layout expectation
-                      },
-                    }}
-                    disabled={loading}
-                  />
-                )}
+              <TextField
+                fullWidth
+                placeholder="Enter responsibility"
+                {...register(`responsibilities.${index}`)}
+                disabled={loading}
               />
-              <Controller
-                control={control}
-                name="endDate"
-                render={({ field, fieldState }) => (
-                  <DatePicker
-                    label="End Date"
-                    value={field.value ? dayjs(field.value) : null}
-                    onChange={(date) =>
-                      field.onChange(date ? date.format("YYYY-MM-DD") : "")
-                    }
-                    slotProps={{
-                      field: { clearable: true },
-                      textField: {
-                        size: "small",
-                        error: !!fieldState.error,
-                        helperText: fieldState.error?.message,
-                        fullWidth: true, // Ensuring it matches the layout expectation
-                      },
-                    }}
-                    disabled={loading || isCurrentlyWorking}
-                  />
-                )}
-              />
+              <Box>
+                <IconButton
+                  size="small"
+                  color="error"
+                  onClick={() => removeResponsibility(index)}
+                  disabled={loading}
+                >
+                  <Remove />
+                </IconButton>
+              </Box>
             </Box>
-            <FormControlLabel
-              control={<Checkbox {...register("isCurrentlyWorking")} />}
-              label="Currently Working Here"
+          ))}
+        </Box>
+        <Box>
+          <Box
+            sx={{
+              display: "flex",
+              justifyContent: "space-between",
+              alignItems: "center",
+              mb: 1,
+            }}
+          >
+            <Typography variant="subtitle2">Technologies Used</Typography>
+            <IconButton
+              size="small"
+              color="primary"
+              onClick={() => appendTechnology("")}
               disabled={loading}
-            />
-            <Box>
-              <Box
-                sx={{
-                  display: "flex",
-                  justifyContent: "space-between",
-                  alignItems: "center",
-                  mb: 1,
-                }}
-              >
-                <Typography variant="subtitle2">Responsibilities</Typography>
-                <IconButton
-                  size="small"
-                  color="primary"
-                  onClick={() => appendResponsibility("")}
-                  disabled={loading}
-                >
-                  <Add />
-                </IconButton>
-              </Box>
-              {responsibilityFields.map((field, index) => (
-                <Box
-                  key={field.id}
-                  sx={{
-                    display: "flex",
-                    gap: 1,
-                    mb: 1,
-                    alignItems: "center",
-                    justifyContent: "end",
-                  }}
-                >
-                  <TextField
-                    fullWidth
-                    size="small"
-                    placeholder="Enter responsibility"
-                    {...register(`responsibilities.${index}`)}
-                    disabled={loading}
-                  />
-                  <Box>
-                    <IconButton
-                      size="small"
-                      color="error"
-                      onClick={() => removeResponsibility(index)}
-                      disabled={loading}
-                    >
-                      <Remove />
-                    </IconButton>
-                  </Box>
-                </Box>
-              ))}
-            </Box>
-            <Box>
-              <Box
-                sx={{
-                  display: "flex",
-                  justifyContent: "space-between",
-                  alignItems: "center",
-                  mb: 1,
-                }}
-              >
-                <Typography variant="subtitle2">Technologies Used</Typography>
-                <IconButton
-                  size="small"
-                  color="primary"
-                  onClick={() => appendTechnology("")}
-                  disabled={loading}
-                >
-                  <Add />
-                </IconButton>
-              </Box>
-              {technologyFields.map((field, index) => (
-                <Box
-                  key={field.id}
-                  sx={{
-                    display: "flex",
-                    gap: 1,
-                    mb: 1,
-                    alignItems: "center",
-                    justifyContent: "end",
-                  }}
-                >
-                  <TextField
-                    fullWidth
-                    size="small"
-                    placeholder="Enter technology"
-                    {...register(`technologiesUsed.${index}`)}
-                    disabled={loading}
-                  />
-                  <Box>
-                    <IconButton
-                      size="small"
-                      color="error"
-                      onClick={() => removeTechnology(index)}
-                      disabled={loading}
-                    >
-                      <Remove />
-                    </IconButton>
-                  </Box>
-                </Box>
-              ))}
-            </Box>
+            >
+              <Add />
+            </IconButton>
           </Box>
-        </DialogContent>
-        <DialogActions>
-          <Button
-            size="small"
-            type="button"
-            onClick={onClose}
-            disabled={loading}
-          >
-            Cancel
-          </Button>
-          <Button
-            size="small"
-            type="submit"
-            variant="contained"
-            disabled={loading}
-            startIcon={loading ? <CircularProgress size={16} /> : null}
-          >
-            {experience ? "Update" : "Add"}
-          </Button>
-        </DialogActions>
-      </form>
-    </Dialog>
+          {technologyFields.map((field, index) => (
+            <Box
+              key={field.id}
+              sx={{
+                display: "flex",
+                gap: 1,
+                mb: 1,
+                alignItems: "center",
+                justifyContent: "end",
+              }}
+            >
+              <TextField
+                fullWidth
+                placeholder="Enter technology"
+                {...register(`technologiesUsed.${index}`)}
+                disabled={loading}
+              />
+              <Box>
+                <IconButton
+                  size="small"
+                  color="error"
+                  onClick={() => removeTechnology(index)}
+                  disabled={loading}
+                >
+                  <Remove />
+                </IconButton>
+              </Box>
+            </Box>
+          ))}
+        </Box>
+      </Box>
+    </SideDrawer>
   );
 };

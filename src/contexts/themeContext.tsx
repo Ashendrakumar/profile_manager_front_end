@@ -3,8 +3,14 @@
  * Manages theme state (light/dark mode) across the application
  */
 
-import { createContext, useContext, useState, useEffect, type ReactNode } from 'react';
-import type { ThemeMode } from '@/theme';
+import {
+  createContext,
+  useContext,
+  useState,
+  useEffect,
+  type ReactNode,
+} from "react";
+import type { ThemeMode } from "@/theme";
 
 interface ThemeContextType {
   mode: ThemeMode;
@@ -14,16 +20,18 @@ interface ThemeContextType {
 
 const ThemeContext = createContext<ThemeContextType | undefined>(undefined);
 
-const THEME_STORAGE_KEY = 'theme_mode';
+const THEME_STORAGE_KEY = "theme_mode";
 
 /**
  * Get system preference for color scheme
  */
 const getSystemPreference = (): ThemeMode => {
-  if (typeof window !== 'undefined' && window.matchMedia) {
-    return window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+  if (typeof window !== "undefined" && window.matchMedia) {
+    return window.matchMedia("(prefers-color-scheme: dark)").matches
+      ? "dark"
+      : "light";
   }
-  return 'light';
+  return "light";
 };
 
 interface ThemeProviderProps {
@@ -38,7 +46,7 @@ export const ThemeProvider = ({ children }: ThemeProviderProps) => {
   // Get initial theme from localStorage, system preference, or default to 'light'
   const [mode, setModeState] = useState<ThemeMode>(() => {
     const savedMode = localStorage.getItem(THEME_STORAGE_KEY) as ThemeMode;
-    if (savedMode === 'light' || savedMode === 'dark') {
+    if (savedMode === "light" || savedMode === "dark") {
       return savedMode;
     }
     // If no saved preference, use system preference
@@ -51,7 +59,7 @@ export const ThemeProvider = ({ children }: ThemeProviderProps) => {
   }, [mode]);
 
   const toggleTheme = () => {
-    setModeState((prevMode) => (prevMode === 'light' ? 'dark' : 'light'));
+    setModeState((prevMode) => (prevMode === "light" ? "dark" : "light"));
   };
 
   const setMode = (newMode: ThemeMode) => {
@@ -64,7 +72,9 @@ export const ThemeProvider = ({ children }: ThemeProviderProps) => {
     setMode,
   };
 
-  return <ThemeContext.Provider value={value}>{children}</ThemeContext.Provider>;
+  return (
+    <ThemeContext.Provider value={value}>{children}</ThemeContext.Provider>
+  );
 };
 
 /**
@@ -73,7 +83,7 @@ export const ThemeProvider = ({ children }: ThemeProviderProps) => {
 export const useThemeMode = (): ThemeContextType => {
   const context = useContext(ThemeContext);
   if (context === undefined) {
-    throw new Error('useThemeMode must be used within a ThemeProvider');
+    throw new Error("useThemeMode must be used within a ThemeProvider");
   }
   return context;
 };

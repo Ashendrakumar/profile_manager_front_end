@@ -4,21 +4,12 @@
  */
 
 import { useEffect } from "react";
-import {
-  Dialog,
-  DialogTitle,
-  DialogContent,
-  DialogActions,
-  TextField,
-  Button,
-  Box,
-  CircularProgress,
-  MenuItem,
-} from "@mui/material";
-import { useForm } from "react-hook-form";
+import { TextField, Box, MenuItem } from "@mui/material";
+import { Controller, useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { skillSchema } from "../utils/validation";
 import type { Skill } from "../services/profileService";
+import { SideDrawer } from "@/common/components/SideDrawer";
 
 type SkillFormData = {
   name: string;
@@ -43,10 +34,12 @@ export const SkillForm = ({
   loading = false,
 }: SkillFormProps) => {
   const {
+    control,
     register,
     handleSubmit,
     formState: { errors },
     reset,
+    setValue,
   } = useForm<SkillFormData>({
     resolver: zodResolver(skillSchema),
     defaultValues: {
@@ -65,6 +58,8 @@ export const SkillForm = ({
         level: skill.level || "BEGINNER",
         yearsOfExperience: skill.yearsOfExperience,
       });
+      console.log("skill", skill);
+      setValue("level", skill.level || "BEGINNER");
     } else {
       reset({
         name: "",
@@ -76,38 +71,42 @@ export const SkillForm = ({
   }, [skill, reset, open]);
 
   return (
-    <Dialog
+    <SideDrawer
+      title={skill ? "Edit Skill" : "Add Skill"}
+      subTitle={skill?.name || ""}
       open={open}
       onClose={loading ? undefined : onClose}
-      maxWidth="xs"
-      fullWidth
+      loading={loading}
+      footerActionClick={handleSubmit(onSubmit)}
+      footerActionName={skill ? "Update" : "Add"}
     >
-      <DialogTitle>{skill ? "Edit Skill" : "Add Skill"}</DialogTitle>
-      <form onSubmit={handleSubmit(onSubmit)}>
-        <DialogContent>
-          <Box sx={{ display: "flex", flexDirection: "column", gap: 3, pt: 1 }}>
+      <Box sx={{ display: "flex", flexDirection: "column", gap: 3, pt: 1 }}>
+        <TextField
+          label="Skill Name"
+          fullWidth
+          {...register("name")}
+          error={!!errors.name}
+          helperText={errors.name?.message}
+          disabled={loading}
+        />
+        <TextField
+          label="Category"
+          fullWidth
+          placeholder="e.g., Programming Languages, Frameworks, Tools"
+          {...register("category")}
+          error={!!errors.category}
+          helperText={errors.category?.message}
+          disabled={loading}
+        />
+        <Controller
+          name="level"
+          control={control}
+          render={({ field }) => (
             <TextField
-              label="Skill Name"
-              fullWidth
-              {...register("name")}
-              error={!!errors.name}
-              helperText={errors.name?.message}
-              disabled={loading}
-            />
-            <TextField
-              label="Category"
-              fullWidth
-              placeholder="e.g., Programming Languages, Frameworks, Tools"
-              {...register("category")}
-              error={!!errors.category}
-              helperText={errors.category?.message}
-              disabled={loading}
-            />
-            <TextField
-              label="Level"
+              {...field}
               select
               fullWidth
-              {...register("level")}
+              label="Level"
               error={!!errors.level}
               helperText={errors.level?.message}
               disabled={loading}
@@ -117,38 +116,19 @@ export const SkillForm = ({
               <MenuItem value="ADVANCED">Advanced</MenuItem>
               <MenuItem value="EXPERT">Expert</MenuItem>
             </TextField>
-            <TextField
-              label="Years of Experience"
-              type="number"
-              fullWidth
-              InputProps={{ inputProps: { min: 0 } }}
-              {...register("yearsOfExperience", { valueAsNumber: true })}
-              error={!!errors.yearsOfExperience}
-              helperText={errors.yearsOfExperience?.message}
-              disabled={loading}
-            />
-          </Box>
-        </DialogContent>
-        <DialogActions>
-          <Button
-            size="small"
-            type="button"
-            onClick={onClose}
-            disabled={loading}
-          >
-            Cancel
-          </Button>
-          <Button
-            size="small"
-            type="submit"
-            variant="contained"
-            disabled={loading}
-            startIcon={loading ? <CircularProgress size={16} /> : null}
-          >
-            {skill ? "Update" : "Add"}
-          </Button>
-        </DialogActions>
-      </form>
-    </Dialog>
+          )}
+        />
+        <TextField
+          label="Years of Experience"
+          type="number"
+          fullWidth
+          InputProps={{ inputProps: { min: 0 } }}
+          {...register("yearsOfExperience", { valueAsNumber: true })}
+          error={!!errors.yearsOfExperience}
+          helperText={errors.yearsOfExperience?.message}
+          disabled={loading}
+        />
+      </Box>
+    </SideDrawer>
   );
 };

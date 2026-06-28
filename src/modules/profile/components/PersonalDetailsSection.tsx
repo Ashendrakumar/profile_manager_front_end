@@ -18,6 +18,7 @@ import {
   Chip,
   Tooltip,
   Paper,
+  CircularProgress,
 } from "@mui/material";
 import {
   Edit,
@@ -36,15 +37,11 @@ import {
   type ResumeItem,
 } from "../services/profileService";
 import { personalDetailsSchema } from "../utils/validation";
-import {
-  LoadingSpinner,
-  ResumeUpload,
-  ProfileImageUpload,
-} from "@/common/components";
+import { ResumeUpload, ProfileImageUpload } from "@/common/components";
 
 export const PersonalDetailsSection = () => {
   const { showSuccess, showError } = useToast();
-  const [loading, setLoading] = useState(true);
+  // const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [personalDetails, setPersonalDetails] =
     useState<PersonalDetails | null>(null);
@@ -71,26 +68,31 @@ export const PersonalDetailsSection = () => {
     fetchPersonalDetails();
   }, []);
 
+  useEffect(() => {
+    if (personalDetails) {
+      reset({
+        firstName: personalDetails.firstName ?? "",
+        lastName: personalDetails.lastName ?? "",
+        profileName: personalDetails.profileName ?? "",
+        jobRole: personalDetails.jobRole ?? "",
+        profileDescription: personalDetails.profileDescription ?? "",
+      });
+    }
+  }, [personalDetails, reset]);
+
   const fetchPersonalDetails = async () => {
     try {
-      setLoading(true);
+      // setLoading(true);
       const response = await profileService.getPersonalDetails();
       const personalDetailsData = response.personalDetails;
       setPersonalDetails(personalDetailsData);
       setResumes(personalDetailsData.resumes || []);
-      reset({
-        firstName: personalDetailsData.firstName || "",
-        lastName: personalDetailsData.lastName || "",
-        profileName: personalDetailsData.profileName || "",
-        jobRole: personalDetailsData.jobRole || "",
-        profileDescription: personalDetailsData.profileDescription || "",
-      });
     } catch (err) {
       showError(
         err instanceof Error ? err.message : "Failed to fetch personal details",
       );
     } finally {
-      setLoading(false);
+      // setLoading(false);
     }
   };
 
@@ -155,10 +157,6 @@ export const PersonalDetailsSection = () => {
     }
   };
 
-  if (loading) {
-    return <LoadingSpinner />;
-  }
-
   return (
     <Box>
       <Typography variant="h5" gutterBottom>
@@ -198,6 +196,9 @@ export const PersonalDetailsSection = () => {
                   {...register("firstName")}
                   error={!!errors.firstName}
                   helperText={errors.firstName?.message}
+                  InputLabelProps={{
+                    shrink: true,
+                  }}
                 />
               </Grid>
               <Grid item xs={12} md={6}>
@@ -208,6 +209,9 @@ export const PersonalDetailsSection = () => {
                   {...register("lastName")}
                   error={!!errors.lastName}
                   helperText={errors.lastName?.message}
+                  InputLabelProps={{
+                    shrink: true,
+                  }}
                 />
               </Grid>
               <Grid item xs={12} md={6}>
@@ -218,6 +222,9 @@ export const PersonalDetailsSection = () => {
                   {...register("profileName")}
                   error={!!errors.profileName}
                   helperText={errors.profileName?.message}
+                  InputLabelProps={{
+                    shrink: true,
+                  }}
                 />
               </Grid>
               <Grid item xs={12} md={6}>
@@ -228,6 +235,9 @@ export const PersonalDetailsSection = () => {
                   {...register("jobRole")}
                   error={!!errors.jobRole}
                   helperText={errors.jobRole?.message}
+                  InputLabelProps={{
+                    shrink: true,
+                  }}
                 />
               </Grid>
               <Grid item xs={12} md={12}>
@@ -240,6 +250,9 @@ export const PersonalDetailsSection = () => {
                   {...register("profileDescription")}
                   error={!!errors.profileDescription}
                   helperText={errors.profileDescription?.message}
+                  InputLabelProps={{
+                    shrink: true,
+                  }}
                 />
               </Grid>
             </Grid>
@@ -248,11 +261,13 @@ export const PersonalDetailsSection = () => {
           {/* Resume Section */}
           <Grid item xs={12} md={6}>
             <ResumeUpload onUploaded={setResumes} />
+          </Grid>
 
-            {resumes.length > 0 && (
-              <Paper variant="outlined" sx={{ mt: 2 }}>
+          <Grid item xs={12} md={6}>
+            {resumes?.length > 0 && (
+              <Paper variant="outlined">
                 <Typography variant="subtitle2" sx={{ px: 2, pt: 2 }}>
-                  Your Resumes ({resumes.length})
+                  Your Resumes ({resumes?.length})
                 </Typography>
                 <List dense>
                   {resumes.map((resume) => {
@@ -286,7 +301,9 @@ export const PersonalDetailsSection = () => {
                                 <IconButton
                                   edge="end"
                                   size="small"
-                                  color={resume.isPrimary ? "warning" : "default"}
+                                  color={
+                                    resume.isPrimary ? "warning" : "default"
+                                  }
                                   disabled={busy || resume.isPrimary}
                                   onClick={() =>
                                     handleSetPrimaryResume(resume._id)
@@ -335,6 +352,9 @@ export const PersonalDetailsSection = () => {
                             noWrap: true,
                             sx: { maxWidth: { xs: 140, sm: 220 } },
                           }}
+                          secondaryTypographyProps={{
+                            component: "div",
+                          }}
                         />
                       </ListItem>
                     );
@@ -347,11 +367,10 @@ export const PersonalDetailsSection = () => {
           {/* Submit Button */}
           <Grid item xs={12}>
             <Button
-              size="medium"
               type="submit"
               variant="contained"
               disabled={saving}
-              startIcon={<Edit />}
+              startIcon={!saving ? <Edit /> : <CircularProgress size={20} />}
             >
               {saving ? "Saving..." : "Save Personal Details"}
             </Button>

@@ -10,7 +10,6 @@ import {
   Button,
   Card,
   CardContent,
-  // CardActions,
   Grid,
   IconButton,
   Chip,
@@ -18,14 +17,12 @@ import {
 import { Add, Edit, Delete } from "@mui/icons-material";
 import { useToast } from "@/contexts/toastContext";
 import { profileService, type Experience } from "../services/profileService";
-import { LoadingSpinner } from "@/common/components";
 import { ConfirmDialog } from "@/common/components";
 import { ExperienceForm } from "./ExperienceForm";
 import { HelperFunctions } from "@/utils/helpers";
 
 export const ExperienceSection = () => {
   const { showSuccess, showError } = useToast();
-  const [loading, setLoading] = useState(true);
   const [experience, setExperience] = useState<Experience[]>([]);
   const [formOpen, setFormOpen] = useState(false);
   const [selectedExperience, setSelectedExperience] =
@@ -41,7 +38,7 @@ export const ExperienceSection = () => {
 
   const fetchExperience = async () => {
     try {
-      setLoading(true);
+      // setLoading(true);
       const response = await profileService.getExperience();
       setExperience(response.experience);
     } catch (err) {
@@ -49,7 +46,7 @@ export const ExperienceSection = () => {
         err instanceof Error ? err.message : "Failed to fetch experience",
       );
     } finally {
-      setLoading(false);
+      // setLoading(false);
     }
   };
 
@@ -109,10 +106,6 @@ export const ExperienceSection = () => {
     }
   };
 
-  if (loading) {
-    return <LoadingSpinner />;
-  }
-
   return (
     <Box>
       <Box
@@ -132,11 +125,8 @@ export const ExperienceSection = () => {
           </Typography>
         </Box>
         <Button variant="contained" startIcon={<Add />} onClick={handleAdd}>
-          <Typography
-            sx={{ display: { xs: "none", sm: "block" } }}
-            variant="body2"
-          >
-            Add Experience
+          <Typography sx={{ display: { xs: "none", sm: "block" } }}>
+            Add
           </Typography>
         </Button>
       </Box>

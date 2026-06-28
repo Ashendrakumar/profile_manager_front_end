@@ -3,7 +3,7 @@
  * Application footer
  */
 
-import { Box, Container, Typography } from '@mui/material';
+import { Box, Container, Typography } from "@mui/material";
 
 interface FooterProps {
   show: boolean;
@@ -23,9 +23,11 @@ export const Footer = ({ show }: FooterProps) => {
       sx={{
         py: 1,
         px: 2,
-        mt: 'auto',
+        mt: "auto",
         backgroundColor: (theme) =>
-          theme.palette.mode === 'light' ? theme.palette.grey[200] : theme.palette.grey[800],
+          theme.palette.mode === "light"
+            ? theme.palette.grey[200]
+            : theme.palette.grey[800],
       }}
     >
       <Container maxWidth="lg">
@@ -36,4 +38,3 @@ export const Footer = ({ show }: FooterProps) => {
     </Box>
   );
 };
-

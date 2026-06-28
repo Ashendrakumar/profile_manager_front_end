@@ -10,7 +10,6 @@ import {
   Button,
   Card,
   CardContent,
-  // CardActions,
   Grid,
   IconButton,
   Chip,
@@ -18,14 +17,12 @@ import {
 import { Add, Edit, Delete } from "@mui/icons-material";
 import { useToast } from "@/contexts/toastContext";
 import { profileService, type Skill } from "../services/profileService";
-import { LoadingSpinner } from "@/common/components";
 import { ConfirmDialog } from "@/common/components";
 import { SkillForm } from "./SkillForm";
 import { HelperFunctions } from "@/utils/helpers";
 
 export const SkillsSection = () => {
   const { showSuccess, showError } = useToast();
-  const [loading, setLoading] = useState(true);
   const [skills, setSkills] = useState<Skill[]>([]);
   const [formOpen, setFormOpen] = useState(false);
   const [selectedSkill, setSelectedSkill] = useState<Skill | null>(null);
@@ -39,13 +36,12 @@ export const SkillsSection = () => {
 
   const fetchSkills = async () => {
     try {
-      setLoading(true);
       const response = await profileService.getSkills();
       setSkills(response.skills);
     } catch (err) {
       showError(err instanceof Error ? err.message : "Failed to fetch skills");
     } finally {
-      setLoading(false);
+      // setLoading(false);
     }
   };
 
@@ -129,10 +125,6 @@ export const SkillsSection = () => {
     {} as Record<string, Skill[]>,
   );
 
-  if (loading) {
-    return <LoadingSpinner />;
-  }
-
   return (
     <Box>
       <Box
@@ -151,17 +143,9 @@ export const SkillsSection = () => {
             Manage your skills and expertise
           </Typography>
         </Box>
-        <Button
-          variant="contained"
-          size="medium"
-          startIcon={<Add />}
-          onClick={handleAdd}
-        >
-          <Typography
-            sx={{ display: { xs: "none", sm: "block" } }}
-            variant="body2"
-          >
-            Add Skill
+        <Button variant="contained" startIcon={<Add />} onClick={handleAdd}>
+          <Typography sx={{ display: { xs: "none", sm: "block" } }}>
+            Add
           </Typography>
         </Button>
       </Box>

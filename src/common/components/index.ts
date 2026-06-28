@@ -10,3 +10,5 @@ export { ResumeUpload } from "./ResumeUpload";
 export type { ResumeUploadProps } from "./ResumeUpload";
 export { ProfileImageUpload } from "./ProfileImageUpload";
 export type { ProfileImageUploadProps } from "./ProfileImageUpload";
+export { Input } from "./Input";
+export type { TextInputProps } from "./Input";

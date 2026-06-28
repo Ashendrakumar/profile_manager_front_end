@@ -4,20 +4,12 @@
  */
 
 import { useEffect } from "react";
-import {
-  Dialog,
-  DialogTitle,
-  DialogContent,
-  DialogActions,
-  TextField,
-  Button,
-  Box,
-  CircularProgress,
-} from "@mui/material";
+import { TextField, Box } from "@mui/material";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { educationSchema } from "../utils/validation";
 import type { Education } from "../services/profileService";
+import { SideDrawer } from "@/common/components/SideDrawer";
 
 type EducationFormData = {
   standard: string;
@@ -84,98 +76,77 @@ export const EducationForm = ({
   }, [education, reset, open]);
 
   return (
-    <Dialog
+    <SideDrawer
       open={open}
       onClose={loading ? undefined : onClose}
-      maxWidth="xs"
-      fullWidth
+      loading={loading}
+      title={education ? "Edit Education" : "Add Education"}
+      subTitle={education?.standard}
+      footerActionClick={handleSubmit(onSubmit)}
+      footerActionName={education ? "Update" : "Add"}
     >
-      <DialogTitle>
-        {education ? "Edit Education" : "Add Education"}
-      </DialogTitle>
       <form onSubmit={handleSubmit(onSubmit)}>
-        <DialogContent>
-          <Box sx={{ display: "flex", flexDirection: "column", gap: 3, pt: 1 }}>
+        <Box sx={{ display: "flex", flexDirection: "column", gap: 3, pt: 1 }}>
+          <TextField
+            label="Standard/Degree"
+            fullWidth
+            {...register("standard")}
+            error={!!errors.standard}
+            helperText={errors.standard?.message}
+            disabled={loading}
+          />
+          <TextField
+            label="Institution"
+            fullWidth
+            {...register("institution")}
+            error={!!errors.institution}
+            helperText={errors.institution?.message}
+            disabled={loading}
+          />
+          <TextField
+            label="University"
+            fullWidth
+            {...register("university")}
+            error={!!errors.university}
+            helperText={errors.university?.message}
+            disabled={loading}
+          />
+          <TextField
+            label="Passing Year"
+            type="number"
+            fullWidth
+            {...register("passingYear", { valueAsNumber: true })}
+            error={!!errors.passingYear}
+            helperText={errors.passingYear?.message}
+            disabled={loading}
+          />
+          <Box
+            sx={{
+              display: "flex",
+              flexDirection: { xs: "column", sm: "row" },
+              gap: 2,
+            }}
+          >
             <TextField
-              label="Standard/Degree"
+              label="Specialization"
               fullWidth
-              {...register("standard")}
-              error={!!errors.standard}
-              helperText={errors.standard?.message}
+              {...register("specialization")}
+              error={!!errors.specialization}
+              helperText={errors.specialization?.message}
               disabled={loading}
             />
-            <TextField
-              label="Institution"
-              fullWidth
-              {...register("institution")}
-              error={!!errors.institution}
-              helperText={errors.institution?.message}
-              disabled={loading}
-            />
-            <TextField
-              label="University"
-              fullWidth
-              {...register("university")}
-              error={!!errors.university}
-              helperText={errors.university?.message}
-              disabled={loading}
-            />
-            <TextField
-              label="Passing Year"
-              type="number"
-              fullWidth
-              {...register("passingYear", { valueAsNumber: true })}
-              error={!!errors.passingYear}
-              helperText={errors.passingYear?.message}
-              disabled={loading}
-            />
-            <Box
-              sx={{
-                display: "flex",
-                flexDirection: { xs: "column", sm: "row" },
-                gap: 2,
-              }}
-            >
-              <TextField
-                label="Specialization"
-                fullWidth
-                {...register("specialization")}
-                error={!!errors.specialization}
-                helperText={errors.specialization?.message}
-                disabled={loading}
-              />
 
-              <TextField
-                label="Grade"
-                fullWidth
-                {...register("grade")}
-                error={!!errors.grade}
-                helperText={errors.grade?.message}
-                disabled={loading}
-              />
-            </Box>
+            <TextField
+              label="Grade"
+              fullWidth
+              {...register("grade")}
+              error={!!errors.grade}
+              helperText={errors.grade?.message}
+              disabled={loading}
+            />
           </Box>
-        </DialogContent>
-        <DialogActions>
-          <Button
-            type="button"
-            size="small"
-            onClick={onClose}
-            disabled={loading}
-          >
-            Cancel
-          </Button>
-          <Button
-            type="submit"
-            size="small"
-            variant="contained"
-            disabled={loading}
-            startIcon={loading ? <CircularProgress size={16} /> : null}
-          >
-            {education ? "Update" : "Add"}
-          </Button>
-        </DialogActions>
+        </Box>
       </form>
-    </Dialog>
+    </SideDrawer>
   );
 };

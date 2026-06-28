@@ -3,8 +3,8 @@
  * Centralized theme setup with customization options
  */
 
-import { createTheme } from '@mui/material/styles';
-import type { ThemeOptions } from '@mui/material/styles';
+import { createTheme } from "@mui/material/styles";
+import type { ThemeOptions } from "@mui/material/styles";
 
 // Custom theme options interface
 interface CustomThemeOptions extends ThemeOptions {
@@ -13,110 +13,120 @@ interface CustomThemeOptions extends ThemeOptions {
 
 // Teal color palette
 const tealColors = {
-  main: '#00897b',      // Teal 600
-  light: '#4fb3bf',     // Teal 400
-  dark: '#00695c',      // Teal 800
-  contrastText: '#ffffff',
+  main: "#00897b", // Teal 600
+  light: "#4fb3bf", // Teal 400
+  dark: "#00695c", // Teal 800
+  contrastText: "#ffffff",
+  50: "#E0F2F1",
+  100: "#B2DFDB",
+  200: "#80CBC4",
+  300: "#4DB6AC",
+  400: "#26A69A",
+  500: "#009688",
+  600: "#00897B",
+  700: "#00796B",
+  800: "#00695C",
+  900: "#004D40",
 };
 
 // Light theme configuration with teal primary color
 const lightThemeOptions: CustomThemeOptions = {
   palette: {
-    mode: 'light',
-    primary: tealColors,
+    mode: "light",
+    primary: {
+      light: tealColors[400],
+      main: tealColors[600],
+      dark: tealColors[800],
+      contrastText: tealColors.contrastText,
+    },
     secondary: {
-      main: '#dc004e',
-      light: '#ff5983',
-      dark: '#9a0036',
-      contrastText: '#ffffff',
+      main: "#dc004e",
+      light: "#ff5983",
+      dark: "#9a0036",
+      contrastText: "#ffffff",
     },
     background: {
-      default: '#f5f5f5',
-      paper: '#ffffff',
+      default: "#f5f5f5",
+      paper: "#ffffff",
     },
     error: {
-      main: '#d32f2f',
+      main: "#d32f2f",
     },
     warning: {
-      main: '#ed6c02',
+      main: "#ed6c02",
     },
     info: {
-      main: '#0288d1',
+      main: "#0288d1",
     },
     success: {
-      main: '#2e7d32',
+      main: "#2e7d32",
     },
   },
   typography: {
     fontFamily: '"Roboto", "Helvetica", "Arial", sans-serif',
     fontSize: 14,
     h1: {
-      fontSize: '2.5rem',
+      fontSize: "2.5rem",
       fontWeight: 600,
       lineHeight: 1.2,
     },
     h2: {
-      fontSize: '2rem',
+      fontSize: "2rem",
       fontWeight: 600,
       lineHeight: 1.3,
     },
     h3: {
-      fontSize: '1.75rem',
+      fontSize: "1.75rem",
       fontWeight: 600,
       lineHeight: 1.3,
     },
     h4: {
-      fontSize: '1.5rem',
+      fontSize: "1.5rem",
       fontWeight: 600,
       lineHeight: 1.4,
     },
     h5: {
-      fontSize: '1.25rem',
+      fontSize: "1.25rem",
       fontWeight: 600,
       lineHeight: 1.4,
     },
     h6: {
-      fontSize: '1.125rem',
+      fontSize: "1.125rem",
       fontWeight: 600,
       lineHeight: 1.4,
     },
     body1: {
-      fontSize: '1rem',
+      fontSize: "1rem",
       lineHeight: 1.5,
     },
     body2: {
-      fontSize: '0.875rem',
+      fontSize: "0.875rem",
       lineHeight: 1.5,
     },
     button: {
-      fontSize: '0.875rem',
+      fontSize: "0.875rem",
       fontWeight: 500,
-      textTransform: 'none',
+      textTransform: "none",
     },
   },
   shape: {
-    borderRadius: 8,
+    borderRadius: 10,
   },
   components: {
-    // Global component overrides
-    MuiTextField: {
-      defaultProps: {
-        size: 'small', // ✅ default size
-      },
-    },
     MuiButton: {
       defaultProps: {
-        size: 'small', // ✅ default size
+        size: "large", // ✅ default size
       },
     },
     MuiCard: {
       styleOverrides: {
         root: {
           borderRadius: 12,
-          boxShadow: '0 2px 12px rgba(0,0,0,0.08), 0 1px 4px rgba(0,0,0,0.05)',
-          transition: 'box-shadow 0.3s ease-in-out',
-          '&:hover': {
-            boxShadow: '0 4px 20px rgba(0,0,0,0.12), 0 2px 8px rgba(0,0,0,0.08)',
+          boxShadow: "0 2px 12px rgba(0,0,0,0.08), 0 1px 4px rgba(0,0,0,0.05)",
+          transition: "box-shadow 0.3s ease-in-out",
+          "&:hover": {
+            boxShadow:
+              "0 4px 20px rgba(0,0,0,0.12), 0 2px 8px rgba(0,0,0,0.08)",
           },
         },
       },
@@ -125,7 +135,7 @@ const lightThemeOptions: CustomThemeOptions = {
       styleOverrides: {
         root: {
           borderRadius: 12,
-          boxShadow: '0 2px 12px rgba(0,0,0,0.08), 0 1px 4px rgba(0,0,0,0.05)',
+          boxShadow: "0 2px 12px rgba(0,0,0,0.08), 0 1px 4px rgba(0,0,0,0.05)",
         },
       },
     },
@@ -140,45 +150,45 @@ const lightThemeOptions: CustomThemeOptions = {
     MuiChip: {
       styleOverrides: {
         root: {
-          fontSize: '0.8rem',
+          fontSize: "0.8rem",
           fontWeight: 500,
-          height: '28px',
+          height: "28px",
         },
       },
     },
     MuiTab: {
       styleOverrides: {
         root: {
-          fontSize: '0.9rem',
+          fontSize: "0.9rem",
           fontWeight: 500,
-          minHeight: '48px',
-          textTransform: 'none',
+          minHeight: "48px",
+          textTransform: "none",
         },
       },
     },
     MuiTableCell: {
       styleOverrides: {
         root: {
-          fontSize: '0.9rem',
-          padding: '12px 16px',
+          fontSize: "0.9rem",
+          padding: "12px 16px",
         },
         head: {
           fontWeight: 600,
-          fontSize: '0.85rem',
+          fontSize: "0.85rem",
         },
       },
     },
     MuiContainer: {
       styleOverrides: {
         root: {
-          paddingLeft: '24px',
-          paddingRight: '24px',
-          '@media (min-width: 600px)': {
-            paddingLeft: '32px',
-            paddingRight: '32px',
+          paddingLeft: "24px",
+          paddingRight: "24px",
+          "@media (min-width: 600px)": {
+            paddingLeft: "32px",
+            paddingRight: "32px",
           },
-          '@media (min-width: 1200px)': {
-            maxWidth: '1400px',
+          "@media (min-width: 1200px)": {
+            maxWidth: "1400px",
           },
         },
       },
@@ -191,16 +201,16 @@ const darkThemeOptions: CustomThemeOptions = {
   ...lightThemeOptions,
   palette: {
     ...lightThemeOptions.palette,
-    mode: 'dark',
+    mode: "dark",
     primary: {
-      main: '#26a69a',      // Teal 400 (lighter for dark mode)
-      light: '#4dd0e1',     // Teal 300
-      dark: '#00897b',      // Teal 600
-      contrastText: '#ffffff',
+      main: "#26a69a", // Teal 400 (lighter for dark mode)
+      light: "#4dd0e1", // Teal 300
+      dark: "#00897b", // Teal 600
+      contrastText: "#ffffff",
     },
     background: {
-      default: '#121212',
-      paper: '#1e1e1e',
+      default: "#121212",
+      paper: "#1e1e1e",
     },
   },
   components: {
@@ -209,7 +219,7 @@ const darkThemeOptions: CustomThemeOptions = {
       styleOverrides: {
         root: {
           borderRadius: 16,
-          boxShadow: '0 2px 12px rgba(0,0,0,0.3), 0 1px 4px rgba(0,0,0,0.2)',
+          boxShadow: "0 2px 12px rgba(0,0,0,0.3), 0 1px 4px rgba(0,0,0,0.2)",
         },
       },
     },
@@ -217,7 +227,7 @@ const darkThemeOptions: CustomThemeOptions = {
       styleOverrides: {
         root: {
           borderRadius: 16,
-          boxShadow: '0 2px 12px rgba(0,0,0,0.3), 0 1px 4px rgba(0,0,0,0.2)',
+          boxShadow: "0 2px 12px rgba(0,0,0,0.3), 0 1px 4px rgba(0,0,0,0.2)",
         },
       },
     },
@@ -239,4 +249,4 @@ export const darkTheme = createTheme(darkThemeOptions);
 export const theme = lightTheme;
 
 // Theme type for TypeScript
-export type ThemeMode = 'light' | 'dark';
+export type ThemeMode = "light" | "dark";

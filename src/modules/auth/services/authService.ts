@@ -26,7 +26,23 @@ export interface RegisterRequest {
 }
 
 /**
- * Authentication response from backend
+ * OTP verification request payload
+ */
+export interface OtpVerifyRequest {
+  email: string;
+  otp: string;
+}
+
+/**
+ * Registration step-1 response (no token yet — awaiting OTP)
+ */
+export interface RegisterPendingResponse {
+  message: string;
+  email: string;
+}
+
+/**
+ * Authentication response from backend (returned after OTP verification or login)
  */
 export interface AuthResponse {
   accessToken: string;
@@ -48,7 +64,7 @@ export interface User {
 
 /**
  * Authentication Service
- * Provides methods for login, register, logout, and token management
+ * Provides methods for login, register, OTP verify/resend, logout, and token management
  */
 export const authService = {
   /**
@@ -66,7 +82,6 @@ export const authService = {
       if (response.refreshToken) {
         localStorage.setItem(STORAGE_KEYS.REFRESH_TOKEN, response.refreshToken);
       }
-      // Store user data
       if (response.user) {
         localStorage.setItem(
           STORAGE_KEYS.USER_DATA,
@@ -79,21 +94,33 @@ export const authService = {
   },
 
   /**
-   * Register new user
+   * Register new user — Step 1
+   * Sends OTP to email. Returns { message, email } — no token yet.
    */
-  async register(userData: RegisterRequest): Promise<AuthResponse> {
-    const response = await apiService.post<AuthResponse>(
+  async register(userData: RegisterRequest): Promise<RegisterPendingResponse> {
+    const response = await apiService.post<RegisterPendingResponse>(
       "/users/register",
       userData,
     );
-    debugger;
-    // Store tokens
+    return response;
+  },
+
+  /**
+   * Verify OTP — Step 2
+   * Validates the OTP, marks the user as verified, and returns the JWT.
+   */
+  async verifyOtp(email: string, otp: string): Promise<AuthResponse> {
+    const response = await apiService.post<AuthResponse>(
+      "/users/verify-otp",
+      { email, otp },
+    );
+
+    // Store tokens after successful verification
     if (response.accessToken) {
       localStorage.setItem(STORAGE_KEYS.AUTH_TOKEN, response.accessToken);
       if (response.refreshToken) {
         localStorage.setItem(STORAGE_KEYS.REFRESH_TOKEN, response.refreshToken);
       }
-      // Store user data
       if (response.user) {
         localStorage.setItem(
           STORAGE_KEYS.USER_DATA,
@@ -103,6 +130,13 @@ export const authService = {
     }
 
     return response;
+  },
+
+  /**
+   * Resend OTP email
+   */
+  async resendOtp(email: string): Promise<{ message: string }> {
+    return apiService.post<{ message: string }>("/users/resend-otp", { email });
   },
 
   /**
@@ -110,13 +144,10 @@ export const authService = {
    */
   async logout(): Promise<void> {
     try {
-      // Call logout endpoint if available
       await apiService.post("/users/logout");
     } catch (error) {
-      // Even if logout fails, clear local storage
       console.error("Logout error:", error);
     } finally {
-      // Clear all auth data
       localStorage.removeItem(STORAGE_KEYS.AUTH_TOKEN);
       localStorage.removeItem(STORAGE_KEYS.REFRESH_TOKEN);
       localStorage.removeItem(STORAGE_KEYS.USER_DATA);

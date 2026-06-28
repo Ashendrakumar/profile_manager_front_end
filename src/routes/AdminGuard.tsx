@@ -3,10 +3,10 @@
  * Protects routes that require admin role
  */
 
-import { Navigate } from 'react-router-dom';
-import { Box, CircularProgress, Typography } from '@mui/material';
-import { useAuth } from '@/contexts';
-import { ROUTES } from '@/constants';
+import { Navigate } from "react-router-dom";
+import { Box, CircularProgress, Typography } from "@mui/material";
+import { useAuth } from "@/contexts";
+import { ROUTES } from "@/constants";
 
 interface AdminGuardProps {
   children: React.ReactElement;
@@ -35,7 +35,7 @@ export const AdminGuard = ({ children }: AdminGuardProps) => {
   }
 
   // Check if user is admin
-  const isAdmin = user?.role === 'admin';
+  const isAdmin = user?.role === "admin";
 
   // Redirect to home if not admin
   if (!isAdmin) {
@@ -54,7 +54,7 @@ export const AdminGuard = ({ children }: AdminGuardProps) => {
         <Typography variant="body1" color="text.secondary">
           You don't have permission to access this page.
         </Typography>
-        <Navigate to={ROUTES.HOME} replace />
+        <Navigate to={ROUTES.PROFILE_COMPLETION} replace />
       </Box>
     );
   }

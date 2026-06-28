@@ -10,7 +10,6 @@ import {
   Button,
   Card,
   CardContent,
-  // CardActions,
   Grid,
   IconButton,
   Chip,
@@ -18,14 +17,12 @@ import {
 import { Add, Edit, Delete } from "@mui/icons-material";
 import { useToast } from "@/contexts/toastContext";
 import { profileService, type Education } from "../services/profileService";
-import { LoadingSpinner } from "@/common/components";
 import { ConfirmDialog } from "@/common/components";
 import { EducationForm } from "./EducationForm";
 import { HelperFunctions } from "@/utils/helpers";
 
 export const EducationSection = () => {
   const { showSuccess, showError } = useToast();
-  const [loading, setLoading] = useState(true);
   const [education, setEducation] = useState<Education[]>([]);
   const [formOpen, setFormOpen] = useState(false);
   const [selectedEducation, setSelectedEducation] = useState<Education | null>(
@@ -43,7 +40,7 @@ export const EducationSection = () => {
 
   const fetchEducation = async () => {
     try {
-      setLoading(true);
+      // setLoading(true);
       const response = await profileService.getEducation();
       setEducation(response.education);
     } catch (err) {
@@ -51,7 +48,7 @@ export const EducationSection = () => {
         err instanceof Error ? err.message : "Failed to fetch education",
       );
     } finally {
-      setLoading(false);
+      // setLoading(false);
     }
   };
 
@@ -111,10 +108,6 @@ export const EducationSection = () => {
     }
   };
 
-  if (loading) {
-    return <LoadingSpinner />;
-  }
-
   return (
     <Box>
       <Box
@@ -133,17 +126,9 @@ export const EducationSection = () => {
             Manage your educational background
           </Typography>
         </Box>
-        <Button
-          variant="contained"
-          size="medium"
-          startIcon={<Add />}
-          onClick={handleAdd}
-        >
-          <Typography
-            sx={{ display: { xs: "none", sm: "block" } }}
-            variant="body2"
-          >
-            Add Education
+        <Button variant="contained" startIcon={<Add />} onClick={handleAdd}>
+          <Typography sx={{ display: { xs: "none", sm: "block" } }}>
+            Add
           </Typography>
         </Button>
       </Box>

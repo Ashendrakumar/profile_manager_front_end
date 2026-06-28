@@ -17,6 +17,7 @@
     /* Path Resolution */
     "baseUrl": "./",
     "paths": {
+      "public/*": ["public/*"],
       "@/*": ["src/*"],
       "@/modules/*": ["src/modules/*"],
       "@/common/*": ["src/common/*"],

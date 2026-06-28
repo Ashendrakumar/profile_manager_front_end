@@ -3,10 +3,10 @@
  * 404 Not Found page
  */
 
-import { Typography, Box, Button, Container } from '@mui/material';
-import { useNavigate } from 'react-router-dom';
-import { useMetadata } from '@/hooks';
-import { ROUTES } from '@/constants';
+import { Typography, Box, Button, Container } from "@mui/material";
+import { useNavigate } from "react-router-dom";
+import { useMetadata } from "@/hooks";
+import { ROUTES } from "@/constants";
 
 /**
  * 404 Not Found page component
@@ -16,8 +16,8 @@ const NotFoundPage = () => {
 
   // Set page metadata
   useMetadata({
-    title: '404 - Page Not Found',
-    description: 'The page you are looking for does not exist',
+    title: "404 - Page Not Found",
+    description: "The page you are looking for does not exist",
   });
 
   return (
@@ -27,7 +27,7 @@ const NotFoundPage = () => {
         flexDirection="column"
         alignItems="center"
         justifyContent="center"
-        minHeight="60vh"
+        minHeight="calc(100dvh - var(--header-height))"
         textAlign="center"
       >
         <Typography variant="h1" component="h1" gutterBottom>

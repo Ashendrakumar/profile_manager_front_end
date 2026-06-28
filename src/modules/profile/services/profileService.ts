@@ -50,7 +50,7 @@ export interface Address {
 }
 
 export interface SocialLink {
-  platform: string;
+  platform: "linkedin" | "github" | "twitter" | "portfolio";
   url: string;
 }
 
