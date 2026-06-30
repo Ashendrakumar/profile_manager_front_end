@@ -87,7 +87,7 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
         const response = await authService.login(credentials);
         setUser(response.user);
 
-        navigate(ROUTES.HOME, { replace: true });
+        navigate(ROUTES.PROFILE_COMPLETION, { replace: true });
       } catch (err) {
         const errorMessage =
           err instanceof Error

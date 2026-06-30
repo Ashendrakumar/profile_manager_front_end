@@ -11,6 +11,7 @@ import { NavLink } from "react-router-dom";
 import { sidebarMenus } from "./menu";
 import { DIMENSIONS } from "@/constants";
 import { useAuth } from "@/contexts";
+import { SidebarFooter } from "./SidebarFooter";
 
 type SidebarProps = {
   open: boolean;
@@ -62,7 +63,7 @@ export default function Sidebar({
       }}
     >
       <List>
-        {navigationItems.map((menu) => {
+        {navigationItems.map((menu: any) => {
           const Icon = menu.icon;
 
           return (
@@ -76,39 +77,85 @@ export default function Sidebar({
                 }
               }}
               sx={{
-                mx: 0,
-                my: 0,
-                borderRadius: 0,
-                borderRight: "4px solid",
-                borderColor: "transparent",
-                transition: "all 0.3s ease-in-out",
+                mx: 0.5,
+                mb: 0.25,
+                py: 1.25,
+                px: 1.25,
+                borderRadius: 1,
+                color: "text.primary",
+                display: "flex",
+                position: "relative",
+                overflow: "hidden",
+                alignItems: "center",
+                justifyContent: isCollapsed ? "center" : "flex-start",
+                transition: "all 0.15s ease",
+                "&:hover": {
+                  backgroundColor: "action.hover",
+                },
+
+                "& .MuiListItemIcon-root": {
+                  color: "inherit",
+                  minWidth: isCollapsed ? "auto" : 36,
+                  width: 36,
+                  display: "flex",
+                  justifyContent: "center",
+                  transition: "color 0.15s ease",
+                },
+
+                "& .MuiListItemText-primary": {
+                  fontSize: 14,
+                  fontWeight: 400,
+                  transition: "color 0.15s ease, font-weight 0.15s ease",
+                },
+
                 "&.active": {
-                  borderRight: "4px solid",
-                  borderColor: "primary.main",
-                  background: (theme) =>
-                    `linear-gradient(45deg, ${theme.palette.primary.main}20 50%, ${theme.palette.primary.light}10 100%)`,
+                  backgroundColor: (theme) => theme.palette.primary[50],
+                  color: (theme) =>
+                    theme.palette.mode === "dark"
+                      ? theme.palette.primary[100]
+                      : theme.palette.primary[700],
+
+                  "&::before": {
+                    content: '""',
+                    position: "absolute",
+                    left: 0,
+                    top: 6,
+                    bottom: 6,
+                    width: 3,
+                    borderRadius: "0 3px 3px 0",
+                    backgroundColor: (theme) => theme.palette.primary[400],
+                  },
+
+                  "&:hover": {
+                    backgroundColor: (theme) => theme.palette.primary[50],
+                  },
+
+                  "& .MuiListItemText-primary": {
+                    fontWeight: 500,
+                  },
                 },
               }}
             >
               {isCollapsed ? (
                 <Tooltip title={menu.title} placement="right" arrow>
                   <ListItemIcon>
-                    <Icon />
+                    <Icon size={19} />
                   </ListItemIcon>
                 </Tooltip>
               ) : (
                 <ListItemIcon>
-                  <Icon />
+                  <Icon size={19} />
                 </ListItemIcon>
               )}
               <ListItemText
-                sx={{ visibility: isCollapsed ? "hidden" : "visible" }}
+                sx={{ visibility: isCollapsed ? "hidden" : "visible", my: 0 }}
                 primary={menu.title}
               />
             </ListItemButton>
           );
         })}
       </List>
+      <SidebarFooter isCollapsed={isCollapsed} />
     </Drawer>
   );
 }

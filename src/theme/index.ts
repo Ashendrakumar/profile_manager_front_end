@@ -25,7 +25,7 @@ const tealColors = {
   500: "#009688",
   600: "#00897B",
   700: "#00796B",
-  800: "#00695C",
+  800: "#9FE1CB",
   900: "#004D40",
 };
 
@@ -38,6 +38,16 @@ const lightThemeOptions: CustomThemeOptions = {
       main: tealColors[600],
       dark: tealColors[800],
       contrastText: tealColors.contrastText,
+      50: tealColors[50],
+      100: tealColors[100],
+      200: tealColors[200],
+      300: tealColors[300],
+      400: tealColors[400],
+      500: tealColors[500],
+      600: tealColors[600],
+      700: tealColors[700],
+      800: tealColors[800],
+      900: tealColors[900],
     },
     secondary: {
       main: "#dc004e",
@@ -203,10 +213,20 @@ const darkThemeOptions: CustomThemeOptions = {
     ...lightThemeOptions.palette,
     mode: "dark",
     primary: {
-      main: "#26a69a", // Teal 400 (lighter for dark mode)
-      light: "#4dd0e1", // Teal 300
-      dark: "#00897b", // Teal 600
-      contrastText: "#ffffff",
+      light: tealColors[300],
+      main: tealColors[400],
+      dark: tealColors[600],
+      contrastText: tealColors.contrastText,
+      50: tealColors[900],
+      100: tealColors[800],
+      200: tealColors[700],
+      300: tealColors[600],
+      400: tealColors[400],
+      500: tealColors[500],
+      600: tealColors[200],
+      700: tealColors[100],
+      800: tealColors[50],
+      900: tealColors[50],
     },
     background: {
       default: "#121212",

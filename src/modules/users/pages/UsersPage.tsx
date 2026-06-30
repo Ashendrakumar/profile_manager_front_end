@@ -27,8 +27,7 @@ import type {
   CreateUserRequest,
   UpdateUserRequest,
 } from "../services/userService";
-import { LoadingSpinner } from "@/common/components";
-import { ConfirmDialog } from "@/common/components";
+import { LoadingSpinner, ConfirmDialog } from "@/common/components";
 import { UserForm } from "../components/UserForm";
 
 /**
@@ -157,7 +156,7 @@ const UsersPage = () => {
   }
 
   return (
-    <Container maxWidth="lg">
+    <>
       <Box
         sx={{
           display: "flex",
@@ -187,9 +186,8 @@ const UsersPage = () => {
             startIcon={<Add />}
             onClick={handleCreateUser}
             disabled={actionLoading}
-            size="medium"
           >
-            Add User
+            Add
           </Button>
         )}
       </Box>
@@ -302,7 +300,7 @@ const UsersPage = () => {
         }}
         loading={actionLoading}
       />
-    </Container>
+    </>
   );
 };
 

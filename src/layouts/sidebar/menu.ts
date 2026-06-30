@@ -1,77 +1,82 @@
-// menu.ts
-
-import {
-  Dashboard,
-  Person,
-  School,
-  Work,
-  Folder,
-  Psychology,
-  Settings,
-  Task,
-  ContactPage,
-  SupervisedUserCircleSharp,
-} from "@mui/icons-material";
-
 import { ROUTES } from "@/constants";
+import {
+  LayoutDashboard,
+  Info,
+  UsersRound,
+  UserCheck,
+  ContactRound,
+  User,
+  GraduationCap,
+  BriefcaseBusiness,
+  FolderGit2,
+  Wrench,
+  Settings,
+} from "lucide-react";
 
-export const sidebarMenus = [
+interface MenuItem {
+  title: string;
+  path: string;
+  icon: any;
+  adminOnly?: boolean;
+}
+
+export const sidebarMenus: MenuItem[] = [
   {
     title: "Dashboard",
     path: ROUTES.HOME,
-    icon: Dashboard,
+    icon: LayoutDashboard, // Perfect choice for general analytics overview
     adminOnly: true,
   },
   {
     title: "About",
-    path: ROUTES.ADMIN_ABOUT,
-    icon: Person,
+    path: ROUTES.ABOUT,
+    icon: Info, // Universal standard for app/company overview information
     adminOnly: true,
   },
   {
     title: "Users",
     path: ROUTES.USERS,
-    icon: SupervisedUserCircleSharp,
+    icon: UsersRound, // Softer, cleaner group avatar aesthetic than base Users
     adminOnly: true,
   },
   {
     title: "Profile Completion",
     path: ROUTES.PROFILE_COMPLETION,
-    icon: Task,
+    icon: UserCheck, // Highlights human profile progress/verification better than a clipboard
   },
   {
     title: "Contact Details",
     path: ROUTES.CONTACT,
-    icon: ContactPage,
+    icon: ContactRound, // More modern than a basic phone icon for comprehensive contact data
   },
   {
     title: "Personal",
     path: ROUTES.PERSONAL_DETAILS,
-    icon: Person,
+    icon: User, // Standard, clean icon denoting private/personal settings
   },
   {
     title: "Education",
     path: ROUTES.EDUCATION,
-    icon: School,
+    icon: GraduationCap, // The absolute gold standard icon for academic history
   },
   {
     title: "Experience",
     path: ROUTES.EXPERIENCE,
-    icon: Work,
+    icon: BriefcaseBusiness, // Sleeker, more corporate look than the default blocky briefcase
   },
   {
     title: "Projects",
     path: ROUTES.PROJECTS,
-    icon: Folder,
+    icon: FolderGit2, // Ideal for portfolio development and code repository tracking
   },
   {
     title: "Skills",
     path: ROUTES.SKILLS,
-    icon: Psychology,
+    icon: Wrench, // Represents hard skills and technical tools better than a lightbulb
   },
   {
     title: "Settings",
     path: ROUTES.SETTINGS,
-    icon: Settings,
+    icon: Settings, // Standard 8-cog wheel that visually balances with LayoutDashboard
   },
 ];

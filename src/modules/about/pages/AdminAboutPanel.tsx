@@ -27,6 +27,7 @@ import { useNavigate } from "react-router-dom";
 import { useToast } from "@/contexts/toastContext";
 import { aboutService, type Feature } from "../services/aboutService";
 import TextEditor from "@/common/components/TextEditor";
+import { ROUTES } from "@/constants";
 
 interface FormData {
   title: string;
@@ -182,18 +183,26 @@ const AdminAboutPanel = () => {
   }
 
   return (
-    <Container maxWidth="lg">
-      <Box sx={{ mb: 3 }}>
-        <Button
-          startIcon={<ArrowBack />}
-          onClick={() => navigate("/about")}
-          sx={{ mb: 2 }}
-        >
-          Back to About
-        </Button>
+    <>
+      <Box
+        sx={{
+          mb: 2,
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "space-between",
+        }}
+      >
         <Typography variant="h4" gutterBottom>
           Manage About Content
         </Typography>
+        <Button
+          variant="contained"
+          startIcon={<ArrowBack />}
+          onClick={() => navigate(ROUTES.ABOUT)}
+          sx={{ mb: 2 }}
+        >
+          Back
+        </Button>
       </Box>
 
       <form onSubmit={handleSubmit}>
@@ -455,7 +464,7 @@ const AdminAboutPanel = () => {
           </Button>
         </DialogActions>
       </Dialog>
-    </Container>
+    </>
   );
 };
 

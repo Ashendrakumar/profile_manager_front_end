@@ -7,15 +7,13 @@ import { AppBar, Toolbar, Typography, Box, IconButton } from "@mui/material";
 import { useAuth } from "@/contexts";
 import { ProfileMenu } from "./ProfileMenu";
 import { Link } from "react-router-dom";
-import MenuIcon from "@mui/icons-material/Menu";
+import { SidebarIcon } from "lucide-react"; // Swapped for a cohesive Lucide look
+import { ROUTES } from "@/constants";
 
 interface HeaderProps {
   setOpen: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
-/**
- * Header Component
- */
 export const Header = ({ setOpen }: HeaderProps) => {
   const { isAuthenticated } = useAuth();
 
@@ -26,40 +24,56 @@ export const Header = ({ setOpen }: HeaderProps) => {
   return (
     <AppBar
       position="sticky"
-      color="primary"
+      elevation={0} // Flattens look; depth is managed below with border
       sx={{
-        backgroundColor: (theme) => theme.palette.primary.main,
         top: 0,
-        // zIndex: (theme) => theme.zIndex.drawer + 1,
+        borderBottom: "1px solid",
+        borderColor: (theme) => theme.palette.divider,
       }}
     >
-      <Toolbar>
+      <Toolbar sx={{ minHeight: { xs: 56, sm: 64 }, px: { xs: 2, sm: 3 } }}>
         <IconButton
           color="inherit"
-          aria-label="open drawer"
+          aria-label="toggle drawer"
           onClick={handleIsOpen}
           edge="start"
-          sx={[
-            {
-              marginRight: 2,
+          size="small"
+          sx={{
+            marginRight: 2,
+            p: 1,
+            borderRadius: 1,
+            border: "1px solid",
+            borderColor: (theme) => theme.palette.action.hover,
+            transition: (theme) =>
+              theme.transitions.create(["background-color", "border-color"]),
+            "&:hover": {
+              backgroundColor: (theme) => theme.palette.action.hover,
+              borderColor: (theme) => theme.palette.divider,
             },
-          ]}
+          }}
         >
-          <MenuIcon />
+          <SidebarIcon size={20} strokeWidth={2} />
         </IconButton>
+
         <Typography
-          variant="h6"
+          variant="subtitle1"
+          fontWeight={600}
           component={Link}
-          to="/"
+          to={ROUTES.PERSONAL_DETAILS}
           sx={{
             flexGrow: 1,
             textDecoration: "none",
             color: "inherit",
+            letterSpacing: "-0.01em",
+            "&:hover": {
+              opacity: 0.85,
+            },
           }}
         >
           Profile Manager
         </Typography>
-        <Box sx={{ display: "flex", gap: 1, alignItems: "center" }}>
+
+        <Box sx={{ display: "flex", gap: 1.5, alignItems: "center" }}>
           {isAuthenticated && <ProfileMenu />}
         </Box>
       </Toolbar>

@@ -78,7 +78,7 @@ const AboutPage = () => {
   }
 
   return (
-    <Container maxWidth="md">
+    <>
       <Box
         sx={{
           display: "flex",
@@ -179,7 +179,7 @@ const AboutPage = () => {
           No About content available yet. Please check back later.
         </Alert>
       )}
-    </Container>
+    </>
   );
 };
 
