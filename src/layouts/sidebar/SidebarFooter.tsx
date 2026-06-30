@@ -48,11 +48,11 @@ export function SidebarFooter({ isCollapsed }: SidebarFooterProps) {
           minWidth: 32,
           fontSize: 12.5,
           fontWeight: 600,
-          bgcolor: (theme) => theme.palette.primary?.[50],
+          bgcolor: (theme) => (theme.palette.primary as any)?.["50"],
           color: (theme) =>
             theme.palette.mode === "dark"
-              ? theme.palette.primary?.[100]
-              : theme.palette.primary?.[700],
+              ? (theme.palette.primary as any)?.[100]
+              : (theme.palette.primary as any)?.[700],
         }}
       >
         {initials}

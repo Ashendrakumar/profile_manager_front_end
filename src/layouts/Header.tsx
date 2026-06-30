@@ -29,6 +29,7 @@ export const Header = ({ setOpen }: HeaderProps) => {
         top: 0,
         borderBottom: "1px solid",
         borderColor: (theme) => theme.palette.divider,
+        backgroundColor: (theme) => theme.palette.primary.main,
       }}
     >
       <Toolbar sx={{ minHeight: { xs: 56, sm: 64 }, px: { xs: 2, sm: 3 } }}>

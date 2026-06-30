@@ -109,11 +109,12 @@ export default function Sidebar({
                 },
 
                 "&.active": {
-                  backgroundColor: (theme) => theme.palette.primary?.[50],
+                  backgroundColor: (theme) =>
+                    (theme.palette.primary as any)?.[50],
                   color: (theme) =>
                     theme.palette.mode === "dark"
-                      ? theme.palette.primary?.[100]
-                      : theme.palette.primary?.[700],
+                      ? (theme.palette.primary as any)?.[100]
+                      : (theme.palette.primary as any)?.[700],
 
                   "&::before": {
                     content: '""',
@@ -123,11 +124,13 @@ export default function Sidebar({
                     bottom: 6,
                     width: 3,
                     borderRadius: "0 3px 3px 0",
-                    backgroundColor: (theme) => theme.palette.primary?.[400],
+                    backgroundColor: (theme) =>
+                      (theme.palette.primary as any)?.[400],
                   },
 
                   "&:hover": {
-                    backgroundColor: (theme) => theme.palette.primary?.[50],
+                    backgroundColor: (theme) =>
+                      (theme.palette.primary as any)?.[50],
                   },
 
                   "& .MuiListItemText-primary": {
