@@ -4,11 +4,23 @@
  */
 
 import { createTheme } from "@mui/material/styles";
-import type { ThemeOptions } from "@mui/material/styles";
+import type {
+  PaletteOptions,
+  SimplePaletteColorOptions,
+  ThemeOptions,
+} from "@mui/material/styles";
+import type { ColorPartial } from "@mui/material/styles/createPalette";
 
 // Custom theme options interface
 interface CustomThemeOptions extends ThemeOptions {
   // Add custom theme properties here if needed
+  palette: CustomPaletteOptions;
+}
+type CustomPaletteColorOptions = SimplePaletteColorOptions & ColorPartial;
+
+interface CustomPaletteOptions extends PaletteOptions {
+  // Add custom theme properties here if needed
+  primary: CustomPaletteColorOptions;
 }
 
 // Teal color palette

@@ -26,8 +26,8 @@ const THEME_STORAGE_KEY = "theme_mode";
  * Get system preference for color scheme
  */
 const getSystemPreference = (): ThemeMode => {
-  if (typeof window !== "undefined" && window.matchMedia) {
-    return window.matchMedia("(prefers-color-scheme: dark)").matches
+  if (typeof globalThis !== "undefined" && globalThis.matchMedia) {
+    return globalThis.matchMedia("(prefers-color-scheme: dark)").matches
       ? "dark"
       : "light";
   }
@@ -66,11 +66,7 @@ export const ThemeProvider = ({ children }: ThemeProviderProps) => {
     setModeState(newMode);
   };
 
-  const value: ThemeContextType = {
-    mode,
-    toggleTheme,
-    setMode,
-  };
+  const value: ThemeContextType = { mode, toggleTheme, setMode };
 
   return (
     <ThemeContext.Provider value={value}>{children}</ThemeContext.Provider>
