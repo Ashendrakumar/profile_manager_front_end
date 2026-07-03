@@ -4,6 +4,16 @@
  */
 
 import { apiService } from '@/services/api';
+import type {
+  PersonalDetails,
+  ContactDetails,
+  Education,
+  Experience,
+  Project,
+  Skill,
+  Portfolio,
+  ResumeItem,
+} from '@/modules/profile/services/profileService';
 
 /**
  * User interface matching backend API
@@ -16,6 +26,40 @@ export interface User {
   name?: string;
   role: 'admin' | 'user';
   password?: string;
+}
+
+/**
+ * Profile completion summary embedded on the user document.
+ */
+export interface UserProfileCompletion {
+  percentage: number;
+  completedSections: string[];
+  lastCalculatedAt?: string;
+}
+
+/**
+ * Full user detail returned by `GET /users/:id`.
+ * Admins receive every profile section for the requested user; regular users
+ * only receive this for their own id (enforced by the backend).
+ */
+export interface UserDetail {
+  _id: string;
+  username: string;
+  email: string;
+  role: 'admin' | 'user';
+  isVerified?: boolean;
+  personalDetails?: Partial<PersonalDetails>;
+  contactDetails?: Partial<ContactDetails>;
+  education?: Education[];
+  experience?: Experience[];
+  projects?: Project[];
+  skills?: Skill[];
+  portfolio?: Portfolio;
+  profileImage?: string;
+  resumes?: ResumeItem[];
+  profileCompletion?: UserProfileCompletion;
+  createdAt?: string;
+  updatedAt?: string;
 }
 
 /**
@@ -51,10 +95,14 @@ export const userService = {
   },
 
   /**
-   * Get user by ID
+   * Get a single user's full details by ID.
+   *
+   * Admins can fetch any user; the backend returns that specific user's entire
+   * profile (personal, contact, education, experience, projects, skills,
+   * portfolio, resumes) — not the logged-in user's.
    */
-  getUserById: async (id: string): Promise<User> => {
-    return apiService.get<User>(`/users/${id}`);
+  getUserById: async (id: string): Promise<UserDetail> => {
+    return apiService.get<UserDetail>(`/users/${id}`);
   },
 
   /**
