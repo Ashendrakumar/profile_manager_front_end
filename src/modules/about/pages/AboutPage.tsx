@@ -13,12 +13,12 @@ import {
   Button,
   Grid,
 } from "@mui/material";
-import { Edit } from "@mui/icons-material";
+import { Edit, Star } from "@mui/icons-material";
 import { useNavigate } from "react-router-dom";
 import { useMetadata } from "@/hooks";
 import { useAuth } from "@/contexts";
 import { aboutService, type AboutData } from "../services/aboutService";
-import { SkeletonLoader } from "@/common/components";
+import { SkeletonLoader, EntityCard } from "@/common/components";
 
 /**
  * About page component
@@ -129,36 +129,24 @@ const AboutPage = () => {
               <Grid container spacing={3} sx={{ mb: 4 }}>
                 {aboutData.features.map((feature, index) => (
                   <Grid item xs={12} sm={6} md={4} key={index}>
-                    <Card
-                      sx={{
-                        height: "100%",
-                        display: "flex",
-                        flexDirection: "column",
-                        transition: "0.3s",
-                        "&:hover": {
-                          boxShadow: 6,
-                          transform: "translateY(-4px)",
-                        },
-                      }}
+                    <EntityCard
+                      title={feature.title}
+                      avatar={<Star />}
+                      avatarColor="warning"
                     >
-                      <CardContent>
-                        <Typography variant="h6" gutterBottom>
-                          {feature.title}
-                        </Typography>
-                        <Box
-                          sx={{
-                            "& p": { mb: 0.5 },
-                            "& ul": { mb: 0.5, pl: 2 },
-                            "& li": { mb: 0.25 },
-                            "& strong": { fontWeight: "bold" },
-                            "& em": { fontStyle: "italic" },
-                          }}
-                          dangerouslySetInnerHTML={{
-                            __html: feature.description,
-                          }}
-                        />
-                      </CardContent>
-                    </Card>
+                      <Box
+                        sx={{
+                          "& p": { mb: 0.5 },
+                          "& ul": { mb: 0.5, pl: 2 },
+                          "& li": { mb: 0.25 },
+                          "& strong": { fontWeight: "bold" },
+                          "& em": { fontStyle: "italic" },
+                        }}
+                        dangerouslySetInnerHTML={{
+                          __html: feature.description,
+                        }}
+                      />
+                    </EntityCard>
                   </Grid>
                 ))}
               </Grid>

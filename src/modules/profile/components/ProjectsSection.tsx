@@ -4,22 +4,21 @@
  */
 
 import { useState, useEffect } from "react";
+import { Box, Typography, Button, Grid, Chip, Link } from "@mui/material";
 import {
-  Box,
-  Typography,
-  Button,
-  Card,
-  CardContent,
-  Grid,
-  IconButton,
-  Chip,
-  Link,
-} from "@mui/material";
-import { Add, Edit, Delete, Launch, Code } from "@mui/icons-material";
+  Add,
+  Edit,
+  Delete,
+  Launch,
+  Code,
+  Folder,
+  Visibility,
+} from "@mui/icons-material";
 import { useToast } from "@/contexts/toastContext";
 import { profileService, type Project } from "../services/profileService";
-import { ConfirmDialog, SkeletonLoader } from "@/common/components";
+import { ConfirmDialog, SkeletonLoader, EntityCard } from "@/common/components";
 import { ProjectForm } from "./ProjectForm";
+import { ProjectDetails } from "./ProjectDetails";
 import { HelperFunctions } from "@/utils/helpers";
 
 export const ProjectsSection = () => {
@@ -31,6 +30,13 @@ export const ProjectsSection = () => {
   const [projectToDelete, setProjectToDelete] = useState<Project | null>(null);
   const [actionLoading, setActionLoading] = useState(false);
   const [loading, setLoading] = useState(true);
+  const [viewProject, setViewProject] = useState<Project | null>(null);
+  const [viewOpen, setViewOpen] = useState(false);
+
+  const handleView = (project: Project) => {
+    setViewProject(project);
+    setViewOpen(true);
+  };
 
   useEffect(() => {
     fetchProjects();
@@ -147,130 +153,130 @@ export const ProjectsSection = () => {
         >
           {projects.map((project) => (
             <Grid key={project._id}>
-              <Card>
-                <CardContent>
+              <EntityCard
+                title={HelperFunctions.capitalizeString(project.title)}
+                avatar={<Folder />}
+                headerChip={
+                  project.projectType
+                    ? {
+                        label: project.projectType,
+                        color:
+                          project.projectType === "Professional"
+                            ? "primary"
+                            : "default",
+                      }
+                    : undefined
+                }
+                actions={[
+                  {
+                    label: "View Details",
+                    icon: <Visibility fontSize="small" />,
+                    onClick: () => handleView(project),
+                  },
+                  {
+                    label: "Edit",
+                    icon: <Edit fontSize="small" />,
+                    onClick: () => handleEdit(project),
+                  },
+                  {
+                    label: "Delete",
+                    icon: <Delete fontSize="small" />,
+                    color: "error",
+                    dividerBefore: true,
+                    onClick: () => handleDelete(project),
+                  },
+                ]}
+              >
+                {project.company && (
+                  <Typography
+                    variant="caption"
+                    color="text.secondary"
+                    sx={{ display: "block", mb: 1 }}
+                  >
+                    Company: {project.company}
+                  </Typography>
+                )}
+                <Box
+                  sx={{
+                    color: "text.secondary",
+                    display: "-webkit-box",
+                    WebkitLineClamp: 3,
+                    WebkitBoxOrient: "vertical",
+                    overflow: "hidden",
+                    "& p": { m: 0 },
+                    "& ul": { m: 0, pl: 2 },
+                    "& li": { mb: 0.25 },
+                    "& strong": { fontWeight: "bold" },
+                    "& em": { fontStyle: "italic" },
+                  }}
+                  dangerouslySetInnerHTML={{
+                    __html: project.description,
+                  }}
+                />
+                <Button
+                  size="small"
+                  startIcon={<Visibility />}
+                  onClick={() => handleView(project)}
+                  sx={{ mt: 0.5, px: 0, textTransform: "none" }}
+                >
+                  View Details
+                </Button>
+                {project.technologies && project.technologies.length > 0 && (
                   <Box
                     sx={{
                       display: "flex",
-                      justifyContent: "space-between",
+                      gap: 0.5,
+                      flexWrap: "wrap",
                       alignItems: "center",
+                      mb: 2,
                     }}
                   >
-                    <Typography variant="h6" gutterBottom>
-                      {HelperFunctions.capitalizeString(project.title)}
+                    <Typography variant="body2" color="text.secondary">
+                      Technologies :
                     </Typography>
-                    <Box>
-                      <IconButton
-                        onClick={() => handleEdit(project)}
-                        color="primary"
-                        size="small"
-                      >
-                        <Edit />
-                      </IconButton>
-                      <IconButton
-                        onClick={() => handleDelete(project)}
-                        color="error"
-                        size="small"
-                      >
-                        <Delete />
-                      </IconButton>
-                    </Box>
-                  </Box>
-                  <Box sx={{ mb: 1 }}>
-                    {project.projectType && (
+                    {project.technologies.map((tech, idx) => (
                       <Chip
-                        label={project.projectType}
+                        key={idx}
+                        label={tech}
                         size="small"
-                        color={
-                          project.projectType === "Professional"
-                            ? "primary"
-                            : "default"
-                        }
-                        sx={{ mr: 1 }}
+                        color="primary"
+                        variant="outlined"
                       />
-                    )}
+                    ))}
                   </Box>
-                  {project.company && (
-                    <Typography
-                      variant="caption"
-                      color="text.secondary"
-                      sx={{ display: "block", mb: 1 }}
+                )}
+                <Box sx={{ display: "flex", gap: 1, flexWrap: "wrap" }}>
+                  {project.projectUrl && (
+                    <Link
+                      href={project.projectUrl}
+                      target="_blank"
+                      rel="noopener noreferrer"
                     >
-                      Company: {project.company}
-                    </Typography>
+                      <Chip
+                        icon={<Launch />}
+                        label="Live Demo "
+                        size="small"
+                        clickable
+                        color="primary"
+                      />
+                    </Link>
                   )}
-                  <Box
-                    sx={{
-                      "& p": { mb: 1 },
-                      "& ul": { mb: 1 },
-                      "& li": { mb: 0.5 },
-                      "& strong": { fontWeight: "bold" },
-                      "& em": { fontStyle: "italic" },
-                    }}
-                    dangerouslySetInnerHTML={{
-                      __html: project.description,
-                    }}
-                  />
-                  {project.technologies && project.technologies.length > 0 && (
-                    <Box
-                      sx={{
-                        display: "flex",
-                        gap: 0.5,
-                        flexWrap: "wrap",
-                        mb: 2,
-                      }}
+                  {project.githubRepo && (
+                    <Link
+                      href={project.githubRepo}
+                      target="_blank"
+                      rel="noopener noreferrer"
                     >
-                      <Box sx={{ display: "flex", gap: 0.5, flexWrap: "wrap" }}>
-                        <Typography variant="body2" color="text.secondary">
-                          Technologies :
-                        </Typography>
-                      </Box>
-                      <Box sx={{ display: "flex", gap: 0.5, flexWrap: "wrap" }}>
-                        {project.technologies.map((tech, idx) => (
-                          <Chip
-                            key={idx}
-                            label={tech}
-                            size="small"
-                            color="primary"
-                            variant="outlined"
-                          />
-                        ))}
-                      </Box>
-                    </Box>
+                      <Chip
+                        icon={<Code />}
+                        label="GitHub "
+                        size="small"
+                        clickable
+                      />
+                    </Link>
                   )}
-                  <Box sx={{ display: "flex", gap: 1, flexWrap: "wrap" }}>
-                    {project.projectUrl && (
-                      <Link
-                        href={project.projectUrl}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                      >
-                        <Chip
-                          icon={<Launch />}
-                          label="Live Demo "
-                          size="small"
-                          clickable
-                          color="primary"
-                        />
-                      </Link>
-                    )}
-                    {project.githubRepo && (
-                      <Link
-                        href={project.githubRepo}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                      >
-                        <Chip
-                          icon={<Code />}
-                          label="GitHub "
-                          size="small"
-                          clickable
-                        />
-                      </Link>
-                    )}
-                  </Box>
-                </CardContent>
-              </Card>
+                </Box>
+              </EntityCard>
             </Grid>
           ))}
         </Grid>
@@ -285,6 +291,15 @@ export const ProjectsSection = () => {
         }}
         onSubmit={handleFormSubmit}
         loading={actionLoading}
+      />
+
+      <ProjectDetails
+        open={viewOpen}
+        project={viewProject}
+        onClose={() => {
+          setViewOpen(false);
+          setViewProject(null);
+        }}
       />
 
       <ConfirmDialog

@@ -4,20 +4,8 @@
  */
 
 import { useState, useEffect } from "react";
-import { Link } from "react-router-dom"; // Fixed: Added missing Link import
-import {
-  Typography,
-  Box,
-  Card,
-  CardContent,
-  Grid,
-  Alert,
-  Button,
-  IconButton,
-  Chip,
-  CardActions,
-} from "@mui/material";
-import { Add, Edit, Delete } from "@mui/icons-material";
+import { Typography, Box, Grid, Alert, Button } from "@mui/material";
+import { Add } from "@mui/icons-material";
 import { useMetadata } from "@/hooks";
 import { useAuth } from "@/contexts";
 import { useToast } from "@/contexts/toastContext";
@@ -29,7 +17,7 @@ import type {
 } from "../services/userService";
 import { SkeletonLoader, ConfirmDialog } from "@/common/components";
 import { UserForm } from "../components/UserForm";
-import { EyeIcon } from "lucide-react";
+import { UserCard } from "../components/UserCard";
 
 /**
  * Users page component
@@ -198,83 +186,20 @@ const UsersPage = () => {
       {loading && <SkeletonLoader count={6} showActions={isAdmin} />}
 
       {!loading && (
-      <Grid container spacing={3}>
-        {users.map((user) => (
-          <Grid item xs={12} sm={6} md={4} key={user._id || user.id}>
-            <Card
-              sx={{
-                transition: "transform 0.2s, box-shadow 0.2s",
-                "&:hover": {
-                  transform: "translateY(-4px)",
-                  boxShadow: 4,
-                },
-              }}
-            >
-              <CardContent>
-                <Box
-                  sx={{
-                    display: "flex",
-                    justifyContent: "space-between",
-                    alignItems: "start",
-                    mb: 1,
-                  }}
-                >
-                  <Typography variant="h6" gutterBottom>
-                    {user.username || user.name}
-                  </Typography>
-                  <Chip
-                    label={user.role || "user"}
-                    color={user.role === "admin" ? "primary" : "default"}
-                    size="small"
-                  />
-                </Box>
-                <Typography variant="body2" color="text.secondary">
-                  {user.email}
-                </Typography>
-              </CardContent>
-              {isAdmin && (
-                <CardActions>
-                  <IconButton
-                    size="small"
-                    color="primary"
-                    onClick={() => handleEditUser(user)}
-                    disabled={actionLoading}
-                  >
-                    <Edit />
-                  </IconButton>
-                  <IconButton
-                    size="small"
-                    color="info"
-                    component={Link} // Fixed: Changed LinkComponent to component
-                    to={`/users/${user._id || user.id}`} // Fixed: Assumed standard string interpolation path
-                    disabled={actionLoading}
-                  >
-                    <EyeIcon size={18} />
-                  </IconButton>
-                  <IconButton
-                    size="small"
-                    color="error"
-                    onClick={() => handleDeleteUser(user)}
-                    disabled={
-                      actionLoading ||
-                      user._id === currentUser?.id ||
-                      user.id === currentUser?.id
-                    }
-                    title={
-                      user._id === currentUser?.id ||
-                      user.id === currentUser?.id
-                        ? "Cannot delete your own account"
-                        : "Delete user"
-                    }
-                  >
-                    <Delete />
-                  </IconButton>
-                </CardActions>
-              )}
-            </Card>
-          </Grid>
-        ))}
-      </Grid>
+        <Grid container spacing={3}>
+          {users.map((user) => (
+            <Grid item xs={12} sm={6} md={4} key={user._id || user.id}>
+              <UserCard
+                user={user}
+                isAdmin={isAdmin}
+                currentUserId={currentUser?.id}
+                actionLoading={actionLoading}
+                onEdit={handleEditUser}
+                onDelete={handleDeleteUser}
+              />
+            </Grid>
+          ))}
+        </Grid>
       )}
 
       {!loading && users.length === 0 && (

@@ -4,20 +4,23 @@
  */
 
 import { useState, useEffect } from "react";
+import { Box, Typography, Button, Grid } from "@mui/material";
 import {
-  Box,
-  Typography,
-  Button,
-  Card,
-  CardContent,
-  Grid,
-  IconButton,
-  Chip,
-} from "@mui/material";
-import { Add, Edit, Delete } from "@mui/icons-material";
+  Add,
+  Edit,
+  Delete,
+  School,
+  Business,
+  AccountBalance,
+} from "@mui/icons-material";
 import { useToast } from "@/contexts/toastContext";
 import { profileService, type Education } from "../services/profileService";
-import { ConfirmDialog, SkeletonLoader } from "@/common/components";
+import {
+  ConfirmDialog,
+  SkeletonLoader,
+  EntityCard,
+  type EntityCardChip,
+} from "@/common/components";
 import { EducationForm } from "./EducationForm";
 import { HelperFunctions } from "@/utils/helpers";
 
@@ -150,71 +153,54 @@ export const EducationSection = () => {
             gap: 2,
           }}
         >
-          {education.map((edu) => (
-            <Grid key={edu._id}>
-              <Card>
-                <CardContent>
-                  <Box
-                    sx={{
-                      display: "flex",
-                      justifyContent: "space-between",
-                      alignItems: "center",
-                    }}
-                  >
-                    <Typography variant="h6" gutterBottom>
-                      {HelperFunctions.capitalizeString(edu.standard)}
-                    </Typography>
-                    <Box>
-                      <IconButton
-                        onClick={() => handleEdit(edu)}
-                        color="primary"
-                        size="small"
-                      >
-                        <Edit />
-                      </IconButton>
-                      <IconButton
-                        onClick={() => handleDelete(edu)}
-                        color="error"
-                        size="small"
-                      >
-                        <Delete />
-                      </IconButton>
-                    </Box>
-                  </Box>
-                  <Typography variant="body2" color="text.secondary" paragraph>
-                    {HelperFunctions.capitalizeString(edu.institution)}
-                  </Typography>
-                  {edu.university && (
-                    <Typography
-                      variant="body2"
-                      color="text.secondary"
-                      paragraph
-                    >
-                      {HelperFunctions.capitalizeString(edu.university)}
-                    </Typography>
-                  )}
-                  <Box
-                    sx={{ display: "flex", gap: 1, flexWrap: "wrap", mt: 2 }}
-                  >
-                    <Chip
-                      label={`Passing Year: ${edu.passingYear}`}
-                      size="small"
-                    />
-                    {edu.grade && (
-                      <Chip label={`Grade: ${edu.grade}`} size="small" />
-                    )}
-                    {edu.specialization && (
-                      <Chip
-                        label={edu.specialization}
-                        size="small"
-                        color="primary"
-                      />
-                    )}
-                  </Box>
-                </CardContent>
-              </Card>
-            </Grid>
-          ))}
+          {education.map((edu) => {
+            const chips: EntityCardChip[] = [
+              { label: `Passing Year: ${edu.passingYear}` },
+            ];
+            if (edu.grade) chips.push({ label: `Grade: ${edu.grade}` });
+            if (edu.specialization)
+              chips.push({ label: edu.specialization, color: "primary" });
+
+            return (
+              <Grid key={edu._id}>
+                <EntityCard
+                  title={HelperFunctions.capitalizeString(edu.standard)}
+                  avatar={<School />}
+                  info={[
+                    {
+                      icon: <Business fontSize="small" />,
+                      text: HelperFunctions.capitalizeString(edu.institution),
+                    },
+                    ...(edu.university
+                      ? [
+                          {
+                            icon: <AccountBalance fontSize="small" />,
+                            text: HelperFunctions.capitalizeString(
+                              edu.university,
+                            ),
+                          },
+                        ]
+                      : []),
+                  ]}
+                  chips={chips}
+                  actions={[
+                    {
+                      label: "Edit",
+                      icon: <Edit fontSize="small" />,
+                      onClick: () => handleEdit(edu),
+                    },
+                    {
+                      label: "Delete",
+                      icon: <Delete fontSize="small" />,
+                      color: "error",
+                      dividerBefore: true,
+                      onClick: () => handleDelete(edu),
+                    },
+                  ]}
+                />
+              </Grid>
+            );
+          })}
         </Grid>
       )}
 

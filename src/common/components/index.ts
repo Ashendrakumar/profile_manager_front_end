@@ -8,6 +8,14 @@ export { SkeletonLoader } from "./SkeletonLoader";
 export type { SkeletonLoaderProps } from "./SkeletonLoader";
 export { ErrorBoundary } from "./ErrorBoundary";
 export { ConfirmDialog } from "./ConfirmDialog";
+export { ActionMenu } from "./ActionMenu";
+export type { ActionMenuProps, ActionMenuItem } from "./ActionMenu";
+export { EntityCard } from "./EntityCard";
+export type {
+  EntityCardProps,
+  EntityCardChip,
+  EntityCardInfo,
+} from "./EntityCard";
 export { ResumeUpload } from "./ResumeUpload";
 export type { ResumeUploadProps } from "./ResumeUpload";
 export { ProfileImageUpload } from "./ProfileImageUpload";

@@ -4,20 +4,11 @@
  */
 
 import { useState, useEffect } from "react";
-import {
-  Box,
-  Typography,
-  Button,
-  Card,
-  CardContent,
-  Grid,
-  IconButton,
-  Chip,
-} from "@mui/material";
-import { Add, Edit, Delete } from "@mui/icons-material";
+import { Box, Typography, Button, Grid } from "@mui/material";
+import { Add, Edit, Delete, Code, AccessTime } from "@mui/icons-material";
 import { useToast } from "@/contexts/toastContext";
 import { profileService, type Skill } from "../services/profileService";
-import { ConfirmDialog, SkeletonLoader } from "@/common/components";
+import { ConfirmDialog, SkeletonLoader, EntityCard } from "@/common/components";
 import { SkillForm } from "./SkillForm";
 import { HelperFunctions } from "@/utils/helpers";
 
@@ -176,63 +167,39 @@ export const SkillsSection = () => {
               >
                 {categorySkills.map((skill) => (
                   <Grid item xs={12} sm={6} md={4} key={skill._id}>
-                    <Card>
-                      <CardContent>
-                        <Box
-                          sx={{
-                            display: "flex",
-                            justifyContent: "space-between",
-                            alignItems: "start",
-                            mb: 1,
-                          }}
-                        >
-                          <Typography variant="h6">{skill.name}</Typography>
-                          <Box
-                            sx={{
-                              display: "flex",
-                              justifyContent: "flex-end",
-                              gap: 1,
-                            }}
-                          >
-                            <IconButton
-                              onClick={() => handleEdit(skill)}
-                              color="primary"
-                              size="small"
-                            >
-                              <Edit />
-                            </IconButton>
-                            <IconButton
-                              onClick={() => handleDelete(skill)}
-                              color="error"
-                              size="small"
-                            >
-                              <Delete />
-                            </IconButton>
-                          </Box>
-                        </Box>
-                        <Box
-                          sx={{
-                            display: "flex",
-                            flexDirection: "column",
-                            gap: 1,
-                          }}
-                        >
-                          <Box>
-                            <Chip
-                              label={skill.level}
-                              variant="outlined"
-                              size="medium"
-                              color={getLevelColor(skill.level)}
-                            />
-                          </Box>
-                          {skill.yearsOfExperience !== undefined && (
-                            <Typography variant="body2" color="text.secondary">
-                              {skill.yearsOfExperience} years of experience
-                            </Typography>
-                          )}
-                        </Box>
-                      </CardContent>
-                    </Card>
+                    <EntityCard
+                      title={skill.name}
+                      avatar={<Code />}
+                      headerChip={{
+                        label: skill.level,
+                        color: getLevelColor(skill.level),
+                        variant: "outlined",
+                      }}
+                      info={
+                        skill.yearsOfExperience !== undefined
+                          ? [
+                              {
+                                icon: <AccessTime fontSize="small" />,
+                                text: `${skill.yearsOfExperience} years of experience`,
+                              },
+                            ]
+                          : undefined
+                      }
+                      actions={[
+                        {
+                          label: "Edit",
+                          icon: <Edit fontSize="small" />,
+                          onClick: () => handleEdit(skill),
+                        },
+                        {
+                          label: "Delete",
+                          icon: <Delete fontSize="small" />,
+                          color: "error",
+                          dividerBefore: true,
+                          onClick: () => handleDelete(skill),
+                        },
+                      ]}
+                    />
                   </Grid>
                 ))}
               </Grid>

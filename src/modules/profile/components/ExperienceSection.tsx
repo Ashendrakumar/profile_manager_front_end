@@ -4,20 +4,16 @@
  */
 
 import { useState, useEffect } from "react";
-import {
-  Box,
-  Typography,
-  Button,
-  Card,
-  CardContent,
-  Grid,
-  IconButton,
-  Chip,
-} from "@mui/material";
-import { Add, Edit, Delete } from "@mui/icons-material";
+import { Box, Typography, Button, Grid } from "@mui/material";
+import { Add, Edit, Delete, Work } from "@mui/icons-material";
 import { useToast } from "@/contexts/toastContext";
 import { profileService, type Experience } from "../services/profileService";
-import { ConfirmDialog, SkeletonLoader } from "@/common/components";
+import {
+  ConfirmDialog,
+  SkeletonLoader,
+  EntityCard,
+  type EntityCardChip,
+} from "@/common/components";
 import { ExperienceForm } from "./ExperienceForm";
 import { HelperFunctions } from "@/utils/helpers";
 
@@ -148,101 +144,67 @@ export const ExperienceSection = () => {
             gap: 2,
           }}
         >
-          {experience.map((exp) => (
-            <Grid key={exp._id}>
-              <Card>
-                <CardContent>
-                  <Box
-                    sx={{
-                      display: "flex",
-                      justifyContent: "space-between",
-                      alignItems: "center",
-                    }}
-                  >
-                    <Typography variant="h6" gutterBottom>
-                      {HelperFunctions.capitalizeString(exp.role)}
-                    </Typography>
-                    <Box>
-                      <IconButton
-                        onClick={() => handleEdit(exp)}
-                        color="primary"
-                        size="small"
-                      >
-                        <Edit />
-                      </IconButton>
-                      <IconButton
-                        onClick={() => handleDelete(exp)}
-                        color="error"
-                        size="small"
-                      >
-                        <Delete />
-                      </IconButton>
-                    </Box>
-                  </Box>
-                  <Typography variant="body2" color="text.secondary" paragraph>
-                    {HelperFunctions.capitalizeString(exp.companyName)}
-                  </Typography>
+          {experience.map((exp) => {
+            const chips: EntityCardChip[] = [
+              {
+                label: `${new Date(exp.startDate).toLocaleDateString()} - ${
+                  exp.isCurrentlyWorking
+                    ? "Present"
+                    : exp.endDate
+                      ? new Date(exp.endDate).toLocaleDateString()
+                      : "N/A"
+                }`,
+              },
+            ];
+            if (exp.isCurrentlyWorking)
+              chips.push({ label: "Current", color: "success" });
+            if (exp.projects && exp.projects.length > 0)
+              chips.push({
+                label: `${exp.projects.length} Project${exp.projects.length !== 1 ? "s" : ""}`,
+                color: "info",
+                variant: "outlined",
+              });
+            (exp.technologiesUsed || []).forEach((tech) =>
+              chips.push({ label: tech, variant: "outlined" }),
+            );
+
+            return (
+              <Grid key={exp._id}>
+                <EntityCard
+                  title={HelperFunctions.capitalizeString(exp.role)}
+                  subtitle={HelperFunctions.capitalizeString(exp.companyName)}
+                  avatar={<Work />}
+                  chips={chips}
+                  actions={[
+                    {
+                      label: "Edit",
+                      icon: <Edit fontSize="small" />,
+                      onClick: () => handleEdit(exp),
+                    },
+                    {
+                      label: "Delete",
+                      icon: <Delete fontSize="small" />,
+                      color: "error",
+                      dividerBefore: true,
+                      onClick: () => handleDelete(exp),
+                    },
+                  ]}
+                >
                   {exp.roleDescription && (
                     <Box
                       sx={{
-                        mb: 2,
                         fontSize: "0.875rem",
+                        color: "text.secondary",
                         "& p": { margin: 0 },
                         "& ol, & ul": { marginLeft: "1.5rem" },
                       }}
-                      dangerouslySetInnerHTML={{
-                        __html: exp.roleDescription,
-                      }}
+                      dangerouslySetInnerHTML={{ __html: exp.roleDescription }}
                     />
                   )}
-                  <Box
-                    sx={{ display: "flex", gap: 1, flexWrap: "wrap", mb: 2 }}
-                  >
-                    <Chip
-                      label={`${new Date(exp.startDate).toLocaleDateString()} - ${
-                        exp.isCurrentlyWorking
-                          ? "Present"
-                          : exp.endDate
-                            ? new Date(exp.endDate).toLocaleDateString()
-                            : "N/A"
-                      }`}
-                      size="small"
-                    />
-                    {exp.isCurrentlyWorking && (
-                      <Chip label="Current" size="small" color="success" />
-                    )}
-                    {exp.projects && exp.projects.length > 0 && (
-                      <Chip
-                        label={`${exp.projects.length} Project${exp.projects.length !== 1 ? "s" : ""}`}
-                        size="small"
-                        color="info"
-                        variant="outlined"
-                      />
-                    )}
-                  </Box>
-                  {exp.technologiesUsed && exp.technologiesUsed.length > 0 && (
-                    <Box
-                      sx={{
-                        display: "flex",
-                        gap: 0.5,
-                        flexWrap: "wrap",
-                        mt: 1,
-                      }}
-                    >
-                      {exp.technologiesUsed.map((tech, idx) => (
-                        <Chip
-                          key={idx}
-                          label={tech}
-                          size="small"
-                          variant="outlined"
-                        />
-                      ))}
-                    </Box>
-                  )}
-                </CardContent>
-              </Card>
-            </Grid>
-          ))}
+                </EntityCard>
+              </Grid>
+            );
+          })}
         </Grid>
       )}
 
