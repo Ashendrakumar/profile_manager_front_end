@@ -3,7 +3,7 @@
  * Main profile page with tabs for different sections
  */
 
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { Box, Typography, Tabs, Tab, Paper } from "@mui/material";
 import { useMetadata } from "@/hooks";
 import { PersonalDetailsSection } from "../components/PersonalDetailsSection";
@@ -12,7 +12,6 @@ import { EducationSection } from "../components/EducationSection";
 import { ExperienceSection } from "../components/ExperienceSection";
 import { ProjectsSection } from "../components/ProjectsSection";
 import { SkillsSection } from "../components/SkillsSection";
-import { useLocation } from "react-router-dom";
 
 interface TabPanelProps {
   children?: React.ReactNode;
@@ -33,18 +32,11 @@ const TabPanel = ({ children, value, index }: TabPanelProps) => {
  */
 const ProfilePage = () => {
   const [activeTab, setActiveTab] = useState(0);
-  const route = useLocation();
-  const [userId, setUserId] = useState("");
   useMetadata({
     title: "Profile - Profile Manager",
     description: "Manage your profile information",
     keywords: "profile, user, settings",
   });
-
-  useEffect(() => {
-    const id = route.pathname.split("/")[2];
-    setUserId(id);
-  }, [route]);
 
   const handleTabChange = (_event: React.SyntheticEvent, newValue: number) => {
     setActiveTab(newValue);
