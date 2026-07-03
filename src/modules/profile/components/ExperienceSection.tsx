@@ -17,7 +17,7 @@ import {
 import { Add, Edit, Delete } from "@mui/icons-material";
 import { useToast } from "@/contexts/toastContext";
 import { profileService, type Experience } from "../services/profileService";
-import { ConfirmDialog } from "@/common/components";
+import { ConfirmDialog, SkeletonLoader } from "@/common/components";
 import { ExperienceForm } from "./ExperienceForm";
 import { HelperFunctions } from "@/utils/helpers";
 
@@ -31,6 +31,7 @@ export const ExperienceSection = () => {
   const [experienceToDelete, setExperienceToDelete] =
     useState<Experience | null>(null);
   const [actionLoading, setActionLoading] = useState(false);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     fetchExperience();
@@ -38,7 +39,7 @@ export const ExperienceSection = () => {
 
   const fetchExperience = async () => {
     try {
-      // setLoading(true);
+      setLoading(true);
       const response = await profileService.getExperience();
       setExperience(response.experience);
     } catch (err) {
@@ -46,7 +47,7 @@ export const ExperienceSection = () => {
         err instanceof Error ? err.message : "Failed to fetch experience",
       );
     } finally {
-      // setLoading(false);
+      setLoading(false);
     }
   };
 
@@ -131,7 +132,9 @@ export const ExperienceSection = () => {
         </Button>
       </Box>
 
-      {experience.length === 0 ? (
+      {loading ? (
+        <SkeletonLoader count={4} minItemWidth={320} gap={2} lines={3} showActions={false} />
+      ) : experience.length === 0 ? (
         <Box sx={{ textAlign: "center", py: 4 }}>
           <Typography variant="body1" color="text.secondary">
             No experience entries yet. Add your first one!

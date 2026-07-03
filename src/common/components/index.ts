@@ -4,6 +4,8 @@
  */
 
 export { LoadingSpinner } from "./LoadingSpinner";
+export { SkeletonLoader } from "./SkeletonLoader";
+export type { SkeletonLoaderProps } from "./SkeletonLoader";
 export { ErrorBoundary } from "./ErrorBoundary";
 export { ConfirmDialog } from "./ConfirmDialog";
 export { ResumeUpload } from "./ResumeUpload";

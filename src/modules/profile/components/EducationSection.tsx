@@ -17,7 +17,7 @@ import {
 import { Add, Edit, Delete } from "@mui/icons-material";
 import { useToast } from "@/contexts/toastContext";
 import { profileService, type Education } from "../services/profileService";
-import { ConfirmDialog } from "@/common/components";
+import { ConfirmDialog, SkeletonLoader } from "@/common/components";
 import { EducationForm } from "./EducationForm";
 import { HelperFunctions } from "@/utils/helpers";
 
@@ -33,6 +33,7 @@ export const EducationSection = () => {
     null,
   );
   const [actionLoading, setActionLoading] = useState(false);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     fetchEducation();
@@ -40,7 +41,7 @@ export const EducationSection = () => {
 
   const fetchEducation = async () => {
     try {
-      // setLoading(true);
+      setLoading(true);
       const response = await profileService.getEducation();
       setEducation(response.education);
     } catch (err) {
@@ -48,7 +49,7 @@ export const EducationSection = () => {
         err instanceof Error ? err.message : "Failed to fetch education",
       );
     } finally {
-      // setLoading(false);
+      setLoading(false);
     }
   };
 
@@ -133,7 +134,9 @@ export const EducationSection = () => {
         </Button>
       </Box>
 
-      {education.length === 0 ? (
+      {loading ? (
+        <SkeletonLoader count={3} minItemWidth={320} gap={2} lines={2} />
+      ) : education.length === 0 ? (
         <Box sx={{ textAlign: "center", py: 4 }}>
           <Typography variant="body1" color="text.secondary">
             No education entries yet. Add your first one!

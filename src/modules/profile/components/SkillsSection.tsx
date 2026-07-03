@@ -17,7 +17,7 @@ import {
 import { Add, Edit, Delete } from "@mui/icons-material";
 import { useToast } from "@/contexts/toastContext";
 import { profileService, type Skill } from "../services/profileService";
-import { ConfirmDialog } from "@/common/components";
+import { ConfirmDialog, SkeletonLoader } from "@/common/components";
 import { SkillForm } from "./SkillForm";
 import { HelperFunctions } from "@/utils/helpers";
 
@@ -29,6 +29,7 @@ export const SkillsSection = () => {
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
   const [skillToDelete, setSkillToDelete] = useState<Skill | null>(null);
   const [actionLoading, setActionLoading] = useState(false);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     fetchSkills();
@@ -36,12 +37,13 @@ export const SkillsSection = () => {
 
   const fetchSkills = async () => {
     try {
+      setLoading(true);
       const response = await profileService.getSkills();
       setSkills(response.skills);
     } catch (err) {
       showError(err instanceof Error ? err.message : "Failed to fetch skills");
     } finally {
-      // setLoading(false);
+      setLoading(false);
     }
   };
 
@@ -150,7 +152,9 @@ export const SkillsSection = () => {
         </Button>
       </Box>
 
-      {skills.length === 0 ? (
+      {loading ? (
+        <SkeletonLoader count={6} minItemWidth={320} gap={2} showActions={false} />
+      ) : skills.length === 0 ? (
         <Box sx={{ textAlign: "center", py: 4 }}>
           <Typography variant="body1" color="text.secondary">
             No skills yet. Add your first one!

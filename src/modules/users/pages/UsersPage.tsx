@@ -27,7 +27,7 @@ import type {
   CreateUserRequest,
   UpdateUserRequest,
 } from "../services/userService";
-import { LoadingSpinner, ConfirmDialog } from "@/common/components";
+import { SkeletonLoader, ConfirmDialog } from "@/common/components";
 import { UserForm } from "../components/UserForm";
 import { EyeIcon } from "lucide-react";
 
@@ -139,10 +139,6 @@ const UsersPage = () => {
     }
   };
 
-  if (loading) {
-    return <LoadingSpinner fullScreen />;
-  }
-
   if (error && users.length === 0) {
     return (
       <Box>
@@ -199,6 +195,9 @@ const UsersPage = () => {
         </Alert>
       )}
 
+      {loading && <SkeletonLoader count={6} showActions={isAdmin} />}
+
+      {!loading && (
       <Grid container spacing={3}>
         {users.map((user) => (
           <Grid item xs={12} sm={6} md={4} key={user._id || user.id}>
@@ -276,8 +275,9 @@ const UsersPage = () => {
           </Grid>
         ))}
       </Grid>
+      )}
 
-      {users.length === 0 && (
+      {!loading && users.length === 0 && (
         <Box sx={{ textAlign: "center", mt: 4 }}>
           <Typography variant="body1" color="text.secondary">
             No users found

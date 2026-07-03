@@ -18,7 +18,7 @@ import {
 import { Add, Edit, Delete, Launch, Code } from "@mui/icons-material";
 import { useToast } from "@/contexts/toastContext";
 import { profileService, type Project } from "../services/profileService";
-import { ConfirmDialog } from "@/common/components";
+import { ConfirmDialog, SkeletonLoader } from "@/common/components";
 import { ProjectForm } from "./ProjectForm";
 import { HelperFunctions } from "@/utils/helpers";
 
@@ -30,6 +30,7 @@ export const ProjectsSection = () => {
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
   const [projectToDelete, setProjectToDelete] = useState<Project | null>(null);
   const [actionLoading, setActionLoading] = useState(false);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     fetchProjects();
@@ -37,7 +38,7 @@ export const ProjectsSection = () => {
 
   const fetchProjects = async () => {
     try {
-      // setLoading(true)
+      setLoading(true);
       const response = await profileService.getProjects();
       setProjects(response.projects);
     } catch (err) {
@@ -45,7 +46,7 @@ export const ProjectsSection = () => {
         err instanceof Error ? err.message : "Failed to fetch projects",
       );
     } finally {
-      // setLoading(false);
+      setLoading(false);
     }
   };
 
@@ -128,7 +129,9 @@ export const ProjectsSection = () => {
         </Button>
       </Box>
 
-      {projects.length === 0 ? (
+      {loading ? (
+        <SkeletonLoader count={4} minItemWidth={320} gap={2} lines={3} showActions={false} />
+      ) : projects.length === 0 ? (
         <Box sx={{ textAlign: "center", py: 4 }}>
           <Typography variant="body1" color="text.secondary">
             No projects yet. Add your first one!
