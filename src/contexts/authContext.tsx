@@ -54,13 +54,20 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
    * Initialize auth state from localStorage
    */
   useEffect(() => {
-    const initializeAuth = () => {
+    const initializeAuth = async () => {
       try {
         const storedUser = authService.getUser();
         const isAuth = authService.isAuthenticated();
-
         if (isAuth && storedUser) {
-          setUser(storedUser);
+          setUser(storedUser); // optimistic: show cached data immediately
+
+          try {
+            const freshUser = await authService.getCurrentUser();
+            setUser(freshUser.user);
+          } catch (refreshErr) {
+            console.error("Failed to refresh user data:", refreshErr);
+            authService.clearAuth();
+          }
         } else {
           authService.clearAuth();
         }

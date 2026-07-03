@@ -110,10 +110,10 @@ export const authService = {
    * Validates the OTP, marks the user as verified, and returns the JWT.
    */
   async verifyOtp(email: string, otp: string): Promise<AuthResponse> {
-    const response = await apiService.post<AuthResponse>(
-      "/users/verify-otp",
-      { email, otp },
-    );
+    const response = await apiService.post<AuthResponse>("/users/verify-otp", {
+      email,
+      otp,
+    });
 
     // Store tokens after successful verification
     if (response.accessToken) {
@@ -190,5 +190,12 @@ export const authService = {
     localStorage.removeItem(STORAGE_KEYS.AUTH_TOKEN);
     localStorage.removeItem(STORAGE_KEYS.REFRESH_TOKEN);
     localStorage.removeItem(STORAGE_KEYS.USER_DATA);
+  },
+
+  /**
+   * Get current user profile
+   */
+  getCurrentUser: async (): Promise<{ user: User }> => {
+    return apiService.get<{ user: User }>("/users/me");
   },
 };
