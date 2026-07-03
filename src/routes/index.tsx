@@ -42,7 +42,6 @@ const UsersPage = lazy(() => import("@/modules/users/pages/UsersPage"));
 const UserDetailPage = lazy(
   () => import("@/modules/users/pages/UserDetailPage"),
 );
-const ProfilePage = lazy(() => import("@/modules/profile/pages/ProfilePage"));
 
 const lazyNamed = <T extends Record<string, unknown>>(
   loader: () => Promise<T>,
@@ -148,16 +147,6 @@ export const routes: AppRoute[] = [
       title: "About Us - Profile Manager",
       description: "Learn more about Profile Manager and our mission",
       keywords: "about, information, company",
-    },
-  },
-  {
-    path: ROUTES.USER,
-    element: guard(<ProfilePage />, { isProtected: true }),
-    isProtected: true,
-    metadata: {
-      title: "Profile - Profile Manager",
-      description: "Manage your profile information",
-      keywords: "profile, user, settings",
     },
   },
   {
