@@ -3,8 +3,8 @@
  * Main profile page with tabs for different sections
  */
 
-import { useState } from "react";
-import { Box, Container, Typography, Tabs, Tab, Paper } from "@mui/material";
+import { useEffect, useState } from "react";
+import { Box, Typography, Tabs, Tab, Paper } from "@mui/material";
 import { useMetadata } from "@/hooks";
 import { PersonalDetailsSection } from "../components/PersonalDetailsSection";
 import { ContactDetailsSection } from "../components/ContactDetailsSection";
@@ -12,7 +12,7 @@ import { EducationSection } from "../components/EducationSection";
 import { ExperienceSection } from "../components/ExperienceSection";
 import { ProjectsSection } from "../components/ProjectsSection";
 import { SkillsSection } from "../components/SkillsSection";
-import { ProfileCompletionDashboard } from "../components/ProfileCompletionDashboard";
+import { useLocation } from "react-router-dom";
 
 interface TabPanelProps {
   children?: React.ReactNode;
@@ -33,28 +33,34 @@ const TabPanel = ({ children, value, index }: TabPanelProps) => {
  */
 const ProfilePage = () => {
   const [activeTab, setActiveTab] = useState(0);
-
+  const route = useLocation();
+  const [userId, setUserId] = useState("");
   useMetadata({
     title: "Profile - Profile Manager",
     description: "Manage your profile information",
     keywords: "profile, user, settings",
   });
 
+  useEffect(() => {
+    const id = route.pathname.split("/")[2];
+    setUserId(id);
+  }, [route]);
+
   const handleTabChange = (_event: React.SyntheticEvent, newValue: number) => {
     setActiveTab(newValue);
   };
 
   return (
-    <Container maxWidth="lg">
-      <Typography variant="h3" component="h1" gutterBottom>
-        My Profile
+    <>
+      <Typography variant="h4" component="h1" gutterBottom>
+        Profile Details
       </Typography>
       <Typography variant="body1" color="text.secondary" paragraph>
         Manage your profile information and professional details
       </Typography>
 
       {/* Profile Completion Dashboard */}
-      <Box sx={{ mt: 3 }}>
+      {/* <Box sx={{ mt: 3 }}>
         <ProfileCompletionDashboard
           onSectionClick={(section) => {
             // Map section names to tab indices
@@ -72,7 +78,7 @@ const ProfilePage = () => {
             }
           }}
         />
-      </Box>
+      </Box> */}
 
       <Paper sx={{ mt: 3 }}>
         <Box
@@ -103,7 +109,7 @@ const ProfilePage = () => {
 
         <Box sx={{ p: 3 }}>
           <TabPanel value={activeTab} index={0}>
-            <PersonalDetailsSection />
+            <PersonalDetailsSection userId={userId} />
           </TabPanel>
           <TabPanel value={activeTab} index={1}>
             <ContactDetailsSection />
@@ -122,7 +128,7 @@ const ProfilePage = () => {
           </TabPanel>
         </Box>
       </Paper>
-    </Container>
+    </>
   );
 };
 

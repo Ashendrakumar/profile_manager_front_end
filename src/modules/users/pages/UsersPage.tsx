@@ -4,6 +4,7 @@
  */
 
 import { useState, useEffect } from "react";
+import { Link } from "react-router-dom"; // Fixed: Added missing Link import
 import {
   Typography,
   Box,
@@ -28,6 +29,7 @@ import type {
 } from "../services/userService";
 import { LoadingSpinner, ConfirmDialog } from "@/common/components";
 import { UserForm } from "../components/UserForm";
+import { EyeIcon } from "lucide-react";
 
 /**
  * Users page component
@@ -243,6 +245,15 @@ const UsersPage = () => {
                   </IconButton>
                   <IconButton
                     size="small"
+                    color="info"
+                    component={Link} // Fixed: Changed LinkComponent to component
+                    to={`/users/${user._id || user.id}`} // Fixed: Assumed standard string interpolation path
+                    disabled={actionLoading}
+                  >
+                    <EyeIcon size={18} />
+                  </IconButton>
+                  <IconButton
+                    size="small"
                     color="error"
                     onClick={() => handleDeleteUser(user)}
                     disabled={
@@ -285,19 +296,18 @@ const UsersPage = () => {
         loading={actionLoading}
       />
 
+      {/* Fixed: Added missing ConfirmDialog implementation */}
       <ConfirmDialog
         open={deleteDialogOpen}
         title="Delete User"
-        message={`Are you sure you want to delete user "${userToDelete?.username || userToDelete?.name}"? This action cannot be undone.`}
-        confirmText="Delete"
-        cancelText="Cancel"
+        message={`Are you sure you want to delete ${userToDelete?.username || userToDelete?.name || "this user"}?`}
+        loading={actionLoading}
         confirmColor="error"
-        onConfirm={handleConfirmDelete}
         onCancel={() => {
           setDeleteDialogOpen(false);
           setUserToDelete(null);
         }}
-        loading={actionLoading}
+        onConfirm={handleConfirmDelete}
       />
     </>
   );

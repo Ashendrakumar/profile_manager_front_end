@@ -39,9 +39,8 @@ import {
 import { personalDetailsSchema } from "../utils/validation";
 import { ResumeUpload, ProfileImageUpload } from "@/common/components";
 
-export const PersonalDetailsSection = () => {
+export const PersonalDetailsSection = ({ userId }: { userId?: string }) => {
   const { showSuccess, showError } = useToast();
-  // const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [personalDetails, setPersonalDetails] =
     useState<PersonalDetails | null>(null);
@@ -65,8 +64,8 @@ export const PersonalDetailsSection = () => {
   });
 
   useEffect(() => {
-    fetchPersonalDetails();
-  }, []);
+    fetchPersonalDetails(userId);
+  }, [userId]);
 
   useEffect(() => {
     if (personalDetails) {
@@ -80,10 +79,10 @@ export const PersonalDetailsSection = () => {
     }
   }, [personalDetails, reset]);
 
-  const fetchPersonalDetails = async () => {
+  const fetchPersonalDetails = async (id?: string) => {
     try {
       // setLoading(true);
-      const response = await profileService.getPersonalDetails();
+      const response = await profileService.getPersonalDetails(id);
       const personalDetailsData = response.personalDetails;
       setPersonalDetails(personalDetailsData);
       setResumes(personalDetailsData.resumes || []);

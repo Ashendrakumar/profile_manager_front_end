@@ -220,12 +220,15 @@ export interface UpdateSkillRequest {
  */
 export const profileService = {
   // Personal Details
-  getPersonalDetails: async (): Promise<{
+  getPersonalDetails: async (
+    id?: string,
+  ): Promise<{
     personalDetails: PersonalDetails;
   }> => {
-    return apiService.get<{ personalDetails: PersonalDetails }>(
-      "/profile/personal-details",
-    );
+    const apiUrl = id
+      ? `/profile/personal-details?id=${id}`
+      : `/profile/personal-details`;
+    return apiService.get<{ personalDetails: PersonalDetails }>(apiUrl);
   },
 
   updatePersonalDetails: async (

@@ -151,7 +151,7 @@ export const routes: AppRoute[] = [
     },
   },
   {
-    path: ROUTES.PROFILE,
+    path: ROUTES.USER,
     element: guard(<ProfilePage />, { isProtected: true }),
     isProtected: true,
     metadata: {
