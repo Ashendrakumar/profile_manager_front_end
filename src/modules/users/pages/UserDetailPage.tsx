@@ -19,7 +19,7 @@ import { useParams, useNavigate } from "react-router-dom";
 import { useMetadata } from "@/hooks";
 import { userService } from "../services/userService";
 // import type { User } from "../services/userService";
-import { LoadingSpinner } from "@/common/components";
+import { SkeletonLoader } from "@/common/components";
 
 /**
  * User detail page component
@@ -65,7 +65,11 @@ const UserDetailPage = () => {
   }, [id]);
 
   if (loading) {
-    return <LoadingSpinner fullScreen />;
+    return (
+      <Container maxWidth="md">
+        <SkeletonLoader variant="detail" lines={8} />
+      </Container>
+    );
   }
 
   if (error || !user) {

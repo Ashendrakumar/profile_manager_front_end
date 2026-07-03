@@ -8,9 +8,7 @@ import {
   Typography,
   Card,
   CardContent,
-  Container,
   Box,
-  CircularProgress,
   Alert,
   Button,
   Grid,
@@ -20,6 +18,7 @@ import { useNavigate } from "react-router-dom";
 import { useMetadata } from "@/hooks";
 import { useAuth } from "@/contexts";
 import { aboutService, type AboutData } from "../services/aboutService";
+import { SkeletonLoader } from "@/common/components";
 
 /**
  * About page component
@@ -62,18 +61,12 @@ const AboutPage = () => {
 
   if (loading) {
     return (
-      <Container maxWidth="md">
-        <Box
-          sx={{
-            display: "flex",
-            justifyContent: "center",
-            alignItems: "center",
-            minHeight: "400px",
-          }}
-        >
-          <CircularProgress />
+      <>
+        <SkeletonLoader variant="detail" lines={5} />
+        <Box sx={{ mt: 4 }}>
+          <SkeletonLoader count={3} minItemWidth={280} showActions={false} />
         </Box>
-      </Container>
+      </>
     );
   }
 

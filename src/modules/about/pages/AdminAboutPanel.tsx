@@ -9,13 +9,11 @@ import {
   Button,
   Card,
   CardContent,
-  CircularProgress,
   Alert,
   Grid,
   IconButton,
   Typography,
   Stack,
-  Container,
   Dialog,
   DialogTitle,
   DialogContent,
@@ -26,7 +24,7 @@ import { useNavigate } from "react-router-dom";
 import { useToast } from "@/contexts/toastContext";
 import { aboutService, type Feature } from "../services/aboutService";
 import TextEditor from "@/common/components/TextEditor";
-import { Input } from "@/common/components";
+import { Input, SkeletonLoader } from "@/common/components";
 import { ROUTES } from "@/constants";
 
 interface FormData {
@@ -167,18 +165,12 @@ const AdminAboutPanel = () => {
 
   if (loading) {
     return (
-      <Container maxWidth="lg">
-        <Box
-          sx={{
-            display: "flex",
-            justifyContent: "center",
-            alignItems: "center",
-            minHeight: "400px",
-          }}
-        >
-          <CircularProgress />
+      <>
+        <SkeletonLoader variant="detail" lines={6} />
+        <Box sx={{ mt: 3 }}>
+          <SkeletonLoader count={3} minItemWidth={280} showActions={false} />
         </Box>
-      </Container>
+      </>
     );
   }
 

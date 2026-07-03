@@ -4,9 +4,10 @@
  */
 
 import { Navigate } from "react-router-dom";
-import { Box, CircularProgress, Typography } from "@mui/material";
+import { Box, Typography } from "@mui/material";
 import { useAuth } from "@/contexts";
 import { ROUTES } from "@/constants";
+import { LoadingSpinner } from "@/common/components";
 
 interface AdminGuardProps {
   children: React.ReactElement;
@@ -22,16 +23,7 @@ export const AdminGuard = ({ children }: AdminGuardProps) => {
 
   // Show loading spinner while checking auth state
   if (isLoading) {
-    return (
-      <Box
-        display="flex"
-        justifyContent="center"
-        alignItems="center"
-        minHeight="60vh"
-      >
-        <CircularProgress />
-      </Box>
-    );
+    return <LoadingSpinner fullScreen />;
   }
 
   // Check if user is admin
