@@ -43,7 +43,7 @@ import {
   TextArea,
 } from "@/common/components";
 
-export const PersonalDetailsSection = ({ userId }: { userId?: string }) => {
+export const PersonalDetailsSection = () => {
   const { showSuccess, showError } = useToast();
   const [saving, setSaving] = useState(false);
   const [personalDetails, setPersonalDetails] =
@@ -68,8 +68,8 @@ export const PersonalDetailsSection = ({ userId }: { userId?: string }) => {
   });
 
   useEffect(() => {
-    fetchPersonalDetails(userId);
-  }, [userId]);
+    fetchPersonalDetails();
+  }, []);
 
   useEffect(() => {
     if (personalDetails) {
@@ -83,10 +83,10 @@ export const PersonalDetailsSection = ({ userId }: { userId?: string }) => {
     }
   }, [personalDetails, reset]);
 
-  const fetchPersonalDetails = async (id?: string) => {
+  const fetchPersonalDetails = async () => {
     try {
       // setLoading(true);
-      const response = await profileService.getPersonalDetails(id);
+      const response = await profileService.getPersonalDetails();
       const personalDetailsData = response.personalDetails;
       setPersonalDetails(personalDetailsData);
       setResumes(personalDetailsData.resumes || []);

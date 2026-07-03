@@ -109,7 +109,7 @@ const ProfilePage = () => {
 
         <Box sx={{ p: 3 }}>
           <TabPanel value={activeTab} index={0}>
-            <PersonalDetailsSection userId={userId} />
+            <PersonalDetailsSection />
           </TabPanel>
           <TabPanel value={activeTab} index={1}>
             <ContactDetailsSection />
