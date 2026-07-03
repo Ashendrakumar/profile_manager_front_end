@@ -4,13 +4,7 @@
  */
 
 import { useEffect, useState } from "react";
-import {
-  TextField,
-  MenuItem,
-  Box,
-  Typography,
-  IconButton,
-} from "@mui/material";
+import { Box, Typography, IconButton } from "@mui/material";
 import { useForm, useFieldArray, Controller } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { projectSchema } from "../utils/validation";
@@ -18,6 +12,7 @@ import { profileService, type Project } from "../services/profileService";
 import { Add, Remove } from "@mui/icons-material";
 import TextEditor from "@/common/components/TextEditor";
 import { SideDrawer } from "@/common/components/SideDrawer";
+import { Input, Select } from "@/common/components";
 
 type ProjectFormData = {
   title: string;
@@ -134,12 +129,11 @@ export const ProjectForm = ({
       footerActionName={project ? "Update" : "Add"}
     >
       <Box sx={{ display: "flex", flexDirection: "column", gap: 3, pt: 1 }}>
-        <TextField
+        <Input
           label="Project Title"
-          fullWidth
-          {...register("title")}
-          error={!!errors.title}
-          helperText={errors.title?.message}
+          name="title"
+          register={register}
+          errors={errors}
           disabled={loading}
         />
         <Controller
@@ -170,18 +164,16 @@ export const ProjectForm = ({
           control={control}
           name="projectType"
           render={({ field }) => (
-            <TextField
-              select
+            <Select
               label="Project Type"
-              fullWidth
               {...field}
               disabled={loading}
-              error={!!errors.projectType}
-              helperText={errors.projectType?.message}
-            >
-              <MenuItem value="Personal">Personal</MenuItem>
-              <MenuItem value="Professional">Professional</MenuItem>
-            </TextField>
+              errors={errors}
+              options={[
+                { label: "Personal", value: "Personal" },
+                { label: "Professional", value: "Professional" },
+              ]}
+            />
           )}
         />
         {projectType === "Professional" && (
@@ -189,25 +181,17 @@ export const ProjectForm = ({
             control={control}
             name="company"
             render={({ field }) => (
-              <TextField
-                select
+              <Select
                 label="Company"
-                fullWidth
                 {...field}
                 disabled={loading || companiesLoading}
-                error={!!errors.company}
-                helperText={errors.company?.message}
-              >
-                {companies.length === 0 ? (
-                  <MenuItem disabled>No companies available</MenuItem>
-                ) : (
-                  companies.map((company) => (
-                    <MenuItem key={company.id} value={company.companyName}>
-                      {company.companyName}
-                    </MenuItem>
-                  ))
-                )}
-              </TextField>
+                errors={errors}
+                emptyText="No companies available"
+                options={companies.map((company) => ({
+                  label: company.companyName,
+                  value: company.companyName,
+                }))}
+              />
             )}
           />
         )}
@@ -241,10 +225,12 @@ export const ProjectForm = ({
                 justifyContent: "end",
               }}
             >
-              <TextField
-                fullWidth
+              <Input
+                label=""
+                name={`technologies.${index}`}
                 placeholder="Enter technology"
-                {...register(`technologies.${index}`)}
+                register={register}
+                errors={errors}
                 disabled={loading}
               />
               <Box>
@@ -260,22 +246,20 @@ export const ProjectForm = ({
             </Box>
           ))}
         </Box>
-        <TextField
+        <Input
           label="Project URL"
-          fullWidth
+          name="projectUrl"
           placeholder="https://example.com"
-          {...register("projectUrl")}
-          error={!!errors.projectUrl}
-          helperText={errors.projectUrl?.message}
+          register={register}
+          errors={errors}
           disabled={loading}
         />
-        <TextField
+        <Input
           label="GitHub Repository"
-          fullWidth
+          name="githubRepo"
           placeholder="https://github.com/username/repo"
-          {...register("githubRepo")}
-          error={!!errors.githubRepo}
-          helperText={errors.githubRepo?.message}
+          register={register}
+          errors={errors}
           disabled={loading}
         />
       </Box>

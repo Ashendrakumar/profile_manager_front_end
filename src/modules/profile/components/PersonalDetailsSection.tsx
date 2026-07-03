@@ -8,7 +8,6 @@ import {
   Box,
   Typography,
   Button,
-  TextField,
   Grid,
   List,
   ListItem,
@@ -37,7 +36,12 @@ import {
   type ResumeItem,
 } from "../services/profileService";
 import { personalDetailsSchema } from "../utils/validation";
-import { ResumeUpload, ProfileImageUpload } from "@/common/components";
+import {
+  ResumeUpload,
+  ProfileImageUpload,
+  Input,
+  TextArea,
+} from "@/common/components";
 
 export const PersonalDetailsSection = ({ userId }: { userId?: string }) => {
   const { showSuccess, showError } = useToast();
@@ -188,70 +192,49 @@ export const PersonalDetailsSection = ({ userId }: { userId?: string }) => {
               sx={{ height: "100%", width: "100%" }}
             >
               <Grid item xs={12} md={6}>
-                <TextField
-                  fullWidth
+                <Input
                   label="First Name"
+                  name="firstName"
                   placeholder="Enter your first name"
-                  {...register("firstName")}
-                  error={!!errors.firstName}
-                  helperText={errors.firstName?.message}
-                  InputLabelProps={{
-                    shrink: true,
-                  }}
+                  register={register}
+                  errors={errors}
                 />
               </Grid>
               <Grid item xs={12} md={6}>
-                <TextField
-                  fullWidth
+                <Input
                   label="Last Name"
+                  name="lastName"
                   placeholder="Enter your last name"
-                  {...register("lastName")}
-                  error={!!errors.lastName}
-                  helperText={errors.lastName?.message}
-                  InputLabelProps={{
-                    shrink: true,
-                  }}
+                  register={register}
+                  errors={errors}
                 />
               </Grid>
               <Grid item xs={12} md={6}>
-                <TextField
-                  fullWidth
+                <Input
                   label="Profile Name"
+                  name="profileName"
                   placeholder="Enter your profile name (for display)"
-                  {...register("profileName")}
-                  error={!!errors.profileName}
-                  helperText={errors.profileName?.message}
-                  InputLabelProps={{
-                    shrink: true,
-                  }}
+                  register={register}
+                  errors={errors}
                 />
               </Grid>
               <Grid item xs={12} md={6}>
-                <TextField
-                  fullWidth
+                <Input
                   label="Job Role"
+                  name="jobRole"
                   placeholder="Enter your job role (for display)"
-                  {...register("jobRole")}
-                  error={!!errors.jobRole}
-                  helperText={errors.jobRole?.message}
-                  InputLabelProps={{
-                    shrink: true,
-                  }}
+                  register={register}
+                  errors={errors}
                 />
               </Grid>
               <Grid item xs={12} md={12}>
-                <TextField
-                  fullWidth
+                <TextArea
                   label="Profile Description"
+                  name="profileDescription"
                   placeholder="Enter a brief description about yourself (max 160 characters)"
-                  multiline
                   rows={4}
-                  {...register("profileDescription")}
-                  error={!!errors.profileDescription}
-                  helperText={errors.profileDescription?.message}
-                  InputLabelProps={{
-                    shrink: true,
-                  }}
+                  register={register}
+                  errors={errors}
                 />
               </Grid>
             </Grid>

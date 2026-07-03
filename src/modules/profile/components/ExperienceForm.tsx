@@ -5,7 +5,6 @@
 
 import { useEffect } from "react";
 import {
-  TextField,
   Box,
   Checkbox,
   FormControlLabel,
@@ -21,6 +20,7 @@ import { DatePicker } from "@mui/x-date-pickers";
 import dayjs from "dayjs";
 import TextEditor from "@/common/components/TextEditor";
 import { SideDrawer } from "@/common/components/SideDrawer";
+import { Input } from "@/common/components";
 
 type ExperienceFormData = {
   companyName: string;
@@ -128,20 +128,18 @@ export const ExperienceForm = ({
       footerActionName={experience ? "Save" : "Add"}
     >
       <Box sx={{ display: "flex", flexDirection: "column", gap: 3, pt: 1 }}>
-        <TextField
+        <Input
           label="Company Name"
-          fullWidth
-          {...register("companyName")}
-          error={!!errors.companyName}
-          helperText={errors.companyName?.message}
+          name="companyName"
+          register={register}
+          errors={errors}
           disabled={loading}
         />
-        <TextField
+        <Input
           label="Role/Position"
-          fullWidth
-          {...register("role")}
-          error={!!errors.role}
-          helperText={errors.role?.message}
+          name="role"
+          register={register}
+          errors={errors}
           disabled={loading}
         />
         <Controller
@@ -254,10 +252,12 @@ export const ExperienceForm = ({
                 justifyContent: "end",
               }}
             >
-              <TextField
-                fullWidth
+              <Input
+                label=""
+                name={`responsibilities.${index}`}
                 placeholder="Enter responsibility"
-                {...register(`responsibilities.${index}`)}
+                register={register}
+                errors={errors}
                 disabled={loading}
               />
               <Box>
@@ -303,10 +303,12 @@ export const ExperienceForm = ({
                 justifyContent: "end",
               }}
             >
-              <TextField
-                fullWidth
+              <Input
+                label=""
+                name={`technologiesUsed.${index}`}
                 placeholder="Enter technology"
-                {...register(`technologiesUsed.${index}`)}
+                register={register}
+                errors={errors}
                 disabled={loading}
               />
               <Box>

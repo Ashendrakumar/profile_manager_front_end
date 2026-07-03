@@ -4,12 +4,13 @@
  */
 
 import { useEffect } from "react";
-import { TextField, Box } from "@mui/material";
+import { Box } from "@mui/material";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { educationSchema } from "../utils/validation";
 import type { Education } from "../services/profileService";
 import { SideDrawer } from "@/common/components/SideDrawer";
+import { Input } from "@/common/components";
 
 type EducationFormData = {
   standard: string;
@@ -87,37 +88,34 @@ export const EducationForm = ({
     >
       <form onSubmit={handleSubmit(onSubmit)}>
         <Box sx={{ display: "flex", flexDirection: "column", gap: 3, pt: 1 }}>
-          <TextField
+          <Input
             label="Standard/Degree"
-            fullWidth
-            {...register("standard")}
-            error={!!errors.standard}
-            helperText={errors.standard?.message}
+            name="standard"
+            register={register}
+            errors={errors}
             disabled={loading}
           />
-          <TextField
+          <Input
             label="Institution"
-            fullWidth
-            {...register("institution")}
-            error={!!errors.institution}
-            helperText={errors.institution?.message}
+            name="institution"
+            register={register}
+            errors={errors}
             disabled={loading}
           />
-          <TextField
+          <Input
             label="University"
-            fullWidth
-            {...register("university")}
-            error={!!errors.university}
-            helperText={errors.university?.message}
+            name="university"
+            register={register}
+            errors={errors}
             disabled={loading}
           />
-          <TextField
+          <Input
             label="Passing Year"
+            name="passingYear"
             type="number"
-            fullWidth
-            {...register("passingYear", { valueAsNumber: true })}
-            error={!!errors.passingYear}
-            helperText={errors.passingYear?.message}
+            register={register}
+            errors={errors}
+            rules={{ valueAsNumber: true }}
             disabled={loading}
           />
           <Box
@@ -127,21 +125,19 @@ export const EducationForm = ({
               gap: 2,
             }}
           >
-            <TextField
+            <Input
               label="Specialization"
-              fullWidth
-              {...register("specialization")}
-              error={!!errors.specialization}
-              helperText={errors.specialization?.message}
+              name="specialization"
+              register={register}
+              errors={errors}
               disabled={loading}
             />
 
-            <TextField
+            <Input
               label="Grade"
-              fullWidth
-              {...register("grade")}
-              error={!!errors.grade}
-              helperText={errors.grade?.message}
+              name="grade"
+              register={register}
+              errors={errors}
               disabled={loading}
             />
           </Box>

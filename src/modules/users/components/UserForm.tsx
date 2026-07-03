@@ -4,7 +4,7 @@
  */
 
 import { useEffect } from "react";
-import { TextField, Box, MenuItem } from "@mui/material";
+import { Box } from "@mui/material";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
@@ -15,6 +15,7 @@ import type {
 } from "../services/userService";
 import { useAuth } from "@/contexts";
 import { SideDrawer } from "@/common/components/SideDrawer";
+import { Input, Select } from "@/common/components";
 
 const userSchema = z
   .object({
@@ -138,33 +139,31 @@ export const UserForm = ({
       footerActionName={isEdit ? "Save" : "Create"}
     >
       <Box sx={{ display: "flex", flexDirection: "column", gap: 2, pt: 1 }}>
-        <TextField
+        <Input
           label="Username"
-          fullWidth
-          {...register("username")}
-          error={!!errors.username}
-          helperText={errors.username?.message}
+          name="username"
+          register={register}
+          errors={errors}
           disabled={loading}
         />
 
-        <TextField
+        <Input
           label="Email"
+          name="email"
           type="email"
-          fullWidth
-          {...register("email")}
-          error={!!errors.email}
-          helperText={errors.email?.message}
+          register={register}
+          errors={errors}
           disabled={loading}
         />
 
-        <TextField
+        <Input
           label={
             isEdit ? "New Password (leave empty to keep current)" : "Password"
           }
+          name="password"
           type="password"
-          fullWidth
-          {...register("password")}
-          error={!!errors.password}
+          register={register}
+          errors={errors}
           helperText={
             errors.password?.message ||
             (isEdit ? "Leave empty to keep current password" : "")
@@ -173,18 +172,17 @@ export const UserForm = ({
         />
 
         {isAdmin && (
-          <TextField
+          <Select
             label="Role"
-            select
-            fullWidth
-            {...register("role")}
-            error={!!errors.role}
-            helperText={errors.role?.message}
+            name="role"
+            register={register}
+            errors={errors}
             disabled={loading}
-          >
-            <MenuItem value="user">User</MenuItem>
-            <MenuItem value="admin">Admin</MenuItem>
-          </TextField>
+            options={[
+              { label: "User", value: "user" },
+              { label: "Admin", value: "admin" },
+            ]}
+          />
         )}
       </Box>
     </SideDrawer>

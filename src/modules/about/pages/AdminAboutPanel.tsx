@@ -7,7 +7,6 @@ import { useState, useEffect } from "react";
 import {
   Box,
   Button,
-  TextField,
   Card,
   CardContent,
   CircularProgress,
@@ -27,6 +26,7 @@ import { useNavigate } from "react-router-dom";
 import { useToast } from "@/contexts/toastContext";
 import { aboutService, type Feature } from "../services/aboutService";
 import TextEditor from "@/common/components/TextEditor";
+import { Input } from "@/common/components";
 import { ROUTES } from "@/constants";
 
 interface FormData {
@@ -216,8 +216,7 @@ const AdminAboutPanel = () => {
                 </Typography>
 
                 <Stack spacing={2}>
-                  <TextField
-                    fullWidth
+                  <Input
                     label="Page Title"
                     name="title"
                     value={formData.title}
@@ -419,8 +418,7 @@ const AdminAboutPanel = () => {
         </DialogTitle>
         <DialogContent sx={{ pt: 2 }}>
           <Stack spacing={2}>
-            <TextField
-              fullWidth
+            <Input
               label="Feature Title"
               value={newFeature.title}
               onChange={(e) =>

@@ -8,10 +8,8 @@ import {
   Box,
   Typography,
   Button,
-  TextField,
   Grid,
   IconButton,
-  MenuItem,
   Stack,
   CircularProgress,
 } from "@mui/material";
@@ -24,6 +22,7 @@ import {
   type ContactDetails,
 } from "../services/profileService";
 import { contactDetailsSchema } from "../utils/validation";
+import { Input, Select } from "@/common/components";
 
 type ContactDetailsFormData = {
   email: string;
@@ -157,13 +156,12 @@ export const ContactDetailsSection = () => {
         <Grid container spacing={1.5}>
           {/* Email */}
           <Grid item xs={12}>
-            <TextField
-              fullWidth
+            <Input
               label="Email"
+              name="email"
               type="email"
-              {...register("email")}
-              error={!!errors.email}
-              helperText={errors.email?.message}
+              register={register}
+              errors={errors}
               disabled
             />
           </Grid>
@@ -191,12 +189,11 @@ export const ContactDetailsSection = () => {
               <Stack key={field.id} sx={{ mb: 2 }}>
                 <Grid container spacing={2}>
                   <Grid item xs={12} sm={7}>
-                    <TextField
-                      fullWidth
+                    <Input
                       label="Phone Number"
-                      {...register(`phones.${index}.number`)}
-                      error={!!errors.phones?.[index]?.number}
-                      helperText={errors.phones?.[index]?.number?.message}
+                      name={`phones.${index}.number`}
+                      register={register}
+                      errors={errors}
                     />
                   </Grid>
                   <Grid item xs={12} sm={3}>
@@ -204,18 +201,16 @@ export const ContactDetailsSection = () => {
                       name={`phones.${index}.type`}
                       control={control}
                       render={({ field }) => (
-                        <TextField
+                        <Select
                           {...field}
-                          fullWidth
-                          select
                           label="Type"
-                          error={!!errors.phones?.[index]?.type}
-                          helperText={errors.phones?.[index]?.type?.message}
-                        >
-                          <MenuItem value="mobile">Mobile</MenuItem>
-                          <MenuItem value="home">Home</MenuItem>
-                          <MenuItem value="work">Work</MenuItem>
-                        </TextField>
+                          errors={errors}
+                          options={[
+                            { label: "Mobile", value: "mobile" },
+                            { label: "Home", value: "home" },
+                            { label: "Work", value: "work" },
+                          ]}
+                        />
                       )}
                     />
                   </Grid>
@@ -283,46 +278,43 @@ export const ContactDetailsSection = () => {
                 }}
               >
                 <Grid>
-                  <TextField
-                    fullWidth
+                  <Input
                     label="Street"
-                    {...register(`addresses.${index}.street`)}
-                    error={!!errors.addresses?.[index]?.street}
-                    helperText={errors.addresses?.[index]?.street?.message}
+                    name={`addresses.${index}.street`}
+                    register={register}
+                    errors={errors}
                   />
                 </Grid>
                 <Grid>
-                  <TextField
-                    fullWidth
+                  <Input
                     label="City"
-                    {...register(`addresses.${index}.city`)}
-                    error={!!errors.addresses?.[index]?.city}
-                    helperText={errors.addresses?.[index]?.city?.message}
+                    name={`addresses.${index}.city`}
+                    register={register}
+                    errors={errors}
                   />
                 </Grid>
                 <Grid>
-                  <TextField
-                    fullWidth
+                  <Input
                     label="State"
-                    {...register(`addresses.${index}.state`)}
-                    error={!!errors.addresses?.[index]?.state}
+                    name={`addresses.${index}.state`}
+                    register={register}
+                    errors={errors}
                   />
                 </Grid>
                 <Grid>
-                  <TextField
-                    fullWidth
+                  <Input
                     label="Zip Code"
-                    {...register(`addresses.${index}.zipCode`)}
-                    error={!!errors.addresses?.[index]?.zipCode}
+                    name={`addresses.${index}.zipCode`}
+                    register={register}
+                    errors={errors}
                   />
                 </Grid>
                 <Grid>
-                  <TextField
-                    fullWidth
+                  <Input
                     label="Country"
-                    {...register(`addresses.${index}.country`)}
-                    error={!!errors.addresses?.[index]?.country}
-                    helperText={errors.addresses?.[index]?.country?.message}
+                    name={`addresses.${index}.country`}
+                    register={register}
+                    errors={errors}
                   />
                 </Grid>
                 <Grid>
@@ -330,17 +322,15 @@ export const ContactDetailsSection = () => {
                     name={`addresses.${index}.type`}
                     control={control}
                     render={({ field }) => (
-                      <TextField
+                      <Select
                         {...field}
-                        fullWidth
-                        select
                         label="Type"
-                        error={!!errors.addresses?.[index]?.type}
-                        helperText={errors.addresses?.[index]?.type?.message}
-                      >
-                        <MenuItem value="home">Home</MenuItem>
-                        <MenuItem value="work">Work</MenuItem>
-                      </TextField>
+                        errors={errors}
+                        options={[
+                          { label: "Home", value: "home" },
+                          { label: "Work", value: "work" },
+                        ]}
+                      />
                     )}
                   />
                 </Grid>
@@ -405,31 +395,26 @@ export const ContactDetailsSection = () => {
                     name={`socialLinks.${index}.platform`}
                     control={control}
                     render={({ field }) => (
-                      <TextField
+                      <Select
                         {...field}
-                        fullWidth
-                        select
                         label="Platform"
-                        error={!!errors.socialLinks?.[index]?.platform}
-                        helperText={
-                          errors.socialLinks?.[index]?.platform?.message
-                        }
-                      >
-                        <MenuItem value="linkedin">LinkedIn</MenuItem>
-                        <MenuItem value="github">GitHub</MenuItem>
-                        <MenuItem value="twitter">Twitter / X</MenuItem>
-                        <MenuItem value="portfolio">Portfolio</MenuItem>
-                      </TextField>
+                        errors={errors}
+                        options={[
+                          { label: "LinkedIn", value: "linkedin" },
+                          { label: "GitHub", value: "github" },
+                          { label: "Twitter / X", value: "twitter" },
+                          { label: "Portfolio", value: "portfolio" },
+                        ]}
+                      />
                     )}
                   />
                 </Grid>
                 <Grid>
-                  <TextField
-                    fullWidth
+                  <Input
                     label="URL"
-                    {...register(`socialLinks.${index}.url`)}
-                    error={!!errors.socialLinks?.[index]?.url}
-                    helperText={errors.socialLinks?.[index]?.url?.message}
+                    name={`socialLinks.${index}.url`}
+                    register={register}
+                    errors={errors}
                   />
                 </Grid>
                 <Grid

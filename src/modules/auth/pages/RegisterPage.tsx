@@ -173,6 +173,7 @@ const RegisterPage = () => {
             label={field.label}
             name={field.name}
             type={field.type}
+            margin="normal"
             register={register}
             errors={errors}
             isSubmitting={isSubmitting}

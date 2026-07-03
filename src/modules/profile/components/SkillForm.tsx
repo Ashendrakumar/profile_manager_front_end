@@ -4,12 +4,13 @@
  */
 
 import { useEffect } from "react";
-import { TextField, Box, MenuItem } from "@mui/material";
+import { Box } from "@mui/material";
 import { Controller, useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { skillSchema } from "../utils/validation";
 import type { Skill } from "../services/profileService";
 import { SideDrawer } from "@/common/components/SideDrawer";
+import { Input, Select } from "@/common/components";
 
 type SkillFormData = {
   name: string;
@@ -81,51 +82,47 @@ export const SkillForm = ({
       footerActionName={skill ? "Update" : "Add"}
     >
       <Box sx={{ display: "flex", flexDirection: "column", gap: 3, pt: 1 }}>
-        <TextField
+        <Input
           label="Skill Name"
-          fullWidth
-          {...register("name")}
-          error={!!errors.name}
-          helperText={errors.name?.message}
+          name="name"
+          register={register}
+          errors={errors}
           disabled={loading}
         />
-        <TextField
+        <Input
           label="Category"
-          fullWidth
+          name="category"
           placeholder="e.g., Programming Languages, Frameworks, Tools"
-          {...register("category")}
-          error={!!errors.category}
-          helperText={errors.category?.message}
+          register={register}
+          errors={errors}
           disabled={loading}
         />
         <Controller
           name="level"
           control={control}
           render={({ field }) => (
-            <TextField
+            <Select
               {...field}
-              select
-              fullWidth
               label="Level"
-              error={!!errors.level}
-              helperText={errors.level?.message}
+              errors={errors}
               disabled={loading}
-            >
-              <MenuItem value="BEGINNER">Beginner</MenuItem>
-              <MenuItem value="INTERMEDIATE">Intermediate</MenuItem>
-              <MenuItem value="ADVANCED">Advanced</MenuItem>
-              <MenuItem value="EXPERT">Expert</MenuItem>
-            </TextField>
+              options={[
+                { label: "Beginner", value: "BEGINNER" },
+                { label: "Intermediate", value: "INTERMEDIATE" },
+                { label: "Advanced", value: "ADVANCED" },
+                { label: "Expert", value: "EXPERT" },
+              ]}
+            />
           )}
         />
-        <TextField
+        <Input
           label="Years of Experience"
+          name="yearsOfExperience"
           type="number"
-          fullWidth
           InputProps={{ inputProps: { min: 0 } }}
-          {...register("yearsOfExperience", { valueAsNumber: true })}
-          error={!!errors.yearsOfExperience}
-          helperText={errors.yearsOfExperience?.message}
+          register={register}
+          errors={errors}
+          rules={{ valueAsNumber: true }}
           disabled={loading}
         />
       </Box>

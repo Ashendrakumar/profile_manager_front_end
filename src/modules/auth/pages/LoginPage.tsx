@@ -112,6 +112,7 @@ const LoginPage = () => {
         <Input
           label="Email"
           name="email"
+          margin="normal"
           register={register}
           errors={errors}
           isSubmitting={isSubmitting}
@@ -122,6 +123,7 @@ const LoginPage = () => {
           label="Password"
           name="password"
           type="password"
+          margin="normal"
           register={register}
           errors={errors}
           isSubmitting={isSubmitting}
