@@ -1,4 +1,5 @@
 import {
+  Box,
   Drawer,
   List,
   ListItemButton,
@@ -27,137 +28,140 @@ export default function Sidebar({
   isCollapsed,
 }: SidebarProps) {
   const { isAuthenticated, user } = useAuth();
-  const allNavigationItems = sidebarMenus;
 
   const navigationItems = isAuthenticated
-    ? allNavigationItems.filter((item) => {
-        if (item.adminOnly) {
-          return user?.role === "admin";
-        }
-        return true;
-      })
+    ? sidebarMenus.filter((item) =>
+        item.adminOnly ? user?.role === "admin" : true,
+      )
     : [];
 
   return (
     <Drawer
       open={open}
       variant={isMobile ? "temporary" : "permanent"}
+      onClose={() => setOpen(false)}
       ModalProps={{
         keepMounted: true,
       }}
       PaperProps={{
         sx: {
-          backgroundColor: "theme.palette.background.default",
-          borderRight: "none",
+          backgroundColor: "background.paper",
+          borderRight: "1px solid",
+          borderColor: "divider",
           borderRadius: 0,
           flexShrink: 0,
+          display: "flex",
+          flexDirection: "column",
           width: isCollapsed
             ? DIMENSIONS.SIDE_BAR_WIDTH_ICON
             : DIMENSIONS.SIDE_BAR_WIDTH,
-          top: DIMENSIONS.HEADER_HEIGHT + "px",
+          top: isMobile ? 0 : `${DIMENSIONS.HEADER_HEIGHT}px`,
           transition: "width 0.3s ease-in-out",
-          height: `calc(100dvh - ${DIMENSIONS.HEADER_HEIGHT}px)`,
+          height: isMobile
+            ? "100dvh"
+            : `calc(100dvh - ${DIMENSIONS.HEADER_HEIGHT}px)`,
           boxSizing: "border-box",
           whiteSpace: "nowrap",
+          overflowX: "hidden",
+          overflowY: "auto",
         },
       }}
     >
-      <List>
-        {navigationItems.map((menu: any) => {
-          const Icon = menu.icon;
+      {/* Nav scrolls; footer stays pinned at bottom */}
+      <Box sx={{ flex: 1, overflowY: "auto", overflowX: "hidden", pt: 0.5 }}>
+        <List disablePadding>
+          {navigationItems.map((menu: any) => {
+            const Icon = menu.icon;
 
-          return (
-            <ListItemButton
-              key={menu.path}
-              component={NavLink}
-              to={menu.path}
-              onClick={() => {
-                if (isMobile) {
-                  setOpen(false);
-                }
-              }}
-              sx={{
-                mx: 0.5,
-                mb: 0.25,
-                py: 1.25,
-                px: 1.25,
-                borderRadius: 1,
-                color: "text.primary",
-                display: "flex",
-                position: "relative",
-                overflow: "hidden",
-                alignItems: "center",
-                justifyContent: isCollapsed ? "center" : "flex-start",
-                transition: "all 0.15s ease",
-                "&:hover": {
-                  backgroundColor: "action.hover",
-                },
-
-                "& .MuiListItemIcon-root": {
-                  color: "inherit",
-                  minWidth: isCollapsed ? "auto" : 36,
-                  width: 36,
+            return (
+              <ListItemButton
+                key={menu.path}
+                component={NavLink}
+                to={menu.path}
+                onClick={() => {
+                  if (isMobile) setOpen(false);
+                }}
+                sx={{
+                  mx: 0.5,
+                  mb: 0.25,
+                  py: 1.25,
+                  px: 1.25,
+                  borderRadius: 1,
+                  color: "text.primary",
                   display: "flex",
-                  justifyContent: "center",
-                  transition: "color 0.15s ease",
-                },
-
-                "& .MuiListItemText-primary": {
-                  fontSize: 14,
-                  fontWeight: 400,
-                  transition: "color 0.15s ease, font-weight 0.15s ease",
-                },
-
-                "&.active": {
-                  backgroundColor: (theme) =>
-                    (theme.palette.primary as any)?.[50],
-                  color: (theme) =>
-                    theme.palette.mode === "dark"
-                      ? (theme.palette.primary as any)?.[100]
-                      : (theme.palette.primary as any)?.[700],
-
-                  "&::before": {
-                    content: '""',
-                    position: "absolute",
-                    left: 0,
-                    top: 6,
-                    bottom: 6,
-                    width: 3,
-                    borderRadius: "0 3px 3px 0",
-                    backgroundColor: (theme) =>
-                      (theme.palette.primary as any)?.[400],
-                  },
-
+                  position: "relative",
+                  overflow: "hidden",
+                  alignItems: "center",
+                  justifyContent: isCollapsed ? "center" : "flex-start",
+                  transition: "all 0.15s ease",
                   "&:hover": {
+                    backgroundColor: "action.hover",
+                  },
+                  "& .MuiListItemIcon-root": {
+                    color: "inherit",
+                    minWidth: isCollapsed ? "auto" : 36,
+                    width: 36,
+                    display: "flex",
+                    justifyContent: "center",
+                    transition: "color 0.15s ease",
+                  },
+                  "& .MuiListItemText-primary": {
+                    fontSize: 14,
+                    fontWeight: 400,
+                    transition: "color 0.15s ease, font-weight 0.15s ease",
+                  },
+                  "&.active": {
                     backgroundColor: (theme) =>
                       (theme.palette.primary as any)?.[50],
+                    color: (theme) =>
+                      theme.palette.mode === "dark"
+                        ? (theme.palette.primary as any)?.[100]
+                        : (theme.palette.primary as any)?.[700],
+                    "&::before": {
+                      content: '""',
+                      position: "absolute",
+                      left: 0,
+                      top: 6,
+                      bottom: 6,
+                      width: 3,
+                      borderRadius: "0 3px 3px 0",
+                      backgroundColor: (theme) =>
+                        (theme.palette.primary as any)?.[400],
+                    },
+                    "&:hover": {
+                      backgroundColor: (theme) =>
+                        (theme.palette.primary as any)?.[50],
+                    },
+                    "& .MuiListItemText-primary": {
+                      fontWeight: 500,
+                    },
                   },
-
-                  "& .MuiListItemText-primary": {
-                    fontWeight: 500,
-                  },
-                },
-              }}
-            >
-              {isCollapsed ? (
-                <Tooltip title={menu.title} placement="right" arrow>
+                }}
+              >
+                {isCollapsed ? (
+                  <Tooltip title={menu.title} placement="right" arrow>
+                    <ListItemIcon>
+                      <Icon size={19} />
+                    </ListItemIcon>
+                  </Tooltip>
+                ) : (
                   <ListItemIcon>
                     <Icon size={19} />
                   </ListItemIcon>
-                </Tooltip>
-              ) : (
-                <ListItemIcon>
-                  <Icon size={19} />
-                </ListItemIcon>
-              )}
-              <ListItemText
-                sx={{ visibility: isCollapsed ? "hidden" : "visible", my: 0 }}
-                primary={menu.title}
-              />
-            </ListItemButton>
-          );
-        })}
-      </List>
+                )}
+                <ListItemText
+                  sx={{
+                    visibility: isCollapsed ? "hidden" : "visible",
+                    my: 0,
+                  }}
+                  primary={menu.title}
+                />
+              </ListItemButton>
+            );
+          })}
+        </List>
+      </Box>
+
       <SidebarFooter isCollapsed={isCollapsed} />
     </Drawer>
   );
