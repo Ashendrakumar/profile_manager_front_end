@@ -16,7 +16,7 @@ import {
   ToastProvider,
 } from "@/contexts";
 import { MainLayout } from "@/layouts";
-import { ErrorBoundary, LoadingSpinner } from "@/common/components";
+import { ErrorBoundary, TopProgressBar } from "@/common/components";
 import { routes } from "@/routes";
 import { setPageMetadata } from "@/utils/metadata";
 
@@ -82,7 +82,7 @@ const AppContent = () => {
           <AuthProvider>
             <ToastProvider>
               <MainLayout>
-                <Suspense fallback={<LoadingSpinner fullScreen />}>
+                <Suspense fallback={<TopProgressBar />}>
                   <Router />
                 </Suspense>
               </MainLayout>

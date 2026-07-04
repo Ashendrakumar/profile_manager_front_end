@@ -5,6 +5,7 @@
 
 export { LoadingSpinner } from "./LoadingSpinner";
 export { SkeletonLoader } from "./SkeletonLoader";
+export { TopProgressBar } from "./TopProgressBar";
 export type { SkeletonLoaderProps } from "./SkeletonLoader";
 export { ErrorBoundary } from "./ErrorBoundary";
 export { ConfirmDialog } from "./ConfirmDialog";

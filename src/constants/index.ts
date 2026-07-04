@@ -67,7 +67,7 @@ export const ROLES = {
 } as const;
 
 export const DIMENSIONS = {
-  HEADER_HEIGHT: 64,
+  HEADER_HEIGHT: 67,
   SIDE_BAR_WIDTH: "15rem",
   SIDE_BAR_WIDTH_ICON: "4rem",
 } as const;
