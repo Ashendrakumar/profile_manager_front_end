@@ -92,9 +92,10 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
         setError(null);
 
         const response = await authService.login(credentials);
-        setUser(response.user);
-
-        navigate(ROUTES.PROFILE_COMPLETION, { replace: true });
+        if (response.user) {
+          setUser(response.user);
+          navigate(ROUTES.PROFILE_COMPLETION, { replace: true });
+        }
       } catch (err) {
         const errorMessage =
           err instanceof Error
@@ -118,15 +119,15 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
       try {
         setIsLoading(true);
         setError(null);
-
         const response = await authService.register(userData);
-        // Redirect to OTP verification page, passing the email as a query param
-        navigate(
-          `${ROUTES.VERIFY_OTP}?email=${encodeURIComponent(response.email)}`,
-          {
-            replace: true,
-          },
-        );
+        if (response.email) {
+          navigate(
+            `${ROUTES.VERIFY_OTP}?email=${encodeURIComponent(response.email)}`,
+            {
+              replace: true,
+            },
+          );
+        }
       } catch (err) {
         const errorMessage =
           err instanceof Error
@@ -152,9 +153,10 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
         setError(null);
 
         const response = await authService.verifyOtp(email, otp);
-        setUser(response.user);
-
-        navigate(ROUTES.HOME, { replace: true });
+        if (response.user) {
+          setUser(response.user);
+          navigate(ROUTES.HOME, { replace: true });
+        }
       } catch (err) {
         const errorMessage =
           err instanceof Error

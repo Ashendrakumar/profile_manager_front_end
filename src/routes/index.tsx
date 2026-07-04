@@ -86,6 +86,8 @@ const NotFoundPage = lazy(
   () => import("@/modules/notFound/pages/NotFoundPage"),
 );
 
+const Inprogress = lazy(() => import("@/modules/Inprogress/Inprogress"));
+
 // ── Helper: wrap a page element with RouteGuard ────────────────────────────────
 
 type GuardFlags = Pick<AppRoute, "isPublic" | "isProtected" | "requiresAdmin">;
@@ -210,6 +212,28 @@ export const routes: AppRoute[] = [
     metadata: {
       title: "Profile Completion - Profile Manager",
       description: "Track your profile completion",
+    },
+  },
+
+  {
+    path: ROUTES.ACHIEVEMENTS,
+    element: guard(<Inprogress />, { isProtected: true }),
+    isProtected: true,
+    metadata: {
+      title: "Inprogress - Profile Manager",
+      description: "Inprogress or Working on it",
+      keywords: "inprogress, working on it",
+    },
+  },
+
+  {
+    path: ROUTES.DOCUMENTS,
+    element: guard(<Inprogress />, { isProtected: true }),
+    isProtected: true,
+    metadata: {
+      title: "Inprogress - Profile Manager",
+      description: "Inprogress or Working on it",
+      keywords: "inprogress, working on it",
     },
   },
 

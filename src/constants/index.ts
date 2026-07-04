@@ -11,8 +11,8 @@ export const APP_DESCRIPTION =
 // Default to JSONPlaceholder for demo purposes
 // In production, set VITE_API_BASE_URL in .env file
 export const API_BASE_URL =
-  import.meta.env.VITE_API_BASE_URL || // "http://localhost:10000/api";
-  "https://profile-manager-back-end.onrender.com/api";
+  import.meta.env.VITE_API_BASE_URL || "http://localhost:10000/api";
+// "https://profile-manager-back-end.onrender.com/api";
 
 // Storage Keys
 export const STORAGE_KEYS = {
@@ -40,7 +40,7 @@ export const HTTP_STATUS = {
 export const ROUTES = {
   HOME: "/",
   ABOUT: "/about",
-  ADMIN_ABOUT: "admin/about",
+  ADMIN_ABOUT: "/about/admin",
   USERS: "/users",
   USER: "/users/:id",
   PERSONAL_DETAILS: "/personal-details",
@@ -49,6 +49,7 @@ export const ROUTES = {
   PROJECTS: "/projects",
   SKILLS: "/skills",
   ACHIEVEMENTS: "/achievements",
+  DOCUMENTS: "/documents",
   PORTFOLIO: "/portfolio",
   SETTINGS: "/settings",
   CONTACT: "/contact-details",

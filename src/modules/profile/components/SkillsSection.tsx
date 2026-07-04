@@ -4,11 +4,16 @@
  */
 
 import { useState, useEffect } from "react";
-import { Box, Typography, Button, Grid } from "@mui/material";
+import { Box, Typography, Grid } from "@mui/material";
 import { Add, Edit, Delete, Code, AccessTime } from "@mui/icons-material";
 import { useToast } from "@/contexts/toastContext";
 import { profileService, type Skill } from "../services/profileService";
-import { ConfirmDialog, SkeletonLoader, EntityCard } from "@/common/components";
+import {
+  ConfirmDialog,
+  SkeletonLoader,
+  EntityCard,
+  ResponsiveButton,
+} from "@/common/components";
 import { SkillForm } from "./SkillForm";
 import { HelperFunctions } from "@/utils/helpers";
 
@@ -136,16 +141,25 @@ export const SkillsSection = () => {
             Manage your skills and expertise
           </Typography>
         </Box>
-        <Button variant="contained" startIcon={<Add />} onClick={handleAdd}>
-          <Typography sx={{ display: { xs: "none", sm: "block" } }}>
-            Add
-          </Typography>
-        </Button>
+        <ResponsiveButton
+          collapseBreakpoint="sm"
+          icon={<Add />}
+          onClick={handleAdd}
+        >
+          Add
+        </ResponsiveButton>
       </Box>
 
-      {loading ? (
-        <SkeletonLoader count={6} minItemWidth={320} gap={2} showActions={false} />
-      ) : skills.length === 0 ? (
+      {loading && (
+        <SkeletonLoader
+          count={6}
+          minItemWidth={320}
+          gap={2}
+          showActions={false}
+        />
+      )}
+
+      {skills.length === 0 && !loading ? (
         <Box sx={{ textAlign: "center", py: 4 }}>
           <Typography variant="body1" color="text.secondary">
             No skills yet. Add your first one!

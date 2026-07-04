@@ -18,9 +18,7 @@ import {
   ListItem,
   ListItemIcon,
   ListItemText,
-  Button,
   Chip,
-  Tooltip,
   alpha,
   useTheme,
   ListItemButton,
@@ -40,6 +38,7 @@ import {
 import { useNavigate } from "react-router-dom";
 import { ROUTES } from "@/constants";
 import { SectionCard } from "@/common/components/SectionCard";
+import { ResponsiveButton } from "@/common/components";
 
 const SECTION_LABELS: Record<
   string,
@@ -171,28 +170,19 @@ export const ProfileCompletionDashboard = ({
   const motivationalMsg = getMotivationalMessage();
 
   // ── Theme-aware color tokens ──────────────────────────────────────────────
-  // Success (green) — used for completed sections
-  const successMain = theme.palette.success.main; // #2e7d32
-  const successBg = alpha(successMain, isDark ? 0.15 : 0.08);
-  const successBorder = alpha(successMain, isDark ? 0.35 : 0.2);
-  // const successChipBg = alpha(successMain, isDark ? 0.25 : 0.14);
-  const progressGreen = "#4caf50";
+  const successMain = theme.palette.success.main;
+  const successBg = alpha(successMain, isDark ? 0.05 : 0.08);
+  const successBorder = alpha(successMain, isDark ? 0.4 : 0.2);
+  const progressGreen = theme.palette.success.main;
 
-  // Warning (orange) — used for missing sections
-  const warningMain = theme.palette.warning.main; // #ed6c02
-  const warningBg = alpha(warningMain, isDark ? 0.15 : 0.08);
-  const warningBorder = alpha(warningMain, isDark ? 0.35 : 0.2);
-  // const warningChipBg = alpha(warningMain, isDark ? 0.25 : 0.14);
+  const warningMain = theme.palette.warning.main;
+  const warningBg = alpha(warningMain, isDark ? 0.05 : 0.08);
+  const warningBorder = alpha(warningMain, isDark ? 0.4 : 0.2);
 
-  // Recap banner — subtle tinted surface
-  // const recapBg = alpha(progressGreen, isDark ? 0.12 : 0.07);
-  // const recapBorder = alpha(progressGreen, isDark ? 0.3 : 0.2);
-
-  // Ring inner circle — must match paper background
   const ringInnerBg = theme.palette.background.paper;
 
   // Track color for linear progress
-  const trackColor = isDark ? alpha("#ffffff", 0.12) : "#e0e0e0";
+  const trackColor = theme.palette.divider;
 
   const CompletedSectionsCard = () => (
     <SectionCard
@@ -314,19 +304,6 @@ export const ProfileCompletionDashboard = ({
             complete
           </Typography>
         </Box>
-
-        <Box sx={{ display: "flex", gap: 1 }}>
-          <Tooltip title="Refresh status">
-            <Button
-              variant="contained"
-              startIcon={<Refresh />}
-              onClick={fetchProfileCompletion}
-              disabled={completion.isLoading}
-            >
-              Refresh
-            </Button>
-          </Tooltip>
-        </Box>
       </Box>
       <Card sx={{ width: "100%", mb: 3 }}>
         <CardContent>
@@ -440,86 +417,12 @@ export const ProfileCompletionDashboard = ({
             completed
           </Typography>
         </Box>
-        <Button
-          variant="outlined"
-          startIcon={<Refresh />}
-          onClick={fetchProfileCompletion}
-        >
+        <ResponsiveButton icon={<Refresh />} onClick={fetchProfileCompletion}>
           Refresh
-        </Button>
+        </ResponsiveButton>
       </Box>
 
       <Box sx={{ flex: 1, overflowY: "auto", px: 2, py: 2 }}>
-        {/* Mini progress recap */}
-        {/* <Box
-          sx={{
-            display: "flex",
-            alignItems: "center",
-            gap: 2,
-            mb: 3,
-            p: 2,
-            borderRadius: 2,
-            backgroundColor: recapBg,
-            border: `1px solid ${recapBorder}`,
-          }}
-        >
-          <Box
-            sx={{
-              width: 56,
-              height: 56,
-              borderRadius: "50%",
-              background: `conic-gradient(${progressGreen} 0deg ${completion.percentage * 3.6}deg, ${trackColor} ${completion.percentage * 3.6}deg 360deg)`,
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "center",
-              flexShrink: 0,
-            }}
-          >
-            <Box
-              sx={{
-                width: 44,
-                height: 44,
-                borderRadius: "50%",
-                background: ringInnerBg,
-                display: "flex",
-                alignItems: "center",
-                justifyContent: "center",
-              }}
-            >
-              <Typography
-                variant="caption"
-                sx={{
-                  fontWeight: "bold",
-                  color: progressGreen,
-                  fontSize: "13px",
-                }}
-              >
-                {completion.percentage}%
-              </Typography>
-            </Box>
-          </Box>
-
-          <Box sx={{ flex: 1 }}>
-            <Typography variant="body2" sx={{ fontWeight: 500 }}>
-              {motivationalMsg.icon} {motivationalMsg.text}
-            </Typography>
-            <LinearProgress
-              variant="determinate"
-              value={completion.percentage}
-              sx={{
-                mt: 1,
-                height: 5,
-                borderRadius: 3,
-                backgroundColor: trackColor,
-                "& .MuiLinearProgress-bar": {
-                  borderRadius: 3,
-                  backgroundColor: progressGreen,
-                },
-              }}
-            />
-          </Box>
-        </Box> */}
-
         {/* Cards */}
         <Stack
           direction={{ xs: "column", md: "row" }}

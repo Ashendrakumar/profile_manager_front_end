@@ -96,6 +96,8 @@ export const Input = ({
   return (
     <TextField
       fullWidth
+      aria-autocomplete="none"
+      name={name}
       margin={margin}
       label={label}
       id={name}
@@ -104,11 +106,12 @@ export const Input = ({
       autoComplete={name}
       variant="outlined"
       type={memoizedType}
+      placeholder={`Please enter ${label}.`}
       error={error ?? !!fieldError}
       helperText={helperText ?? fieldError?.message}
-      InputLabelProps={{
-        shrink: true,
-      }}
+      // InputLabelProps={{
+      //   shrink: true,
+      // }}
       InputProps={
         isPassword ? { ...passwordAdornment, ...InputProps } : InputProps
       }

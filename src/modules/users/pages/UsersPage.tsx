@@ -15,7 +15,11 @@ import type {
   CreateUserRequest,
   UpdateUserRequest,
 } from "../services/userService";
-import { SkeletonLoader, ConfirmDialog } from "@/common/components";
+import {
+  SkeletonLoader,
+  ConfirmDialog,
+  ResponsiveButton,
+} from "@/common/components";
 import { UserForm } from "../components/UserForm";
 import { UserCard } from "../components/UserCard";
 
@@ -166,14 +170,13 @@ const UsersPage = () => {
           </Typography>
         </Box>
         {isAdmin && (
-          <Button
-            variant="contained"
-            startIcon={<Add />}
+          <ResponsiveButton
+            collapseBreakpoint="sm"
+            icon={<Add />}
             onClick={handleCreateUser}
-            disabled={actionLoading}
           >
             Add
-          </Button>
+          </ResponsiveButton>
         )}
       </Box>
 

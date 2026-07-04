@@ -4,7 +4,7 @@
  */
 
 import { useState, useEffect } from "react";
-import { Box, Typography, Button, Grid } from "@mui/material";
+import { Box, Typography, Grid } from "@mui/material";
 import { Add, Edit, Delete, Work } from "@mui/icons-material";
 import { useToast } from "@/contexts/toastContext";
 import { profileService, type Experience } from "../services/profileService";
@@ -13,6 +13,7 @@ import {
   SkeletonLoader,
   EntityCard,
   type EntityCardChip,
+  ResponsiveButton,
 } from "@/common/components";
 import { ExperienceForm } from "./ExperienceForm";
 import { HelperFunctions } from "@/utils/helpers";
@@ -121,15 +122,23 @@ export const ExperienceSection = () => {
             Manage your work experience
           </Typography>
         </Box>
-        <Button variant="contained" startIcon={<Add />} onClick={handleAdd}>
-          <Typography sx={{ display: { xs: "none", sm: "block" } }}>
-            Add
-          </Typography>
-        </Button>
+        <ResponsiveButton
+          collapseBreakpoint="sm"
+          icon={<Add />}
+          onClick={handleAdd}
+        >
+          Add
+        </ResponsiveButton>
       </Box>
 
       {loading ? (
-        <SkeletonLoader count={4} minItemWidth={320} gap={2} lines={3} showActions={false} />
+        <SkeletonLoader
+          count={4}
+          minItemWidth={320}
+          gap={2}
+          lines={3}
+          showActions={false}
+        />
       ) : experience.length === 0 ? (
         <Box sx={{ textAlign: "center", py: 4 }}>
           <Typography variant="body1" color="text.secondary">

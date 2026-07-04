@@ -26,6 +26,7 @@ import { aboutService, type Feature } from "../services/aboutService";
 import TextEditor from "@/common/components/TextEditor";
 import { Input, SkeletonLoader } from "@/common/components";
 import { ROUTES } from "@/constants";
+import { ResponsiveButton } from "@/common/components/ResponsiveButton";
 
 interface FormData {
   title: string;
@@ -187,14 +188,16 @@ const AdminAboutPanel = () => {
         <Typography variant="h4" gutterBottom>
           Manage About Content
         </Typography>
-        <Button
-          variant="contained"
-          startIcon={<ArrowBack />}
-          onClick={() => navigate(ROUTES.ABOUT)}
-          sx={{ mb: 2 }}
+        <ResponsiveButton
+          variant="outlined"
+          collapseBreakpoint="sm"
+          icon={<ArrowBack />}
+          onClick={() => {
+            navigate(ROUTES.ABOUT);
+          }}
         >
           Back
-        </Button>
+        </ResponsiveButton>
       </Box>
 
       <form onSubmit={handleSubmit}>
@@ -291,9 +294,9 @@ const AdminAboutPanel = () => {
                   }}
                 >
                   <Typography variant="h6">Features</Typography>
-                  <Button
-                    variant="contained"
-                    startIcon={<Add />}
+                  <ResponsiveButton
+                    collapseBreakpoint="sm"
+                    icon={<Add />}
                     onClick={() => {
                       setNewFeature({ title: "", description: "" });
                       setEditingFeatureIndex(null);
@@ -302,7 +305,7 @@ const AdminAboutPanel = () => {
                     size="small"
                   >
                     Add Feature
-                  </Button>
+                  </ResponsiveButton>
                 </Box>
 
                 {formData.features.length === 0 ? (

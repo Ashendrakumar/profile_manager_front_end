@@ -56,7 +56,7 @@ const LoginPage = () => {
   // Redirect if already authenticated
   useEffect(() => {
     if (isAuthenticated && !isLoading) {
-      navigate(ROUTES.HOME, { replace: true });
+      navigate(ROUTES.PROFILE_COMPLETION, { replace: true });
     }
   }, [isAuthenticated, isLoading, navigate]);
 

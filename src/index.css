@@ -37,4 +37,5 @@ button {
 
 ::root {
   --header-height: 64px;
+  --footer-height: 16px;
 }

@@ -4,7 +4,7 @@
  */
 
 import { useState, useEffect } from "react";
-import { Box, Typography, Button, Grid } from "@mui/material";
+import { Box, Typography, Grid } from "@mui/material";
 import {
   Add,
   Edit,
@@ -23,6 +23,7 @@ import {
 } from "@/common/components";
 import { EducationForm } from "./EducationForm";
 import { HelperFunctions } from "@/utils/helpers";
+import { ResponsiveButton } from "@/common/components";
 
 export const EducationSection = () => {
   const { showSuccess, showError } = useToast();
@@ -130,11 +131,13 @@ export const EducationSection = () => {
             Manage your educational background
           </Typography>
         </Box>
-        <Button variant="contained" startIcon={<Add />} onClick={handleAdd}>
-          <Typography sx={{ display: { xs: "none", sm: "block" } }}>
-            Add
-          </Typography>
-        </Button>
+        <ResponsiveButton
+          collapseBreakpoint="sm"
+          icon={<Add />}
+          onClick={handleAdd}
+        >
+          Add
+        </ResponsiveButton>
       </Box>
 
       {loading ? (

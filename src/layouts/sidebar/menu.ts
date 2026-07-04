@@ -11,6 +11,8 @@ import {
   FolderGit2,
   Wrench,
   Settings,
+  FolderKanban,
+  ShieldCheck,
 } from "lucide-react";
 
 interface MenuItem {
@@ -73,6 +75,16 @@ export const sidebarMenus: MenuItem[] = [
     title: "Skills",
     path: ROUTES.SKILLS,
     icon: Wrench, // Represents hard skills and technical tools better than a lightbulb
+  },
+  {
+    title: "Certifications",
+    path: ROUTES.ACHIEVEMENTS,
+    icon: ShieldCheck, // Standard, clean icon denoting private/personal settings
+  },
+  {
+    title: "Documents",
+    path: ROUTES.DOCUMENTS,
+    icon: FolderKanban, // Standard, clean icon denoting private/personal settings
   },
   {
     title: "Settings",

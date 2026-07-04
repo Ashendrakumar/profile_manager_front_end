@@ -16,7 +16,12 @@ import {
 } from "@mui/icons-material";
 import { useToast } from "@/contexts/toastContext";
 import { profileService, type Project } from "../services/profileService";
-import { ConfirmDialog, SkeletonLoader, EntityCard } from "@/common/components";
+import {
+  ConfirmDialog,
+  SkeletonLoader,
+  EntityCard,
+  ResponsiveButton,
+} from "@/common/components";
 import { ProjectForm } from "./ProjectForm";
 import { ProjectDetails } from "./ProjectDetails";
 import { HelperFunctions } from "@/utils/helpers";
@@ -128,16 +133,26 @@ export const ProjectsSection = () => {
             Showcase your projects and work
           </Typography>
         </Box>
-        <Button variant="contained" startIcon={<Add />} onClick={handleAdd}>
-          <Typography sx={{ display: { xs: "none", sm: "block" } }}>
-            Add
-          </Typography>
-        </Button>
+        <ResponsiveButton
+          collapseBreakpoint="sm"
+          icon={<Add />}
+          onClick={handleAdd}
+        >
+          Add
+        </ResponsiveButton>
       </Box>
 
-      {loading ? (
-        <SkeletonLoader count={4} minItemWidth={320} gap={2} lines={3} showActions={false} />
-      ) : projects.length === 0 ? (
+      {loading && (
+        <SkeletonLoader
+          count={4}
+          minItemWidth={320}
+          gap={2}
+          lines={3}
+          showActions={false}
+        />
+      )}
+
+      {projects.length === 0 && !loading ? (
         <Box sx={{ textAlign: "center", py: 4 }}>
           <Typography variant="body1" color="text.secondary">
             No projects yet. Add your first one!

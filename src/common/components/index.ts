@@ -27,3 +27,4 @@ export { TextArea } from "./TextArea";
 export type { TextAreaProps } from "./TextArea";
 export { Select } from "./Select";
 export type { SelectProps, SelectOption } from "./Select";
+export { ResponsiveButton } from "./ResponsiveButton";

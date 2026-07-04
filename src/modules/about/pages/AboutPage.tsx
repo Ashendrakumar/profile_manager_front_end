@@ -4,21 +4,18 @@
  */
 
 import { useState, useEffect } from "react";
-import {
-  Typography,
-  Card,
-  CardContent,
-  Box,
-  Alert,
-  Button,
-  Grid,
-} from "@mui/material";
+import { Typography, Card, CardContent, Box, Alert, Grid } from "@mui/material";
 import { Edit, Star } from "@mui/icons-material";
 import { useNavigate } from "react-router-dom";
 import { useMetadata } from "@/hooks";
 import { useAuth } from "@/contexts";
 import { aboutService, type AboutData } from "../services/aboutService";
-import { SkeletonLoader, EntityCard } from "@/common/components";
+import {
+  SkeletonLoader,
+  EntityCard,
+  ResponsiveButton,
+} from "@/common/components";
+import { ROUTES } from "@/constants";
 
 /**
  * About page component
@@ -86,14 +83,15 @@ const AboutPage = () => {
 
         {/* Edit button for admins */}
         {user?.role === "admin" && (
-          <Button
-            variant="contained"
-            startIcon={<Edit />}
-            onClick={() => navigate("/admin/about")}
-            sx={{ ml: 2 }}
+          <ResponsiveButton
+            collapseBreakpoint="sm"
+            icon={<Edit />}
+            onClick={() => {
+              navigate(ROUTES.ADMIN_ABOUT);
+            }}
           >
             Edit
-          </Button>
+          </ResponsiveButton>
         )}
       </Box>
 
