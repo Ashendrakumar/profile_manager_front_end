@@ -27,7 +27,7 @@ export interface ApiError {
  */
 const apiClient: AxiosInstance = axios.create({
   baseURL: API_BASE_URL,
-  timeout: 30000, // 30 seconds
+  timeout: 90000, // 90 seconds
   headers: {
     "Content-Type": "application/json",
   },
