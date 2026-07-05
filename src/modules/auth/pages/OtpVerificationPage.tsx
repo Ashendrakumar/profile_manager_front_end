@@ -226,8 +226,8 @@ const OtpVerificationPage = () => {
             }
             onFocus={(e) => e.target.select()}
             disabled={isSubmitting || isLoading || isResending || canResend}
-            ref={(el) => {
-              inputRefs.current[index] = el as HTMLInputElement;
+            inputRef={(el) => {
+              inputRefs.current[index] = el;
             }}
             inputMode="numeric"
             type="tel"
