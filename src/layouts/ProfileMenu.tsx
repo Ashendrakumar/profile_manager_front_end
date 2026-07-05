@@ -13,16 +13,20 @@ import {
   Box,
   Typography,
   Button,
+  alpha,
 } from "@mui/material";
 import { User, Sun, Moon, ExternalLink, Sparkles, LogOut } from "lucide-react"; // Integrated Lucide React
 
 import { useThemeMode, useAuth } from "@/contexts";
 import { profileService } from "@/modules/profile";
 import type { User as UserType } from "@/modules/auth";
+import { useNavigate } from "react-router-dom";
+import { ROUTES } from "@/constants";
 
 export const ProfileMenu = () => {
   const { mode, toggleTheme } = useThemeMode();
   const { logout, user, updateUser } = useAuth();
+  const navigate = useNavigate();
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
   const open = Boolean(anchorEl);
 
@@ -61,6 +65,11 @@ export const ProfileMenu = () => {
     };
     updateUser(updatedUser as UserType);
     window.open(response.data.link, "_blank", "noopener,noreferrer");
+  };
+
+  const handleUserInfo = () => {
+    handleMenuClose();
+    navigate(ROUTES.PROFILE_COMPLETION);
   };
 
   const handleThemeToggle = () => {
@@ -194,7 +203,7 @@ export const ProfileMenu = () => {
           />
         </MenuItem>
 
-        <MenuItem onClick={handleMenuClose} sx={{ borderRadius: 1 }}>
+        <MenuItem onClick={handleUserInfo} sx={{ borderRadius: 1 }}>
           <ListItemIcon sx={{ color: "text.secondary" }}>
             <User size={16} />
           </ListItemIcon>
@@ -221,7 +230,9 @@ export const ProfileMenu = () => {
           sx={{
             borderRadius: 1,
             color: "error.main",
-            "&:hover": { backgroundColor: "error.lighter" },
+            "&:hover": {
+              backgroundColor: (t) => alpha(t.palette.error.main, 0.08),
+            },
           }}
         >
           <ListItemIcon sx={{ color: "inherit" }}>

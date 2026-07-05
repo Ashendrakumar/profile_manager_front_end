@@ -55,7 +55,7 @@ export const ActionMenu = ({
   size = "small",
   ariaLabel = "actions",
   disabled = false,
-  minWidth = 200,
+  minWidth = 100,
   header,
 }: ActionMenuProps) => {
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
