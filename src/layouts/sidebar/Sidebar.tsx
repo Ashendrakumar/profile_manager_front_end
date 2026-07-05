@@ -21,7 +21,7 @@ type SidebarProps = {
   isCollapsed: boolean;
 };
 
-export default function Sidebar({
+export function Sidebar({
   open,
   setOpen,
   isMobile,

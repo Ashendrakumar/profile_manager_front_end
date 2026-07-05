@@ -8,7 +8,7 @@
  * both light (#ffffff paper) and dark (#1e1e1e paper) themes.
  */
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import {
   Box,
   Card,
@@ -23,12 +23,15 @@ import {
   useTheme,
   ListItemButton,
   Stack,
+  CircularProgress,
+  Button,
 } from "@mui/material";
 import {
   CheckCircle,
   RadioButtonUnchecked,
   Refresh,
   ArrowForwardIos,
+  ErrorOutline,
 } from "@mui/icons-material";
 import { useToast } from "@/contexts/toastContext";
 import {
@@ -39,6 +42,7 @@ import { useNavigate } from "react-router-dom";
 import { ROUTES } from "@/constants";
 import { SectionCard } from "@/common/components/SectionCard";
 import { ResponsiveButton } from "@/common/components";
+import { SkeletonLoader } from "@/common/components/SkeletonLoader";
 
 const SECTION_LABELS: Record<
   string,
@@ -123,13 +127,17 @@ export const ProfileCompletionDashboard = ({
     isLoading: true,
   });
 
-  useEffect(() => {
-    fetchProfileCompletion();
-  }, []);
+  // Tracks whether we've EVER successfully loaded data.
+  // Lets us tell "first load" (show full skeleton) apart from
+  // "refresh" (keep old data visible, just show a subtle spinner).
+  const [hasLoadedOnce, setHasLoadedOnce] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
-  const fetchProfileCompletion = async () => {
+  const fetchProfileCompletion = useCallback(async () => {
     try {
+      setError(null);
       setCompletion((prev) => ({ ...prev, isLoading: true }));
+
       const response = await profileService.getProfileCompletion();
       const remainingSection = ALL_SECTIONS.filter(
         (section) =>
@@ -141,15 +149,22 @@ export const ProfileCompletionDashboard = ({
         missingSections: remainingSection,
         isLoading: false,
       });
+      setHasLoadedOnce(true);
     } catch (err) {
-      showError(
+      const message =
         err instanceof Error
           ? err.message
-          : "Failed to fetch profile completion",
-      );
+          : "Failed to fetch profile completion";
+      setError(message);
+      showError(message);
       setCompletion((prev) => ({ ...prev, isLoading: false }));
     }
-  };
+  }, [showError]);
+
+  useEffect(() => {
+    fetchProfileCompletion();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   const getMotivationalMessage = (): { text: string; icon: string } => {
     const { percentage } = completion;
@@ -178,7 +193,7 @@ export const ProfileCompletionDashboard = ({
   const warningMain = theme.palette.warning.main;
   const warningBg = alpha(warningMain, isDark ? 0.05 : 0.08);
   const warningBorder = alpha(warningMain, isDark ? 0.4 : 0.2);
-
+  const errorMain = theme.palette.error.main;
   const ringInnerBg = theme.palette.background.paper;
 
   // Track color for linear progress
@@ -282,9 +297,8 @@ export const ProfileCompletionDashboard = ({
     />
   );
 
-  return (
-    <>
-      {/* Header */}
+  const pageHeader = () => {
+    return (
       <Box
         sx={{
           display: "flex",
@@ -305,6 +319,44 @@ export const ProfileCompletionDashboard = ({
           </Typography>
         </Box>
       </Box>
+    );
+  };
+
+  if (error && !hasLoadedOnce) {
+    return (
+      <Box
+        sx={{
+          display: "flex",
+          flexDirection: "column",
+          alignItems: "center",
+          justifyContent: "center",
+          gap: 2,
+          py: 8,
+        }}
+      >
+        <ErrorOutline sx={{ fontSize: 48, color: errorMain }} />
+        <Typography variant="h6">
+          Couldn't load your profile completion
+        </Typography>
+        <Typography variant="body2" color="text.secondary">
+          {error}
+        </Typography>
+        <Button
+          variant="contained"
+          startIcon={<Refresh />}
+          onClick={fetchProfileCompletion}
+        >
+          Try Again
+        </Button>
+      </Box>
+    );
+  }
+
+  return (
+    <>
+      {/* Header */}
+      {pageHeader()}
+
       <Card sx={{ width: "100%", mb: 3 }}>
         <CardContent>
           <Box
@@ -317,6 +369,8 @@ export const ProfileCompletionDashboard = ({
           >
             {/* Clickable Circular Progress Ring */}
             <Box
+              role="img"
+              aria-label={`Profile ${completion.percentage}% complete`}
               sx={{
                 position: "relative",
                 display: "flex",
@@ -329,6 +383,7 @@ export const ProfileCompletionDashboard = ({
                 boxShadow: "0 2px 8px rgba(0,0,0,0.15)",
                 cursor: "pointer",
                 transition: "transform 0.2s, box-shadow 0.2s",
+                opacity: completion.isLoading ? 0.6 : 1,
                 "&:hover": {
                   transform: "scale(1.04)",
                   boxShadow: `0 4px 16px ${alpha(progressGreen, 0.35)}`,
@@ -348,20 +403,26 @@ export const ProfileCompletionDashboard = ({
                   flexDirection: "column",
                 }}
               >
-                <Typography
-                  variant="h4"
-                  sx={{ fontWeight: "bold", color: progressGreen }}
-                >
-                  {completion.percentage}%
-                </Typography>
-                <Typography variant="caption" color="text.secondary">
-                  Complete
-                </Typography>
+                {completion.isLoading ? (
+                  <CircularProgress size={28} sx={{ color: progressGreen }} />
+                ) : (
+                  <>
+                    <Typography
+                      variant="h4"
+                      sx={{ fontWeight: "bold", color: progressGreen }}
+                    >
+                      {completion.percentage}%
+                    </Typography>
+                    <Typography variant="caption" color="text.secondary">
+                      Complete
+                    </Typography>
+                  </>
+                )}
               </Box>
             </Box>
 
             {/* Motivational text + linear bar */}
-            <Box sx={{ flex: 1 }}>
+            <Box sx={{ flex: 1, width: "100%" }}>
               <Box
                 sx={{ display: "flex", alignItems: "center", gap: 1, mb: 2 }}
               >
@@ -379,7 +440,7 @@ export const ProfileCompletionDashboard = ({
               </Typography>
 
               <LinearProgress
-                variant="determinate"
+                variant={completion.isLoading ? "indeterminate" : "determinate"}
                 value={completion.percentage}
                 sx={{
                   height: 8,
@@ -391,6 +452,15 @@ export const ProfileCompletionDashboard = ({
                   },
                 }}
               />
+
+              {error && (
+                <Typography
+                  variant="caption"
+                  sx={{ color: errorMain, display: "block", mt: 1 }}
+                >
+                  Last refresh failed: {error}
+                </Typography>
+              )}
             </Box>
           </Box>
         </CardContent>
@@ -417,24 +487,47 @@ export const ProfileCompletionDashboard = ({
             completed
           </Typography>
         </Box>
-        <ResponsiveButton icon={<Refresh />} onClick={fetchProfileCompletion}>
+        <ResponsiveButton
+          icon={
+            completion.isLoading ? <CircularProgress size={18} /> : <Refresh />
+          }
+          onClick={fetchProfileCompletion}
+          disabled={completion.isLoading}
+        >
           Refresh
         </ResponsiveButton>
       </Box>
 
       <Box sx={{ flex: 1, overflowY: "auto", px: 2, py: 2 }}>
-        {/* Cards */}
         <Stack
           direction={{ xs: "column", md: "row" }}
           spacing={2}
           alignItems="stretch"
         >
           <Card sx={{ flex: 1 }}>
-            <MissingSectionsCard />
+            {completion.isLoading ? (
+              <SkeletonLoader
+                variant="detail"
+                count={1}
+                lines={5}
+                showActions={false}
+              />
+            ) : (
+              <MissingSectionsCard />
+            )}
           </Card>
 
           <Card sx={{ flex: 1 }}>
-            <CompletedSectionsCard />
+            {completion.isLoading ? (
+              <SkeletonLoader
+                variant="detail"
+                count={1}
+                lines={5}
+                showActions={false}
+              />
+            ) : (
+              <CompletedSectionsCard />
+            )}
           </Card>
         </Stack>
       </Box>

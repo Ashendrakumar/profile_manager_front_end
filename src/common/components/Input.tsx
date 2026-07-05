@@ -109,9 +109,9 @@ export const Input = ({
       placeholder={`Please enter ${label}.`}
       error={error ?? !!fieldError}
       helperText={helperText ?? fieldError?.message}
-      // InputLabelProps={{
-      //   shrink: true,
-      // }}
+      InputLabelProps={{
+        shrink: true,
+      }}
       InputProps={
         isPassword ? { ...passwordAdornment, ...InputProps } : InputProps
       }

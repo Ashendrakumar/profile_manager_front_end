@@ -23,6 +23,7 @@ import { ROUTES } from "@/constants";
 interface AuthContextType {
   user: User | null;
   isAuthenticated: boolean;
+  isInitializing: boolean;
   isLoading: boolean;
   login: (credentials: LoginRequest) => Promise<void>;
   register: (userData: RegisterRequest) => Promise<void>;
@@ -46,7 +47,8 @@ interface AuthProviderProps {
  */
 export const AuthProvider = ({ children }: AuthProviderProps) => {
   const [user, setUser] = useState<User | null>(null);
-  const [isLoading, setIsLoading] = useState(true);
+  const [isInitializing, setIsInitializing] = useState(true);
+  const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const navigate = useNavigate();
 
@@ -75,6 +77,7 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
         console.error("Auth initialization error:", err);
         authService.clearAuth();
       } finally {
+        setIsInitializing(false);
         setIsLoading(false);
       }
     };
@@ -224,6 +227,7 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
   const value: AuthContextType = {
     user,
     isAuthenticated: !!user && authService.isAuthenticated(),
+    isInitializing,
     isLoading,
     login,
     register,

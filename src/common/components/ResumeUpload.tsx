@@ -8,7 +8,6 @@ import {
   Button,
   CircularProgress,
   Typography,
-  Paper,
   LinearProgress,
   Stack,
 } from "@mui/material";
@@ -22,6 +21,7 @@ import {
 import CloudUploadIcon from "@mui/icons-material/CloudUpload";
 import CheckCircleIcon from "@mui/icons-material/CheckCircle";
 import ErrorIcon from "@mui/icons-material/Error";
+import InsertDriveFileIcon from "@mui/icons-material/InsertDriveFile";
 import {
   profileService,
   type ResumeItem,
@@ -47,10 +47,6 @@ const ALLOWED_MIME_TYPES = [
 ];
 const DEFAULT_MAX_SIZE = 5; // MB
 
-/**
- * Resume Upload Component
- * Handles file upload with drag-and-drop support
- */
 export const ResumeUpload = ({
   onSuccess,
   onUploaded,
@@ -58,8 +54,8 @@ export const ResumeUpload = ({
   maxFileSize = DEFAULT_MAX_SIZE,
   accept = ".pdf,.doc,.docx",
   disabled = false,
-  label = "Upload Resume",
-  helperText = `Supported formats: PDF, DOC, DOCX (Max ${DEFAULT_MAX_SIZE}MB)`,
+  label = "Drag & drop your resume here",
+  helperText = `PDF, DOC or DOCX · Max ${DEFAULT_MAX_SIZE}MB`,
 }: ResumeUploadProps) => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -73,15 +69,12 @@ export const ResumeUpload = ({
   const ALLOWED_EXTENSIONS = [".pdf", ".doc", ".docx"];
 
   const validateFile = (file: File): boolean => {
-    // Check file size
     const maxBytes = maxFileSize * 1024 * 1024;
     if (file.size > maxBytes) {
       setError(`File size exceeds ${maxFileSize}MB limit`);
       return false;
     }
 
-    // Check file type. Some mobile browsers report an empty MIME type, so we
-    // fall back to the file extension when the MIME type is missing/unknown.
     const hasValidMime = ALLOWED_MIME_TYPES.includes(file.type);
     const hasValidExt = ALLOWED_EXTENSIONS.some((ext) =>
       file.name.toLowerCase().endsWith(ext),
@@ -95,7 +88,6 @@ export const ResumeUpload = ({
   };
 
   const handleFileUpload = async (file: File) => {
-    // Reset states
     setError(null);
     setSuccess(false);
     setUploadProgress(0);
@@ -109,7 +101,6 @@ export const ResumeUpload = ({
       setLoading(true);
       setFileName(file.name);
 
-      // Call profile service to upload resume with real upload progress
       const result = await profileService.uploadResume(file, (percent) =>
         setUploadProgress(percent),
       );
@@ -121,7 +112,6 @@ export const ResumeUpload = ({
       if (onSuccess) onSuccess(file.name);
       if (onUploaded) onUploaded(result.resumes);
 
-      // Reset success message after 3 seconds
       successTimeoutRef.current = setTimeout(() => {
         setSuccess(false);
         setFileName("");
@@ -140,7 +130,6 @@ export const ResumeUpload = ({
     if (files && files.length > 0) {
       handleFileUpload(files[0]);
     }
-    // Reset so selecting the same file again re-triggers onChange
     e.currentTarget.value = "";
   };
 
@@ -173,39 +162,46 @@ export const ResumeUpload = ({
     if (success) {
       toastService.success("Resume uploaded successfully");
     }
-
     if (error) {
       toastService.error(error);
     }
   }, [success, error]);
 
-  // Clear the success auto-reset timer on unmount.
   useEffect(() => {
     return () => {
       if (successTimeoutRef.current) clearTimeout(successTimeoutRef.current);
     };
   }, []);
 
+  const statusColor = success
+    ? "success.main"
+    : error
+      ? "error.main"
+      : "divider";
+
   return (
     <Box width="100%">
-      <Paper
+      <Box
         onDragOver={handleDragOver}
         onDragLeave={handleDragLeave}
         onDrop={handleDrop}
         onClick={handleClickUpload}
         sx={{
-          p: 3,
+          p: 2.5,
+          borderRadius: 2,
           textAlign: "center",
-          border: "2px dashed",
-          borderColor: isDragOver ? "primary.main" : "divider",
-          backgroundColor: isDragOver ? "action.hover" : "background.paper",
-          transition: "all 0.3s ease",
+          border: "1.5px dashed",
+          borderColor: isDragOver ? "primary.main" : statusColor,
+          backgroundColor: isDragOver ? "action.hover" : "transparent",
+          transition: "all 0.2s ease",
           cursor: disabled || loading ? "not-allowed" : "pointer",
           opacity: disabled ? 0.6 : 1,
-          "&:hover": {
-            borderColor: "primary.main",
-            backgroundColor: "action.hover",
-          },
+          "&:hover": disabled
+            ? undefined
+            : {
+                borderColor: "primary.main",
+                backgroundColor: "action.hover",
+              },
         }}
       >
         <input
@@ -217,41 +213,52 @@ export const ResumeUpload = ({
           style={{ display: "none" }}
         />
 
-        <Stack spacing={2} alignItems="center">
-          {/* Icon */}
+        <Stack spacing={1.25} alignItems="center">
           {!loading && !success && !error && (
-            <CloudUploadIcon sx={{ fontSize: 48, color: "primary.main" }} />
+            <CloudUploadIcon sx={{ fontSize: 36, color: "primary.main" }} />
           )}
-          {loading && <CircularProgress />}
-          {success && (
-            <CheckCircleIcon sx={{ fontSize: 48, color: "success.main" }} />
+          {loading && <CircularProgress size={36} />}
+          {!loading && success && (
+            <CheckCircleIcon sx={{ fontSize: 36, color: "success.main" }} />
           )}
-          {error && <ErrorIcon sx={{ fontSize: 48, color: "error.main" }} />}
+          {!loading && error && (
+            <ErrorIcon sx={{ fontSize: 36, color: "error.main" }} />
+          )}
 
-          {/* Label */}
-          <Typography variant="h6" component="div">
-            {label}
+          <Typography variant="body2" sx={{ fontWeight: 600 }}>
+            {success ? "Resume uploaded" : error ? "Upload failed" : label}
           </Typography>
 
-          {/* Helper Text */}
-          {!loading && !success && (
-            <Typography variant="body2" color="textSecondary">
+          {!loading && !success && !error && (
+            <Typography variant="caption" color="text.secondary">
               {helperText}
             </Typography>
           )}
 
-          {/* File Name */}
-          {fileName && (
-            <Typography variant="body2" color="textSecondary">
-              File: {fileName}
+          {error && (
+            <Typography variant="caption" color="error.main">
+              {error}
             </Typography>
           )}
 
-          {/* Upload Button */}
+          {fileName && (
+            <Stack
+              direction="row"
+              spacing={0.5}
+              alignItems="center"
+              sx={{ color: "text.secondary" }}
+            >
+              <InsertDriveFileIcon sx={{ fontSize: 14 }} />
+              <Typography variant="caption" noWrap sx={{ maxWidth: 220 }}>
+                {fileName}
+              </Typography>
+            </Stack>
+          )}
+
           {!loading && !success && (
             <Button
-              variant="contained"
-              color="primary"
+              variant="outlined"
+              size="small"
               onClick={(e) => {
                 e.stopPropagation();
                 handleClickUpload();
@@ -262,17 +269,20 @@ export const ResumeUpload = ({
             </Button>
           )}
 
-          {/* Progress */}
           {loading && uploadProgress > 0 && (
-            <Box sx={{ width: "100%", maxWidth: 300 }}>
+            <Box sx={{ width: "100%", maxWidth: 260 }}>
               <LinearProgress variant="determinate" value={uploadProgress} />
-              <Typography variant="caption" color="textSecondary">
-                {uploadProgress}%
+              <Typography
+                variant="caption"
+                color="text.secondary"
+                sx={{ display: "block", mt: 0.5 }}
+              >
+                Uploading… {uploadProgress}%
               </Typography>
             </Box>
           )}
         </Stack>
-      </Paper>
+      </Box>
     </Box>
   );
 };

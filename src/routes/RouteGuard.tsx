@@ -32,11 +32,11 @@ export const RouteGuard = ({
   isProtected,
   requiresAdmin,
 }: RouteGuardProps) => {
-  const { user, isAuthenticated, isLoading } = useAuth();
+  const { user, isAuthenticated, isInitializing } = useAuth();
   const location = useLocation();
 
   // ── Loading state ────────────────────────────────────────────────────────────
-  if (isLoading) {
+  if (isInitializing) {
     return <LoadingSpinner fullScreen />;
   }
 

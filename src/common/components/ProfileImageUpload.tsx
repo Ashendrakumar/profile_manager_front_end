@@ -1,14 +1,18 @@
+/**
+ * ProfileImageUpload Component
+ */
+
 import {
   Avatar,
+  Badge,
   Box,
   Button,
   CircularProgress,
   LinearProgress,
-  Paper,
   Stack,
   Typography,
 } from "@mui/material";
-import { Person } from "@mui/icons-material";
+import { Person, CameraAlt, CheckCircle } from "@mui/icons-material";
 import {
   type ChangeEvent,
   type DragEvent,
@@ -48,8 +52,8 @@ export const ProfileImageUpload = ({
   maxFileSize = DEFAULT_MAX_SIZE,
   accept = "image/*",
   disabled = false,
-  label = "Upload Profile Picture",
-  helperText = `Supported formats: JPG, PNG, GIF, WebP (Max ${DEFAULT_MAX_SIZE}MB)`,
+  label = "Profile Picture",
+  helperText = `JPG, PNG, GIF or WebP · Max ${DEFAULT_MAX_SIZE}MB`,
   showPreview = true,
 }: ProfileImageUploadProps) => {
   const [loading, setLoading] = useState(false);
@@ -62,12 +66,9 @@ export const ProfileImageUpload = ({
     initialImage || null,
   );
   const [uploadProgress, setUploadProgress] = useState(0);
-
-  // FIX: Use state for drag-over so hover styles actually re-render
   const [isDragOver, setIsDragOver] = useState(false);
 
   const fileInputRef = useRef<HTMLInputElement>(null);
-  // Track the "success" auto-reset timer so we can clear it on unmount.
   const successTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   const validateFile = (file: File): boolean => {
@@ -97,8 +98,6 @@ export const ProfileImageUpload = ({
       setLoading(true);
       setFileName(file.name);
 
-      // FIX: Resolve the preview URL before the upload call so onSuccess
-      // receives the real data-URL, not a potentially-null snapshot.
       const previewUrl = await new Promise<string>((resolve, reject) => {
         const reader = new FileReader();
         reader.onload = (e) => resolve(e.target?.result as string);
@@ -108,7 +107,6 @@ export const ProfileImageUpload = ({
 
       setImagePreview(previewUrl);
 
-      // Real upload progress (the service forwards axios onUploadProgress).
       const res = await profileService.uploadProfileImage(file, (percent) =>
         setUploadProgress(percent),
       );
@@ -117,7 +115,6 @@ export const ProfileImageUpload = ({
       setSuccess(true);
       setLoading(false);
 
-      // Prefer the persisted server URL; fall back to the local preview.
       if (onSuccess) onSuccess(res.profileImage || previewUrl, file.name);
 
       successTimeoutRef.current = setTimeout(() => setSuccess(false), 3000);
@@ -135,13 +132,13 @@ export const ProfileImageUpload = ({
     if (files && files.length > 0) {
       handleFileUpload(files[0]);
     }
-    // Reset input value so the same file can be re-selected after an error
     e.currentTarget.value = "";
   };
 
   const handleDragOver = (e: DragEvent<HTMLDivElement>) => {
     e.preventDefault();
-    setIsDragOver(true);
+    if (disabled || loading) return;
+    if (!isDragOver) setIsDragOver(true);
   };
 
   const handleDragLeave = (e: DragEvent<HTMLDivElement>) => {
@@ -152,6 +149,7 @@ export const ProfileImageUpload = ({
   const handleDrop = (e: DragEvent<HTMLDivElement>) => {
     e.preventDefault();
     setIsDragOver(false);
+    if (disabled || loading) return;
     const files = e.dataTransfer.files;
     if (files && files.length > 0) {
       handleFileUpload(files[0]);
@@ -159,12 +157,10 @@ export const ProfileImageUpload = ({
   };
 
   const handleClickUpload = () => {
+    if (disabled || loading) return;
     fileInputRef.current?.click();
   };
 
-  // Sync preview when the saved image arrives (e.g. after the parent's async
-  // fetch resolves). Without this the initially-saved image never shows,
-  // because initialImage is only read into state on first mount.
   useEffect(() => {
     if (initialImage) {
       setImagePreview(initialImage);
@@ -174,7 +170,6 @@ export const ProfileImageUpload = ({
     }
   }, [initialImage, initialFileName]);
 
-  // Clear the success auto-reset timer on unmount.
   useEffect(() => {
     return () => {
       if (successTimeoutRef.current) clearTimeout(successTimeoutRef.current);
@@ -186,100 +181,176 @@ export const ProfileImageUpload = ({
     if (error) toastService.error(error);
   }, [success, error]);
 
+  const hasSelection = fileName !== "No image selected";
+  const statusColor = success
+    ? "success.main"
+    : error
+      ? "error.main"
+      : "divider";
+
   return (
     <Box width="100%">
-      <Paper
+      <input
+        ref={fileInputRef}
+        type="file"
+        accept={accept}
+        onChange={handleFileInputChange}
+        disabled={disabled || loading}
+        style={{ display: "none" }}
+      />
+
+      {/* Whole card is the dropzone, matching ResumeUpload's pattern */}
+      <Box
         onDragOver={handleDragOver}
         onDragLeave={handleDragLeave}
         onDrop={handleDrop}
+        onClick={handleClickUpload}
         sx={{
-          p: 3,
+          p: 2.5,
+          borderRadius: 2,
           textAlign: "center",
-          border: "2px dashed",
-          // FIX: isDragOver is now state — MUI will re-render with correct color
-          borderColor: isDragOver ? "primary.main" : "divider",
-          backgroundColor: isDragOver ? "action.hover" : "background.paper",
-          transition: "all 0.3s ease",
-          cursor: "pointer",
-          "&:hover": {
-            borderColor: "primary.main",
-            backgroundColor: "action.hover",
-          },
+          border: "1.5px dashed",
+          borderColor: isDragOver ? "primary.main" : statusColor,
+          backgroundColor: isDragOver ? "action.hover" : "transparent",
+          transition: "all 0.2s ease",
+          cursor: disabled || loading ? "not-allowed" : "pointer",
+          opacity: disabled ? 0.6 : 1,
+          "&:hover": disabled
+            ? undefined
+            : {
+                borderColor: "primary.main",
+                backgroundColor: "action.hover",
+              },
         }}
       >
-        <input
-          ref={fileInputRef}
-          type="file"
-          accept={accept}
-          onChange={handleFileInputChange}
-          disabled={disabled || loading}
-          style={{ display: "none" }}
-        />
-
-        <Stack spacing={2} alignItems="center">
+        <Stack spacing={1.5} alignItems="center">
           {showPreview && (
-            <Avatar
-              src={imagePreview || ""}
-              sx={{
-                width: 120,
-                height: 120,
-                fontSize: "2.5rem",
-                bgcolor: "primary.main",
-                borderWidth: 3,
-                borderStyle: "solid",
-                borderColor: success
-                  ? "success.main"
-                  : error
-                    ? "error.main"
-                    : "common.white",
-              }}
-            >
-              {!imagePreview && (
-                <Person sx={{ fontSize: 48, color: "common.white" }} />
+            <Box sx={{ position: "relative" }}>
+              <Badge
+                overlap="circular"
+                anchorOrigin={{ vertical: "bottom", horizontal: "right" }}
+                badgeContent={
+                  !loading && !disabled ? (
+                    <Box
+                      sx={{
+                        width: 30,
+                        height: 30,
+                        borderRadius: "50%",
+                        bgcolor: "primary.main",
+                        display: "flex",
+                        alignItems: "center",
+                        justifyContent: "center",
+                        border: "2px solid",
+                        borderColor: "background.paper",
+                      }}
+                    >
+                      <CameraAlt sx={{ fontSize: 15, color: "common.white" }} />
+                    </Box>
+                  ) : null
+                }
+              >
+                <Avatar
+                  src={imagePreview || ""}
+                  sx={{
+                    width: 100,
+                    height: 100,
+                    fontSize: "2.25rem",
+                    bgcolor: "primary.main",
+                    borderWidth: 3,
+                    borderStyle: "solid",
+                    borderColor: success
+                      ? "success.main"
+                      : error
+                        ? "error.main"
+                        : "background.paper",
+                    boxShadow: 1,
+                  }}
+                >
+                  {!imagePreview && (
+                    <Person sx={{ fontSize: 40, color: "common.white" }} />
+                  )}
+                </Avatar>
+              </Badge>
+
+              {loading && (
+                <CircularProgress
+                  size={116}
+                  thickness={2}
+                  sx={{
+                    position: "absolute",
+                    top: -3,
+                    left: -3,
+                    color: "primary.main",
+                  }}
+                />
               )}
-            </Avatar>
+            </Box>
           )}
 
-          {loading && <CircularProgress />}
+          <Box sx={{ textAlign: "center" }}>
+            <Typography variant="body2" sx={{ fontWeight: 600 }}>
+              {success ? "Photo uploaded" : error ? "Upload failed" : label}
+            </Typography>
+            {!loading && !success && !error && (
+              <Typography variant="caption" color="text.secondary">
+                {helperText}
+              </Typography>
+            )}
+            {!loading && error && (
+              <Typography variant="caption" color="error.main">
+                {error}
+              </Typography>
+            )}
+          </Box>
 
-          <Typography variant="h6" component="div">
-            {label}
-          </Typography>
-
-          {!loading && !success && (
-            <Typography variant="body2" color="textSecondary">
-              {helperText}
+          {!loading && hasSelection && (
+            <Typography
+              variant="caption"
+              color="text.secondary"
+              noWrap
+              sx={{ maxWidth: 220 }}
+            >
+              {fileName}
             </Typography>
           )}
 
-          {!loading && !success && (
-            <Button
-              variant="contained"
-              color="primary"
-              onClick={handleClickUpload}
-              disabled={disabled}
-            >
-              Choose Image
-            </Button>
-          )}
-
           {loading && uploadProgress > 0 && (
-            <Box sx={{ width: "100%", maxWidth: 300 }}>
+            <Box sx={{ width: "100%", maxWidth: 220 }}>
               <LinearProgress variant="determinate" value={uploadProgress} />
-              <Typography variant="caption" color="textSecondary">
-                {uploadProgress}%
+              <Typography
+                variant="caption"
+                color="text.secondary"
+                sx={{ display: "block", textAlign: "center", mt: 0.5 }}
+              >
+                Uploading… {uploadProgress}%
               </Typography>
             </Box>
           )}
 
-          {/* Show selected file name when not loading */}
-          {!loading && fileName !== "No image selected" && (
-            <Typography variant="caption" color="textSecondary">
-              {fileName}
-            </Typography>
+          {!loading && (
+            <Button
+              variant="outlined"
+              size="small"
+              onClick={(e) => {
+                e.stopPropagation();
+                handleClickUpload();
+              }}
+              disabled={disabled}
+            >
+              {hasSelection ? "Change Photo" : "Choose Photo"}
+            </Button>
+          )}
+
+          {!loading && success && (
+            <Stack direction="row" spacing={0.5} alignItems="center">
+              <CheckCircle sx={{ fontSize: 16, color: "success.main" }} />
+              <Typography variant="caption" color="success.main">
+                Uploaded
+              </Typography>
+            </Stack>
           )}
         </Stack>
-      </Paper>
+      </Box>
     </Box>
   );
 };

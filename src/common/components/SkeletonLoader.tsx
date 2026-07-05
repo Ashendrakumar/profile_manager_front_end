@@ -5,13 +5,7 @@
  * single detail block while data is loading.
  */
 
-import {
-  Box,
-  Card,
-  CardContent,
-  CardActions,
-  Skeleton,
-} from "@mui/material";
+import { Box, Card, CardContent, CardActions, Skeleton } from "@mui/material";
 
 export type SkeletonLoaderProps = {
   /** Visual shape of each placeholder. Defaults to `card`. */
@@ -26,6 +20,8 @@ export type SkeletonLoaderProps = {
   showActions?: boolean;
   /** Gap between items, in MUI spacing units. */
   gap?: number;
+  /** MUI sx prop. */
+  sx?: any;
 };
 
 const range = (n: number) => Array.from({ length: n }, (_, i) => i);
@@ -129,10 +125,11 @@ export const SkeletonLoader = ({
   lines = 2,
   showActions = true,
   gap = 3,
+  sx = {},
 }: SkeletonLoaderProps) => {
   if (variant === "detail") {
     return (
-      <Box role="status" aria-busy="true" aria-label="Loading">
+      <Box role="status" aria-busy="true" aria-label="Loading" sx={sx}>
         <DetailSkeleton lines={Math.max(lines, 4)} />
       </Box>
     );
@@ -144,7 +141,7 @@ export const SkeletonLoader = ({
         role="status"
         aria-busy="true"
         aria-label="Loading"
-        sx={{ display: "flex", flexDirection: "column", gap }}
+        sx={{ display: "flex", flexDirection: "column", gap, ...sx }}
       >
         {range(count).map((i) => (
           <ListItemSkeleton key={i} lines={lines} showActions={showActions} />
@@ -162,6 +159,7 @@ export const SkeletonLoader = ({
         display: "grid",
         gridTemplateColumns: `repeat(auto-fill, minmax(${minItemWidth}px, 1fr))`,
         gap,
+        ...sx,
       }}
     >
       {range(count).map((i) => (

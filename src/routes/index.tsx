@@ -214,7 +214,6 @@ export const routes: AppRoute[] = [
       description: "Track your profile completion",
     },
   },
-
   {
     path: ROUTES.ACHIEVEMENTS,
     element: guard(<Inprogress />, { isProtected: true }),
@@ -225,7 +224,6 @@ export const routes: AppRoute[] = [
       keywords: "inprogress, working on it",
     },
   },
-
   {
     path: ROUTES.DOCUMENTS,
     element: guard(<Inprogress />, { isProtected: true }),
@@ -272,8 +270,8 @@ export const routes: AppRoute[] = [
   // ── 404 ────────────────────────────────────────────────────────────────────
   {
     path: "*",
-    element: <NotFoundPage />,
-    isPublic: true,
+    element: guard(<NotFoundPage />, { isProtected: true }),
+    isProtected: true,
     metadata: {
       title: "404 - Page Not Found",
       description: "The page you are looking for does not exist",

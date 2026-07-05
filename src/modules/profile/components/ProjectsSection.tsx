@@ -4,7 +4,7 @@
  */
 
 import { useState, useEffect } from "react";
-import { Box, Typography, Button, Grid, Chip, Link } from "@mui/material";
+import { Box, Typography, Grid, Chip, Link } from "@mui/material";
 import {
   Add,
   Edit,
@@ -228,14 +228,13 @@ export const ProjectsSection = () => {
                     __html: project.description,
                   }}
                 />
-                <Button
-                  size="small"
-                  startIcon={<Visibility />}
+                <ResponsiveButton
+                  variant="text"
+                  icon={<Visibility />}
                   onClick={() => handleView(project)}
-                  sx={{ mt: 0.5, px: 0, textTransform: "none" }}
                 >
                   View Details
-                </Button>
+                </ResponsiveButton>
                 {project.technologies && project.technologies.length > 0 && (
                   <Box
                     sx={{

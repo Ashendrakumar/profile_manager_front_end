@@ -1,6 +1,6 @@
 import { Box, Grid, useTheme } from "@mui/material";
 
-const AuthLayout = ({ children }: { children: React.ReactNode }) => {
+export const AuthLayout = ({ children }: { children: React.ReactNode }) => {
   const theme = useTheme();
   const authImage =
     theme.palette.mode === "light"
@@ -52,5 +52,3 @@ const AuthLayout = ({ children }: { children: React.ReactNode }) => {
     </Grid>
   );
 };
-
-export default AuthLayout;

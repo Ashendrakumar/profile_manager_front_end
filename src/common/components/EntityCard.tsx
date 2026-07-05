@@ -110,11 +110,10 @@ export const EntityCard = ({
         transition: (theme) =>
           theme.transitions.create(
             ["transform", "box-shadow", "border-color"],
-            { duration: theme.transitions.duration.shorter },
+            { duration: theme.transitions.duration.standard },
           ),
         "&:hover": {
-          transform: "translateY(-6px)",
-          boxShadow: 6,
+          transform: "translateY(-5px)",
           borderColor: "primary.main",
         },
       }}
@@ -146,7 +145,9 @@ export const EntityCard = ({
               variant="subtitle1"
               fontWeight={600}
               noWrap
-              title={titleTooltip ?? (typeof title === "string" ? title : undefined)}
+              title={
+                titleTooltip ?? (typeof title === "string" ? title : undefined)
+              }
             >
               {title}
             </Typography>

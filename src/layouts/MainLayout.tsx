@@ -10,10 +10,10 @@ import { ROUTES, STORAGE_KEYS } from "@/constants";
 import { useAuth } from "@/contexts";
 import { Header } from "./Header";
 import { Body } from "./Body";
-import AuthLayout from "./AuthLayout";
-import Sidebar from "./sidebar/Sidebar";
 import { LoadingSpinner } from "@/common/components";
 import { useEffect, useMemo, useState } from "react";
+import { Sidebar } from "./sidebar/Sidebar";
+import { AuthLayout } from "./AuthLayout";
 
 interface MainLayoutProps {
   children: ReactNode;
@@ -25,7 +25,7 @@ interface MainLayoutProps {
  */
 export const MainLayout = ({ children }: MainLayoutProps) => {
   const location = useLocation();
-  const { isAuthenticated, isLoading } = useAuth();
+  const { isAuthenticated, isInitializing } = useAuth();
   const [open, setOpen] = useState(() => {
     const stored = localStorage.getItem(STORAGE_KEYS.SIDE_BAR);
     return stored ? JSON.parse(stored) : true;
@@ -60,7 +60,7 @@ export const MainLayout = ({ children }: MainLayoutProps) => {
 
   const isCollapsed = useMemo(() => !isMobile && !open, [isMobile, open]);
 
-  if (!isAuthenticated && isLoading) {
+  if (!isAuthenticated && isInitializing) {
     return <LoadingSpinner fullScreen />;
   }
 
