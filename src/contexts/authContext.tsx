@@ -123,13 +123,10 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
         setIsLoading(true);
         setError(null);
         const response = await authService.register(userData);
-        if (response.email) {
-          navigate(
-            `${ROUTES.VERIFY_OTP}?email=${encodeURIComponent(response.email)}`,
-            {
-              replace: true,
-            },
-          );
+        if (response.otpToken) {
+          navigate(`${ROUTES.VERIFY_OTP_PAGE}/${response.otpToken}`, {
+            replace: true,
+          });
         }
       } catch (err) {
         const errorMessage =

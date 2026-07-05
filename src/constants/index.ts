@@ -58,7 +58,8 @@ export const ROUTES = {
   // auth_ROUTES
   LOGIN: "/login",
   REGISTER: "/register",
-  VERIFY_OTP: "/verify-otp",
+  VERIFY_OTP: "/verify-otp/:token",
+  VERIFY_OTP_PAGE: "/verify-otp",
   NOT_FOUND: "/404",
 } as const;
 

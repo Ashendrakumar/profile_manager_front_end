@@ -1,10 +1,12 @@
 /**
  * OTP Verification Page
- * Beautiful 6-digit OTP input with countdown timer and resend functionality
+ * Reads a signed OTP token from the URL param (/verify-otp/:token),
+ * decodes it to get email + fullName, checks expiry, and lets the user verify.
  */
 
 import { useEffect, useRef, useState, useCallback } from "react";
-import { useNavigate, useSearchParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
+import { jwtDecode } from "jwt-decode";
 import {
   Box,
   Typography,
@@ -17,29 +19,65 @@ import { theme } from "@/theme";
 import { ROUTES } from "@/constants";
 
 const OTP_LENGTH = 6;
-const COUNTDOWN_SECONDS = 60 * 10;
+const COUNTDOWN_INTERVAL = 10 * 60;
+
+interface OtpTokenPayload {
+  email: string;
+  fullName: string;
+  exp: number;
+  iat?: number;
+}
 
 const OtpVerificationPage = () => {
+  const inputRefs = useRef<(HTMLInputElement | null)[]>([]);
   const navigate = useNavigate();
-  const [searchParams] = useSearchParams();
-  const email = searchParams.get("email") || "";
-
+  const { token } = useParams<{ token: string }>();
   const { verifyOtp, resendOtp, isLoading, error, clearError } = useAuth();
-
   const [otp, setOtp] = useState<string[]>(new Array(OTP_LENGTH).fill(""));
-  const [countdown, setCountdown] = useState(COUNTDOWN_SECONDS);
-  const [canResend, setCanResend] = useState(false);
   const [isResending, setIsResending] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
 
-  const inputRefs = useRef<(HTMLInputElement | null)[]>([]);
+  // Decode token using jwt-decode
+  let decoded: OtpTokenPayload | null = null;
+  try {
+    if (token) decoded = jwtDecode<OtpTokenPayload>(token);
+  } catch {
+    decoded = null;
+  }
 
-  //  Redirect if no email provided
+  const email = decoded?.email ?? "";
+  const fullName = decoded?.fullName ?? "";
+
+  // Seed the countdown from the backend token's exp — how many seconds remain
+  const initialCountdown = decoded?.exp
+    ? Math.max(0, decoded.exp - Math.floor(Date.now() / 1000))
+    : 0;
+
+  const [countdown, setCountdown] = useState(initialCountdown);
+  const [canResend, setCanResend] = useState(initialCountdown <= 0);
+
+  /**
+   * Guard: redirect to register if token is missing, malformed, or expired.
+   */
   useEffect(() => {
-    if (!email) {
+    if (!token || !decoded) {
       navigate(ROUTES.REGISTER, { replace: true });
+      return;
     }
-  }, [email, navigate]);
+
+    const nowInSeconds = Math.floor(Date.now() / 1000);
+    if (decoded.exp < nowInSeconds) {
+      // Token has expired — send back to register so they can resend OTP
+      navigate(ROUTES.REGISTER, {
+        replace: true,
+        state: {
+          otpExpired: true,
+          message:
+            "Your verification link has expired. Please register again to receive a new code.",
+        },
+      });
+    }
+  }, []);
 
   // Countdown timer
   useEffect(() => {
@@ -173,7 +211,7 @@ const OtpVerificationPage = () => {
     if (error) clearError();
     try {
       await resendOtp(email);
-      setCountdown(COUNTDOWN_SECONDS);
+      setCountdown(COUNTDOWN_INTERVAL); // fresh OTP = new 10-min window
       setCanResend(false);
       setOtp(new Array(OTP_LENGTH).fill(""));
       inputRefs.current[0]?.focus();
@@ -190,11 +228,28 @@ const OtpVerificationPage = () => {
   return (
     <>
       <Typography component="h1" variant="h4" align="center" gutterBottom>
-        Verify your
-        <Typography component="span" variant="h4" color="primary.main">
-          {" "}
-          email with OTP
-        </Typography>
+        {fullName ? (
+          <>
+            Hi,{" "}
+            <Typography
+              component="span"
+              variant="h4"
+              color="primary.main"
+              sx={{ textTransform: "capitalize" }}
+            >
+              {fullName}
+            </Typography>
+            !
+          </>
+        ) : (
+          <>
+            Verify your
+            <Typography component="span" variant="h4" color="primary.main">
+              {" "}
+              email with OTP
+            </Typography>
+          </>
+        )}
       </Typography>
 
       <Typography
@@ -203,7 +258,11 @@ const OtpVerificationPage = () => {
         align="center"
         sx={{ mb: 3 }}
       >
-        Check your email and enter the verification code ...
+        We sent a 6-digit verification code to{" "}
+        <Box component="span" sx={{ fontWeight: 600, color: "text.primary" }}>
+          {email}
+        </Box>
+        . Enter it below to verify your account.
       </Typography>
 
       {/* OTP inputs */}
@@ -241,6 +300,7 @@ const OtpVerificationPage = () => {
           />
         ))}
       </Box>
+
       {/* Progress indicator */}
       <Box
         sx={{
@@ -266,8 +326,7 @@ const OtpVerificationPage = () => {
         ))}
       </Box>
 
-      {/* Verify button */}
-
+      {/* Verify / Resend */}
       {!canResend ? (
         <Box sx={{ textAlign: "center" }}>
           <Button

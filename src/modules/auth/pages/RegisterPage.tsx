@@ -4,12 +4,12 @@
  */
 
 import { useEffect } from "react";
-import { useNavigate, Link as RouterLink } from "react-router-dom";
+import { useNavigate, Link as RouterLink, useLocation } from "react-router-dom";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { Box, Button, Typography, Link, CircularProgress } from "@mui/material";
-import { useAuth } from "@/contexts";
+import { useAuth, useToast } from "@/contexts";
 import { ROUTES } from "@/constants";
 import { Input } from "@/common/components";
 
@@ -71,6 +71,7 @@ type RegisterFormData = z.infer<typeof registerSchema>;
  */
 const RegisterPage = () => {
   const navigate = useNavigate();
+  const location = useLocation();
   const {
     register: registerUser,
     isAuthenticated,
@@ -78,6 +79,23 @@ const RegisterPage = () => {
     error,
     clearError,
   } = useAuth();
+  const { showError } = useToast();
+
+  // Show a warning if redirected back from the OTP page due to an expired token
+  useEffect(() => {
+    const state = location.state as {
+      otpExpired?: boolean;
+      message?: string;
+    } | null;
+    if (state?.otpExpired) {
+      showError(
+        state.message ??
+          "Your OTP session expired. Please register again to receive a new code.",
+        6000,
+      );
+      globalThis.history.replaceState({}, "");
+    }
+  }, []);
 
   const {
     register,

@@ -39,6 +39,7 @@ export interface OtpVerifyRequest {
 export interface RegisterPendingResponse {
   message: string;
   email: string;
+  otpToken?: string;
 }
 
 /**
