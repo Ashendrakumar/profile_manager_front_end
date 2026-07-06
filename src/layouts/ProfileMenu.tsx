@@ -22,6 +22,8 @@ import { profileService } from "@/modules/profile";
 import type { User as UserType } from "@/modules/auth";
 import { useNavigate } from "react-router-dom";
 import { ROUTES } from "@/constants";
+import { UserAvatar } from "./UserAvatar";
+import { HelperFunctions } from "@/utils/helpers";
 
 export const ProfileMenu = () => {
   const { mode, toggleTheme } = useThemeMode();
@@ -29,6 +31,7 @@ export const ProfileMenu = () => {
   const navigate = useNavigate();
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
   const open = Boolean(anchorEl);
+  const role = HelperFunctions.formatRole(user?.role);
 
   const handleProfileClick = (event: React.MouseEvent<HTMLElement>) => {
     setAnchorEl(event.currentTarget);
@@ -113,7 +116,7 @@ export const ProfileMenu = () => {
             color: (theme) => theme.palette.primary.contrastText,
           }}
         >
-          <User size={18} strokeWidth={2.2} />
+          <UserAvatar />
         </Box>
 
         <Box
@@ -124,7 +127,7 @@ export const ProfileMenu = () => {
         >
           <Typography variant="body2" sx={{ fontWeight: 600, lineHeight: 1.2 }}>
             {user?.name
-              ? user.name.length > 12
+              ? user?.name.length > 12
                 ? `${user.name.slice(0, 10)}...`
                 : user.name
               : "Guest"}
@@ -137,7 +140,7 @@ export const ProfileMenu = () => {
               mt: 0.2,
             }}
           >
-            {user?.role || "User"}
+            {role}
           </Typography>
         </Box>
       </Button>

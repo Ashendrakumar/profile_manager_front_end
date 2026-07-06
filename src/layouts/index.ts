@@ -11,3 +11,4 @@ export { NavigationItems } from "./NavigationItems";
 export { ProfileMenu } from "./ProfileMenu";
 export { AuthLayout } from "./AuthLayout";
 export { Sidebar } from "./sidebar/Sidebar";
+export { UserAvatar } from "./UserAvatar";

@@ -60,6 +60,7 @@ export interface User {
   email: string;
   role?: "admin" | "user";
   portfolio: Portfolio;
+  avatarUrl?: string;
   [key: string]: unknown;
 }
 

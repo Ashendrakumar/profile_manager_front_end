@@ -1,20 +1,7 @@
-import { Box, Avatar, Typography, Tooltip, Divider } from "@mui/material";
+import { Box, Typography, Tooltip, Divider } from "@mui/material";
 import { useAuth } from "@/contexts";
-
-function getInitials(name?: string | null): string {
-  if (!name) return "?";
-  return name
-    .split(" ")
-    .filter(Boolean)
-    .slice(0, 2)
-    .map((part) => part[0]?.toUpperCase())
-    .join("");
-}
-
-function formatRole(role?: string | null): string {
-  if (!role) return "Member";
-  return role.charAt(0).toUpperCase() + role.slice(1);
-}
+import { UserAvatar } from "../UserAvatar";
+import { HelperFunctions } from "@/utils/helpers";
 
 type SidebarFooterProps = {
   isCollapsed: boolean;
@@ -25,8 +12,7 @@ export function SidebarFooter({ isCollapsed }: SidebarFooterProps) {
 
   if (!user) return null;
 
-  const initials = getInitials(user.name);
-  const role = formatRole(user.role);
+  const role = HelperFunctions.formatRole(user.role);
 
   const content = (
     <Box
@@ -40,23 +26,7 @@ export function SidebarFooter({ isCollapsed }: SidebarFooterProps) {
         overflow: "hidden",
       }}
     >
-      <Avatar
-        src={user.avatarUrl as string}
-        sx={{
-          width: 32,
-          height: 32,
-          minWidth: 32,
-          fontSize: 12.5,
-          fontWeight: 600,
-          bgcolor: (theme) => (theme.palette.primary as any)?.["50"],
-          color: (theme) =>
-            theme.palette.mode === "dark"
-              ? (theme.palette.primary as any)?.[100]
-              : (theme.palette.primary as any)?.[700],
-        }}
-      >
-        {initials}
-      </Avatar>
+      <UserAvatar />
 
       {!isCollapsed && (
         <Box sx={{ overflow: "hidden", minWidth: 0 }}>
