@@ -1,14 +1,19 @@
 import { useAuth } from "@/contexts";
 import { HelperFunctions } from "@/utils/helpers";
 import { Avatar } from "@mui/material";
+import { useMemo } from "react";
 
 export const UserAvatar = () => {
   const { user } = useAuth();
-  const initials = HelperFunctions.getInitials(user?.name);
+  const initials = useMemo(
+    () => HelperFunctions.getInitials(user?.name),
+    [user?.name],
+  );
+  const userImage = useMemo(() => user?.avatarUrl, [user?.avatarUrl]);
 
   return (
     <Avatar
-      src={user?.avatarUrl as string}
+      src={userImage}
       sx={{
         width: 32,
         height: 32,
