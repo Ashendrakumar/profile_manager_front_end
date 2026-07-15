@@ -11,7 +11,6 @@ import {
   DialogActions,
   Button,
   CircularProgress,
-  // Avatar,
   AvatarGroup,
 } from "@mui/material";
 
@@ -67,15 +66,20 @@ export const ConfirmDialog = ({
         </DialogContentText>
       </DialogContent>
       <DialogActions>
-        <Button size="small" onClick={onCancel} disabled={loading}>
+        <Button
+          size="medium"
+          variant="outlined"
+          onClick={onCancel}
+          disabled={loading}
+        >
           {cancelText}
         </Button>
         <AvatarGroup> </AvatarGroup>
         <Button
-          size="small"
+          size="medium"
+          variant="contained"
           onClick={handleConfirm}
           color={confirmColor}
-          variant="contained"
           disabled={loading}
           startIcon={loading ? <CircularProgress size={16} /> : null}
         >

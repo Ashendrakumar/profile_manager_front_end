@@ -9,6 +9,7 @@ import { useMetadata } from "@/hooks";
 import { PersonalDetailsSection } from "../components/PersonalDetailsSection";
 import { ContactDetailsSection } from "../components/ContactDetailsSection";
 import { EducationSection } from "../components/EducationSection";
+import { CertificationSection } from "../components/CertificationSection";
 import { ExperienceSection } from "../components/ExperienceSection";
 import { ProjectsSection } from "../components/ProjectsSection";
 import { SkillsSection } from "../components/SkillsSection";
@@ -51,27 +52,6 @@ const ProfilePage = () => {
         Manage your profile information and professional details
       </Typography>
 
-      {/* Profile Completion Dashboard */}
-      {/* <Box sx={{ mt: 3 }}>
-        <ProfileCompletionDashboard
-          onSectionClick={(section) => {
-            // Map section names to tab indices
-            const sectionToTabMap: Record<string, number> = {
-              personalDetails: 0,
-              contactDetails: 1,
-              education: 2,
-              experience: 3,
-              projects: 4,
-              skills: 5,
-            };
-            const tabIndex = sectionToTabMap[section];
-            if (tabIndex !== undefined) {
-              setActiveTab(tabIndex);
-            }
-          }}
-        />
-      </Box> */}
-
       <Paper sx={{ mt: 3 }}>
         <Box
           sx={{ borderBottom: 1, borderColor: "divider", overflow: "hidden" }}
@@ -93,6 +73,7 @@ const ProfilePage = () => {
             <Tab label="Personal Details" />
             <Tab label="Contact Details" />
             <Tab label="Education" />
+            <Tab label="Certifications" />
             <Tab label="Experience" />
             <Tab label="Projects" />
             <Tab label="Skills" />
@@ -110,12 +91,15 @@ const ProfilePage = () => {
             <EducationSection />
           </TabPanel>
           <TabPanel value={activeTab} index={3}>
-            <ExperienceSection />
+            <CertificationSection />
           </TabPanel>
           <TabPanel value={activeTab} index={4}>
-            <ProjectsSection />
+            <ExperienceSection />
           </TabPanel>
           <TabPanel value={activeTab} index={5}>
+            <ProjectsSection />
+          </TabPanel>
+          <TabPanel value={activeTab} index={6}>
             <SkillsSection />
           </TabPanel>
         </Box>

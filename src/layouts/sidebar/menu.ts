@@ -78,7 +78,7 @@ export const sidebarMenus: MenuItem[] = [
   },
   {
     title: "Certifications",
-    path: ROUTES.ACHIEVEMENTS,
+    path: ROUTES.CERTIFICATIONS,
     icon: ShieldCheck, // Standard, clean icon denoting private/personal settings
   },
   {

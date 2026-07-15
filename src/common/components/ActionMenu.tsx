@@ -16,6 +16,7 @@ import {
   Tooltip,
   Box,
   alpha,
+  Typography,
 } from "@mui/material";
 import { MoreVert } from "@mui/icons-material";
 
@@ -56,13 +57,14 @@ export const ActionMenu = ({
   ariaLabel = "actions",
   disabled = false,
   minWidth = 100,
-  header,
+  header = <Typography variant="subtitle1">Actions</Typography>,
 }: ActionMenuProps) => {
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
   const open = Boolean(anchorEl);
 
   const handleOpen = (event: MouseEvent<HTMLElement>) => {
     event.stopPropagation();
+    event.preventDefault();
     setAnchorEl(event.currentTarget);
   };
 
@@ -117,10 +119,10 @@ export const ActionMenu = ({
         }}
       >
         {header && (
-          <Box sx={{ px: 1.5, py: 1 }}>
-            {header}
+          <>
+            <Box sx={{ px: 1.5, py: 0.25 }}>{header}</Box>
             <Divider sx={{ mt: 1, mx: -0.5 }} />
-          </Box>
+          </>
         )}
 
         {visibleItems.flatMap((item, index) => {
@@ -151,7 +153,10 @@ export const ActionMenu = ({
             >
               {item.icon && (
                 <ListItemIcon
-                  sx={{ color: isError ? "inherit" : "text.secondary" }}
+                  sx={{
+                    color: isError ? "inherit" : "text.secondary",
+                    minWidth: 35,
+                  }}
                 >
                   {item.icon}
                 </ListItemIcon>

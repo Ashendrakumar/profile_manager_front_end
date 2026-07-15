@@ -65,6 +65,10 @@ const EducationSection = lazyNamed(
   () => import("@/modules/profile/components/EducationSection"),
   "EducationSection",
 );
+const CertificationSection = lazyNamed(
+  () => import("@/modules/profile/components/CertificationSection"),
+  "CertificationSection",
+);
 const ExperienceSection = lazyNamed(
   () => import("@/modules/profile/components/ExperienceSection"),
   "ExperienceSection",
@@ -87,6 +91,9 @@ const NotFoundPage = lazy(
 );
 
 const Inprogress = lazy(() => import("@/modules/Inprogress/Inprogress"));
+const DocumentsPage = lazy(
+  () => import("@/modules/documents/pages/DocumentsPage"),
+);
 
 // ── Helper: wrap a page element with RouteGuard ────────────────────────────────
 
@@ -206,6 +213,15 @@ export const routes: AppRoute[] = [
     },
   },
   {
+    path: ROUTES.CERTIFICATIONS,
+    element: guard(<CertificationSection />, { isProtected: true }),
+    isProtected: true,
+    metadata: {
+      title: "Certifications - Profile Manager",
+      description: "Manage your certifications",
+    },
+  },
+  {
     path: ROUTES.PROFILE_COMPLETION,
     element: guard(<ProfileCompletionDashboard />, { isProtected: true }),
     isProtected: true,
@@ -226,12 +242,12 @@ export const routes: AppRoute[] = [
   },
   {
     path: ROUTES.DOCUMENTS,
-    element: guard(<Inprogress />, { isProtected: true }),
+    element: guard(<DocumentsPage />, { isProtected: true }),
     isProtected: true,
     metadata: {
-      title: "Inprogress - Profile Manager",
-      description: "Inprogress or Working on it",
-      keywords: "inprogress, working on it",
+      title: "Documents - Profile Manager",
+      description: "Manage your folders and uploaded documents",
+      keywords: "documents, folders, upload",
     },
   },
 

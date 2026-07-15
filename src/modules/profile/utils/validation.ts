@@ -10,7 +10,7 @@ export const contactDetailsSchema = z.object({
   email: z
     .string()
     .min(1, "Email is required")
-    .email("Please enter a valid email address"),
+    .email({ message: "Please enter a valid email address" }),
   phones: z
     .array(
       z.object({
@@ -34,7 +34,7 @@ export const contactDetailsSchema = z.object({
   socialLinks: z.array(
     z.object({
       platform: z.enum(["linkedin", "github", "twitter", "portfolio"]),
-      url: z.string().url("Please enter a valid URL"),
+      url: z.string().url({ message: "Please enter a valid URL" }),
     }),
   ),
 });
@@ -50,6 +50,21 @@ export const educationSchema = z.object({
     .max(new Date().getFullYear() + 10),
   grade: z.string().optional(),
   specialization: z.string().optional(),
+});
+
+// Certification Schema
+export const certificationSchema = z.object({
+  title: z.string().min(1, "Certificate title is required"),
+  issuer: z.string().min(1, "Issuer is required"),
+  issueDate: z.string().min(1, "Issue date is required"),
+  expiryDate: z.string().optional().or(z.literal("")),
+  credentialId: z.string().optional().or(z.literal("")),
+  credentialUrl: z
+    .string()
+    .url({ message: "Please enter a valid URL" })
+    .optional()
+    .or(z.literal("")),
+  description: z.string().optional().or(z.literal("")),
 });
 
 // Experience Schema
@@ -100,12 +115,12 @@ export const projectSchema = z
     technologies: z.array(z.string()),
     projectUrl: z
       .string()
-      .url("Please enter a valid URL")
+      .url({ message: "Please enter a valid URL" })
       .optional()
       .or(z.literal("")),
     githubRepo: z
       .string()
-      .url("Please enter a valid URL")
+      .url({ message: "Please enter a valid URL" })
       .optional()
       .or(z.literal("")),
   })
