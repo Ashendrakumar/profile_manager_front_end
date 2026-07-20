@@ -63,7 +63,7 @@ export const ProfileImageUpload = ({
     initialFileName || "No image selected",
   );
   const [imagePreview, setImagePreview] = useState<string | null>(
-    initialImage || null,
+    () => initialImage || null,
   );
   const [uploadProgress, setUploadProgress] = useState(0);
   const [isDragOver, setIsDragOver] = useState(false);
@@ -181,7 +181,7 @@ export const ProfileImageUpload = ({
     if (error) toastService.error(error);
   }, [success, error]);
 
-  const hasSelection = fileName !== "No image selected";
+  const hasSelection = imagePreview !== "No image selected";
   const statusColor = success
     ? "success.main"
     : error

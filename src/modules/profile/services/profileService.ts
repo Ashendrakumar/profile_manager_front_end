@@ -22,7 +22,7 @@ export interface PersonalDetails {
   profileName: string;
   jobRole: string;
   profileDescription?: string;
-  profileImage?: string;
+  avatarUrl?: string;
   resumes?: ResumeItem[];
 }
 

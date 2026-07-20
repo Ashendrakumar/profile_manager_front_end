@@ -31,6 +31,7 @@ interface AuthContextType {
   resendOtp: (email: string) => Promise<void>;
   logout: () => Promise<void>;
   updateUser: (userData: User) => void;
+  updateImage: (avatarUrl: string) => void;
   error: string | null;
   clearError: () => void;
 }
@@ -215,6 +216,13 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
   }, []);
 
   /**
+   * Update user Image
+   */
+  const updateImage = useCallback((avatarUrl: string) => {
+    setUser((preVious) => ({ ...preVious, avatarUrl }) as User);
+  }, []);
+
+  /**
    * Clear error function
    */
   const clearError = useCallback(() => {
@@ -232,6 +240,7 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
     resendOtp,
     logout,
     updateUser,
+    updateImage,
     error,
     clearError,
   };

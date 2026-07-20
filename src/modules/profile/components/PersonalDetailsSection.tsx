@@ -46,6 +46,7 @@ import {
   TextArea,
 } from "@/common/components";
 import { SkeletonLoader } from "@/common/components/SkeletonLoader";
+import { useAuth } from "@/contexts";
 
 // ── Reusable "section card" wrapper (matches Contact Details styling) ──────
 const SectionCardShell = ({
@@ -92,6 +93,7 @@ const SectionCardShell = ({
 
 export const PersonalDetailsSection = () => {
   const { showSuccess, showError } = useToast();
+  const { updateImage, user } = useAuth();
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [personalDetails, setPersonalDetails] =
@@ -117,6 +119,7 @@ export const PersonalDetailsSection = () => {
 
   useEffect(() => {
     fetchPersonalDetails();
+    fetchResumes();
   }, []);
 
   useEffect(() => {
@@ -147,15 +150,23 @@ export const PersonalDetailsSection = () => {
     }
   };
 
+  const fetchResumes = async () => {
+    try {
+      const response = await profileService.getResumes();
+      const resumeData = response.resumes;
+      setResumes(resumeData || []);
+    } catch (err) {
+      showError(err instanceof Error ? err.message : "Failed to fetch resumes");
+    } finally {
+    }
+  };
+
   const handleProfileImageSuccess = (imagePath: string) => {
-    setPersonalDetails((prev) =>
-      prev
-        ? {
-            ...prev,
-            profileImage: imagePath,
-          }
-        : null,
-    );
+    updateImage(imagePath);
+  };
+
+  const handleResumeSuccess = (resume: ResumeItem[]) => {
+    setResumes(() => [...resume]);
   };
 
   const handleSetPrimaryResume = async (resumeId: string) => {
@@ -259,8 +270,15 @@ export const PersonalDetailsSection = () => {
             >
               <ProfileImageUpload
                 onSuccess={handleProfileImageSuccess}
-                initialImage={personalDetails?.profileImage}
-                label="Upload Profile Picture"
+                initialImage={user?.avatarUrl}
+                label={
+                  user?.avatarUrl
+                    ? "Change Profile Picture"
+                    : "Upload Profile Picture"
+                }
+                initialFileName={
+                  user?.avatarUrl ? personalDetails?.firstName : ""
+                }
                 showPreview={true}
               />
             </SectionCardShell>
@@ -340,7 +358,10 @@ export const PersonalDetailsSection = () => {
               icon={<UploadFile color="primary" />}
               title="Upload Resume"
             >
-              <ResumeUpload onUploaded={setResumes} />
+              <ResumeUpload
+                onUploaded={setResumes}
+                onSuccess={handleResumeSuccess}
+              />
             </SectionCardShell>
           </Grid>
 

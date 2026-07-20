@@ -343,8 +343,6 @@ const DocumentsPage = () => {
       >
         <Grid
           item
-          xs={12}
-          md={3}
           sx={{
             borderRight: { md: 1 },
             borderColor: { md: "divider" },
@@ -403,9 +401,12 @@ const DocumentsPage = () => {
 
         <Grid
           item
-          xs={12}
-          md={9}
-          sx={{ display: "flex", flexDirection: "column", height: "100%" }}
+          sx={{
+            display: "flex",
+            flexDirection: "column",
+            height: "100%",
+            flexGrow: 1,
+          }}
         >
           <Box
             sx={{

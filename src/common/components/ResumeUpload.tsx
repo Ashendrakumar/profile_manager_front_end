@@ -29,7 +29,7 @@ import {
 import { toastService } from "@/contexts";
 
 export interface ResumeUploadProps {
-  onSuccess?: (fileName: string) => void;
+  onSuccess?: (resumes: ResumeItem[]) => void;
   /** Called after a successful upload with the user's full, updated resume list. */
   onUploaded?: (resumes: ResumeItem[]) => void;
   onError?: (error: string) => void;
@@ -109,7 +109,7 @@ export const ResumeUpload = ({
       setSuccess(true);
       setLoading(false);
 
-      if (onSuccess) onSuccess(file.name);
+      if (onSuccess) onSuccess(result.resumes);
       if (onUploaded) onUploaded(result.resumes);
 
       successTimeoutRef.current = setTimeout(() => {
