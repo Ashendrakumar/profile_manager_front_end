@@ -154,7 +154,7 @@ export const PersonalDetailsSection = () => {
     try {
       const response = await profileService.getResumes();
       const resumeData = response.resumes;
-      setResumes(resumeData || []);
+      handleResumeSuccess(resumeData);
     } catch (err) {
       showError(err instanceof Error ? err.message : "Failed to fetch resumes");
     } finally {
