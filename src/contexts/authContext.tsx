@@ -32,6 +32,7 @@ interface AuthContextType {
   logout: () => Promise<void>;
   updateUser: (userData: User) => void;
   updateImage: (avatarUrl: string) => void;
+  loginWithToken: (token: string) => Promise<void>;
   error: string | null;
   clearError: () => void;
 }
@@ -229,6 +230,34 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
     setError(null);
   }, []);
 
+  /**
+   * Login with an OAuth token (e.g., from Google redirect)
+   * Stores token, fetches full user profile, and navigates to the app.
+   */
+  const loginWithToken = useCallback(
+    async (token: string) => {
+      try {
+        setIsLoading(true);
+        setError(null);
+        const user = await authService.loginWithToken(token);
+        setUser(user);
+        navigate(ROUTES.PROFILE_COMPLETION, { replace: true });
+      } catch (err) {
+        const errorMessage =
+          err instanceof Error
+            ? err.message
+            : "Google login failed. Please try again.";
+        setError(errorMessage);
+        authService.clearAuth();
+        navigate(ROUTES.LOGIN, { replace: true });
+        throw err;
+      } finally {
+        setIsLoading(false);
+      }
+    },
+    [navigate],
+  );
+
   const value: AuthContextType = {
     user,
     isAuthenticated: !!user && authService.isAuthenticated(),
@@ -241,6 +270,7 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
     logout,
     updateUser,
     updateImage,
+    loginWithToken,
     error,
     clearError,
   };

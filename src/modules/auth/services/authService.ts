@@ -200,4 +200,17 @@ export const authService = {
   getCurrentUser: async (): Promise<{ user: User }> => {
     return apiService.get<{ user: User }>("/users/me");
   },
+
+  /**
+   * Login with a token received from a Google OAuth redirect.
+   * Stores the token and fetches the full user profile from /users/me.
+   */
+  async loginWithToken(token: string): Promise<User> {
+    localStorage.setItem(STORAGE_KEYS.AUTH_TOKEN, token);
+    const { user } = await this.getCurrentUser();
+    if (user) {
+      localStorage.setItem(STORAGE_KEYS.USER_DATA, JSON.stringify(user));
+    }
+    return user;
+  },
 };

@@ -32,6 +32,9 @@ const RegisterPage = lazy(() => import("@/modules/auth/pages/RegisterPage"));
 const OtpVerificationPage = lazy(
   () => import("@/modules/auth/pages/OtpVerificationPage"),
 );
+const GoogleCallbackPage = lazy(
+  () => import("@/modules/auth/pages/GoogleCallbackPage"),
+);
 
 const HomePage = lazy(() => import("@/modules/home/pages/HomePage"));
 const AboutPage = lazy(() => import("@/modules/about/pages/AboutPage"));
@@ -134,6 +137,15 @@ export const routes: AppRoute[] = [
       title: "Verify Email - Profile Manager",
       description: "Verify your email address with OTP",
       keywords: "otp, verify, email verification",
+    },
+  },
+  {
+    // Google OAuth callback — must NOT be guarded (no token yet)
+    path: ROUTES.GOOGLE_CALLBACK,
+    element: <GoogleCallbackPage />,
+    metadata: {
+      title: "Signing in with Google... - Profile Manager",
+      description: "Completing Google sign-in",
     },
   },
 
