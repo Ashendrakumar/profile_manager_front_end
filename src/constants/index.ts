@@ -11,8 +11,8 @@ export const APP_DESCRIPTION =
 // Default to JSONPlaceholder for demo purposes
 // In production, set VITE_API_BASE_URL in .env file
 export const API_BASE_URL =
-  import.meta.env.VITE_API_BASE_URL || //"http://localhost:10000/api";
-  "https://profile-manager-back-end.onrender.com/api";
+  import.meta.env.VITE_API_BASE_URL ||  "http://localhost:10000/api";
+  // "https://profile-manager-back-end.onrender.com/api";
 
 // Storage Keys
 export const STORAGE_KEYS = {
@@ -61,8 +61,12 @@ export const ROUTES = {
   REGISTER: "/register",
   VERIFY_OTP: "/verify-otp/:token",
   VERIFY_OTP_PAGE: "/verify-otp",
+  GOOGLE_CALLBACK: "/google/callback",
   NOT_FOUND: "/404",
 } as const;
+
+// Google OAuth — backend initiates the redirect to Google's consent screen
+export const GOOGLE_AUTH_URL = `${API_BASE_URL}/users/auth/google`;
 
 export const ROLES = {
   ADMIN: "admin",

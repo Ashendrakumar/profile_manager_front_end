@@ -177,38 +177,6 @@ const LoginPage = () => {
         </Alert>
       )}
 
-      {/* ── Google Sign-In Button ─────────────────────────────────────────── */}
-      <Button
-        id="google-signin-btn"
-        fullWidth
-        variant="outlined"
-        onClick={handleGoogleSignIn}
-        startIcon={<GoogleLogo />}
-        sx={{
-          mb: 2,
-          py: 1.25,
-          borderColor: "divider",
-          color: "text.primary",
-          fontWeight: 500,
-          fontSize: "0.9rem",
-          textTransform: "none",
-          gap: 1,
-          "&:hover": {
-            borderColor: "primary.main",
-            backgroundColor: "action.hover",
-          },
-        }}
-      >
-        Continue with Google
-      </Button>
-
-      {/* ── Divider ───────────────────────────────────────────────────────── */}
-      <Divider sx={{ my: 2 }}>
-        <Typography variant="body2" color="text.secondary" sx={{ px: 1 }}>
-          or sign in with email
-        </Typography>
-      </Divider>
-
       {/* ── Email / Password Form ─────────────────────────────────────────── */}
       <Box component="form" onSubmit={handleSubmit(onSubmit)} noValidate>
         <Input
@@ -236,11 +204,43 @@ const LoginPage = () => {
           type="submit"
           fullWidth
           variant="contained"
-          sx={{ mt: 5, mb: 2 }}
+          sx={{ mt: 4 }}
           disabled={isSubmitting}
         >
           {isSubmitting ? <CircularProgress size={24} /> : "Sign In"}
         </Button>
+
+      {/* ── Divider ───────────────────────────────────────────────────────── */}
+      <Divider sx={{ my: 2 }}>
+        <Typography variant="body2" color="text.secondary" sx={{ px: 1 }}>
+          or sign in with email
+        </Typography>
+      </Divider>
+
+      {/* ── Google Sign-In Button ─────────────────────────────────────────── */}
+      <Button
+        id="google-signin-btn"
+        fullWidth
+        variant="outlined"
+        onClick={handleGoogleSignIn}
+        startIcon={<GoogleLogo />}
+        sx={{
+          mb: 2,
+          py: 1.25,
+          borderColor: "divider",
+          color: "text.primary",
+          fontWeight: 500,
+          fontSize: "0.9rem",
+          textTransform: "none",
+          gap: 1,
+          "&:hover": {
+            borderColor: "primary.main",
+            backgroundColor: "action.hover",
+          },
+        }}
+      >
+        Continue with Google
+      </Button>
 
         <Box textAlign="center">
           Don't have an account?
