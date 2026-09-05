@@ -16,6 +16,7 @@ type EducationFormData = {
   standard: string;
   institution: string;
   university?: string;
+  location: string;
   passingYear: number;
   grade?: string;
   specialization?: string;
@@ -46,6 +47,7 @@ export const EducationForm = ({
     defaultValues: {
       standard: "",
       institution: "",
+      location: "",
       university: "",
       passingYear: new Date().getFullYear(),
       grade: "",
@@ -60,6 +62,7 @@ export const EducationForm = ({
         standard: education.standard || "",
         institution: education.institution || "",
         university: education.university || "",
+        location: education.location || "",
         passingYear: education.passingYear || new Date().getFullYear(),
         grade: education.grade || "",
         specialization: education.specialization || "",
@@ -69,6 +72,7 @@ export const EducationForm = ({
         standard: "",
         institution: "",
         university: "",
+        location: "",
         passingYear: new Date().getFullYear(),
         grade: "",
         specialization: "",
@@ -105,6 +109,13 @@ export const EducationForm = ({
           <Input
             label="University"
             name="university"
+            register={register}
+            errors={errors}
+            disabled={loading}
+          />
+          <Input
+            label="Location"
+            name="location"
             register={register}
             errors={errors}
             disabled={loading}

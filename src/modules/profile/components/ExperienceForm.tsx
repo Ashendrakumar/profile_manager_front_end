@@ -24,6 +24,7 @@ import { Input } from "@/common/components";
 
 type ExperienceFormData = {
   companyName: string;
+  location: string;
   role: string;
   roleDescription?: string;
   startDate: string;
@@ -93,6 +94,7 @@ export const ExperienceForm = ({
     if (experience) {
       reset({
         companyName: experience.companyName || "",
+        location: experience.location || "",
         role: experience.role || "",
         roleDescription: experience.roleDescription || "",
         startDate: experience.startDate
@@ -106,6 +108,7 @@ export const ExperienceForm = ({
     } else {
       reset({
         companyName: "",
+        location: "",
         role: "",
         roleDescription: "",
         startDate: "",
@@ -131,6 +134,13 @@ export const ExperienceForm = ({
         <Input
           label="Company Name"
           name="companyName"
+          register={register}
+          errors={errors}
+          disabled={loading}
+        />
+        <Input
+          label="Location"
+          name="location"
           register={register}
           errors={errors}
           disabled={loading}
