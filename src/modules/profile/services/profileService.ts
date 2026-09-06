@@ -76,6 +76,7 @@ export interface Education {
   standard: string;
   institution: string;
   university?: string;
+  location: string;
   passingYear: number;
   grade?: string;
   specialization?: string;
@@ -142,6 +143,7 @@ export interface ExperienceProjectLink {
 export interface Experience {
   _id?: string;
   companyName: string;
+  location: string;
   role: string;
   roleDescription?: string;
   startDate: string;

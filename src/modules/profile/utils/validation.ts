@@ -44,6 +44,7 @@ export const educationSchema = z.object({
   standard: z.string().min(1, "Standard/Degree is required"),
   institution: z.string().min(1, "Institution is required"),
   university: z.string().optional(),
+  location: z.string().min(1, "Location is required"),
   passingYear: z
     .number()
     .min(1900)
@@ -71,6 +72,7 @@ export const certificationSchema = z.object({
 export const experienceSchema = z
   .object({
     companyName: z.string().min(1, "Company name is required"),
+    location: z.string().min(1, "Location is required"),
     role: z.string().min(1, "Role is required"),
     roleDescription: z.string().optional().or(z.literal("")),
     startDate: z.string().min(1, "Start date is required"),
