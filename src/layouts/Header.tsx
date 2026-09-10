@@ -3,11 +3,12 @@
  * Application header with navigation and profile menu
  */
 
-import { AppBar, Toolbar, Typography, Box, IconButton } from "@mui/material";
+import { AppBar, Toolbar, Box, IconButton, alpha } from "@mui/material";
 import { useAuth } from "@/contexts";
 import { ProfileMenu } from "./ProfileMenu";
 import { Link } from "react-router-dom";
 import { SidebarIcon } from "lucide-react"; // Swapped for a cohesive Lucide look
+import { BrandMark } from "@/common/components";
 import { ROUTES } from "@/constants";
 
 interface HeaderProps {
@@ -24,12 +25,21 @@ export const Header = ({ setOpen }: HeaderProps) => {
   return (
     <AppBar
       position="sticky"
-      elevation={0} // Flattens look; depth is managed below with border
+      elevation={0} // Flat; depth comes from the border + backdrop blur below
+      color="transparent"
       sx={{
         top: 0,
+        color: "text.primary",
         borderBottom: "1px solid",
-        borderColor: (theme) => theme.palette.divider,
-        backgroundColor: (theme) => theme.palette.primary.main,
+        borderColor: "divider",
+        // Glassy translucent surface over the scrolling content.
+        backgroundColor: (theme) =>
+          alpha(
+            theme.palette.background.paper,
+            theme.palette.mode === "dark" ? 0.72 : 0.8,
+          ),
+        backdropFilter: "blur(18px) saturate(160%)",
+        WebkitBackdropFilter: "blur(18px) saturate(160%)",
       }}
     >
       <Toolbar sx={{ minHeight: { xs: 56, sm: 64 }, px: { xs: 2, sm: 3 } }}>
@@ -42,37 +52,43 @@ export const Header = ({ setOpen }: HeaderProps) => {
           sx={{
             marginRight: 2,
             p: 1,
-            borderRadius: 1,
+            borderRadius: 1.5,
+            color: "text.secondary",
             border: "1px solid",
-            borderColor: (theme) => theme.palette.action.hover,
+            borderColor: "divider",
             transition: (theme) =>
-              theme.transitions.create(["background-color", "border-color"]),
+              theme.transitions.create([
+                "background-color",
+                "border-color",
+                "color",
+              ]),
             "&:hover": {
               backgroundColor: (theme) => theme.palette.action.hover,
-              borderColor: (theme) => theme.palette.divider,
+              borderColor: "primary.main",
+              color: "primary.main",
             },
           }}
         >
           <SidebarIcon size={20} strokeWidth={2} />
         </IconButton>
 
-        <Typography
-          variant="subtitle1"
-          fontWeight={600}
+        <Box
           component={Link}
-          to={ROUTES.PERSONAL_DETAILS}
+          to={ROUTES.PROFILE}
           sx={{
             flexGrow: 1,
+            display: "inline-flex",
+            alignItems: "center",
             textDecoration: "none",
             color: "inherit",
-            letterSpacing: "-0.01em",
+            transition: (theme) => theme.transitions.create("opacity"),
             "&:hover": {
               opacity: 0.85,
             },
           }}
         >
-          Profile Manager
-        </Typography>
+          <BrandMark variant="default" size={32} />
+        </Box>
 
         <Box sx={{ display: "flex", gap: 1.5, alignItems: "center" }}>
           {isAuthenticated && <ProfileMenu />}

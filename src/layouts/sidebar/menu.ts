@@ -3,8 +3,6 @@ import {
   LayoutDashboard,
   Info,
   UsersRound,
-  UserCheck,
-  ContactRound,
   User,
   GraduationCap,
   BriefcaseBusiness,
@@ -42,19 +40,9 @@ export const sidebarMenus: MenuItem[] = [
     adminOnly: true,
   },
   {
-    title: "Profile Completion",
-    path: ROUTES.PROFILE_COMPLETION,
-    icon: UserCheck, // Highlights human profile progress/verification better than a clipboard
-  },
-  {
-    title: "Contact Details",
-    path: ROUTES.CONTACT,
-    icon: ContactRound, // More modern than a basic phone icon for comprehensive contact data
-  },
-  {
-    title: "Personal",
-    path: ROUTES.PERSONAL_DETAILS,
-    icon: User, // Standard, clean icon denoting private/personal settings
+    title: "My Profile",
+    path: ROUTES.PROFILE, // Completion + Personal + Contact + Resume, edited via side drawers
+    icon: User,
   },
   {
     title: "Education",

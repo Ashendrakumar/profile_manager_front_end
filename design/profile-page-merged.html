@@ -1,0 +1,416 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>My Profile · Merged Page (view + edit drawer)</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Sora:wght@600;700;800&display=swap" rel="stylesheet" />
+<style>
+/* Tokens mirror src/theme/index.ts */
+:root{
+  --teal-50:#e6f6f4;--teal-100:#c2e9e4;--teal-200:#8fd6cd;--teal-300:#4fbdb0;--teal-400:#26a698;
+  --teal-500:#00968a;--teal-600:#00897b;--teal-700:#00796b;--teal-800:#00655a;--teal-900:#004d40;
+  --coral-500:#ff5a3c;--amber:#f5a524;--violet:#7c5cff;--sky:#2e9bff;--rose:#f43f6e;--green:#18b368;
+  --bg:#f4f7f8;--surface:#ffffff;--surface-2:#f8fafb;--surface-3:#eef3f4;
+  --line:#e4ebec;--line-strong:#d3dedf;--ink:#0f1e1c;--ink-2:#3d4f4d;--ink-3:#5c6d6a;--ink-4:#95a3a1;
+  --active-bg:#e6f6f4;--active-fg:#00796b;
+  --grad-brand:linear-gradient(135deg,#00b3a0,#00897b 55%,#00655a);
+  --grad-coral:linear-gradient(135deg,#ff7a66,#ff5a3c 55%,#e94a2e);
+  --sh-sm:0 2px 12px rgba(6,32,29,.08),0 1px 4px rgba(6,32,29,.05);
+  --sh-md:0 8px 24px rgba(6,32,29,.12),0 2px 8px rgba(6,32,29,.06);
+  --sh-lg:0 20px 48px rgba(6,32,29,.16),0 6px 16px rgba(6,32,29,.08);
+  --sh-teal:0 12px 30px rgba(0,137,123,.28);
+  --r-sm:12px;--r-md:16px;--r-pill:999px;--ease:cubic-bezier(.22,.61,.36,1);--dur:.28s;
+  --font:'Inter',system-ui,sans-serif;--display:'Sora','Inter',sans-serif;
+}
+[data-theme="dark"]{
+  --bg:#0b1413;--surface:#111d1b;--surface-2:#0f1a19;--surface-3:#16221f;
+  --line:#22322f;--line-strong:#2c3d3a;--ink:#eaf4f2;--ink-2:#b9c9c6;--ink-3:#9fb2ae;--ink-4:#5f716e;
+  --active-bg:rgba(0,150,138,.16);--active-fg:#8fd6cd;
+  --sh-sm:0 2px 12px rgba(0,0,0,.4);--sh-md:0 10px 28px rgba(0,0,0,.5);--sh-lg:0 24px 54px rgba(0,0,0,.6);
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:var(--font);background:var(--bg);color:var(--ink);-webkit-font-smoothing:antialiased;transition:background .4s,color .4s}
+h1,h2,h3,h4{font-family:var(--display);letter-spacing:-.02em;line-height:1.2}
+::selection{background:var(--teal-300);color:#012}
+
+.chrome{position:sticky;top:0;z-index:100;display:flex;align-items:center;gap:16px;padding:12px 22px;background:color-mix(in srgb,var(--surface) 82%,transparent);backdrop-filter:blur(18px) saturate(160%);border-bottom:1px solid var(--line)}
+.c-brand{display:flex;align-items:center;gap:10px;font-family:var(--display);font-weight:800}
+.c-brand .logo{width:32px;height:32px;border-radius:10px;background:var(--grad-brand);display:grid;place-items:center;color:#fff;box-shadow:var(--sh-teal);font-weight:800}
+.c-brand small{display:block;font-size:10.5px;font-weight:600;color:var(--ink-3);text-transform:uppercase;letter-spacing:.05em}
+.toggle{margin-left:auto;display:flex;align-items:center;gap:8px;border:1px solid var(--line-strong);background:var(--surface);border-radius:var(--r-pill);padding:7px 14px;cursor:pointer;font-weight:600;font-size:13px;color:var(--ink-2)}
+.toggle:hover{border-color:var(--teal-400);color:var(--teal-600)}
+
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;font-weight:600;font-size:13.5px;cursor:pointer;border:none;border-radius:var(--r-sm);padding:11px 20px;transition:all var(--dur) var(--ease)}
+.btn-primary{background:var(--grad-brand);color:#fff;box-shadow:var(--sh-teal)}
+.btn-primary:hover{transform:translateY(-2px)}
+.btn-ghost{background:var(--surface);color:var(--ink);border:1.5px solid var(--line-strong)}
+.btn-ghost:hover{border-color:var(--teal-400);color:var(--teal-600)}
+.btn-sm{padding:8px 14px;font-size:12.5px}
+.btn-edit{background:var(--surface);color:var(--teal-700);border:1.5px solid var(--teal-200);padding:7px 14px;font-size:12.5px;border-radius:var(--r-sm);display:inline-flex;gap:6px;align-items:center;cursor:pointer;font-weight:600;transition:all var(--dur) var(--ease)}
+.btn-edit:hover{background:var(--teal-50);border-color:var(--teal-400)}
+[data-theme="dark"] .btn-edit{color:var(--teal-200);border-color:var(--line-strong);background:transparent}
+.chip{display:inline-flex;align-items:center;gap:5px;font-size:12px;font-weight:600;padding:5px 11px;border-radius:var(--r-pill);height:26px;white-space:nowrap}
+.chip-teal{background:var(--teal-50);color:var(--teal-700)}.chip-green{background:rgba(24,179,104,.13);color:#0d7a48}
+.chip-amber{background:rgba(245,165,36,.15);color:#a86b00}.chip-violet{background:rgba(124,92,255,.13);color:#5a3fd6}.chip-gray{background:var(--surface-3);color:var(--ink-3)}
+[data-theme="dark"] .chip-teal{background:rgba(0,150,138,.18);color:var(--teal-200)}
+.bar{height:8px;border-radius:var(--r-pill);background:var(--surface-3);overflow:hidden}.bar>i{display:block;height:100%;background:var(--grad-brand)}
+.muted{color:var(--ink-3)}.avatar{border-radius:50%;background:var(--grad-brand);color:#fff;display:inline-grid;place-items:center;font-weight:700}
+.card{background:var(--surface);border:1px solid var(--line);border-radius:var(--r-md);box-shadow:var(--sh-sm)}
+
+.shell{display:grid;grid-template-columns:240px 1fr;min-height:calc(100vh - 57px)}
+@media(max-width:900px){.shell{grid-template-columns:1fr}.sidebar{display:none}}
+.sidebar{background:var(--surface-2);border-right:1px solid var(--line);padding:14px 12px;position:sticky;top:57px;height:calc(100vh - 57px);overflow-y:auto}
+.side-brand{display:flex;align-items:center;gap:10px;padding:6px 10px 14px;font-family:var(--display);font-weight:800}
+.side-brand .logo{width:30px;height:30px;border-radius:9px;background:var(--teal-50);color:var(--teal-600);display:grid;place-items:center;font-weight:800;border:1px solid rgba(0,137,123,.2)}
+.nav-group{font-size:10px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--ink-4);padding:14px 12px 6px}
+.nav-i{display:flex;align-items:center;gap:12px;padding:10px 12px;border-radius:var(--r-sm);font-size:13.5px;font-weight:500;color:var(--ink-2);cursor:pointer;transition:all .15s;margin-bottom:1px;position:relative}
+.nav-i .ic{width:19px;text-align:center;font-size:15px;opacity:.9}
+.nav-i:hover{background:var(--surface-3);color:var(--ink)}
+.nav-i.active{background:var(--active-bg);color:var(--active-fg);font-weight:600}
+.nav-i.active::before{content:"";position:absolute;left:0;top:7px;bottom:7px;width:3px;border-radius:0 3px 3px 0;background:var(--teal-400)}
+
+.appbar{position:sticky;top:57px;z-index:50;display:flex;align-items:center;gap:14px;padding:12px 22px;background:color-mix(in srgb,var(--surface) 80%,transparent);backdrop-filter:blur(18px) saturate(160%);border-bottom:1px solid var(--line)}
+.searchbox{flex:1;max-width:420px;display:flex;align-items:center;gap:10px;background:var(--surface-3);border:1px solid var(--line);border-radius:var(--r-pill);padding:9px 16px;font-size:13px;color:var(--ink-3)}
+.icon-btn{width:38px;height:38px;border-radius:11px;display:grid;place-items:center;background:var(--surface);border:1px solid var(--line);color:var(--ink-3);cursor:pointer}
+.content{padding:24px;max-width:1200px}
+.page-head{display:flex;justify-content:space-between;align-items:flex-start;flex-wrap:wrap;gap:14px;margin-bottom:20px}
+.page-head h1{font-size:26px}.page-head .sub{font-size:13.5px;color:var(--ink-3);margin-top:3px}
+
+.profile-grid{display:grid;grid-template-columns:320px 1fr;gap:20px;align-items:start}
+@media(max-width:980px){.profile-grid{grid-template-columns:1fr}}
+.prail{position:sticky;top:126px;display:flex;flex-direction:column;gap:16px}
+@media(max-width:980px){.prail{position:static}}
+.identity{padding:28px 22px 24px;text-align:center}
+/* Progress ring WRAPS the avatar — one unified element */
+.id-ring{width:128px;height:128px;border-radius:50%;position:relative;margin:0 auto 18px;
+  background:conic-gradient(var(--teal-500) 0 266deg,var(--line-strong) 266deg 360deg);box-shadow:var(--sh-md)}
+.id-ring::before{content:"";position:absolute;inset:6px;border-radius:50%;background:var(--surface)}
+.id-av{position:absolute;inset:12px;border-radius:50%;display:grid;place-items:center;font-size:34px;width:auto;height:auto}
+.av-edit{position:absolute;inset:12px;border-radius:50%;background:rgba(6,20,18,.55);color:#fff;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;font-size:11px;font-weight:600;opacity:0;cursor:pointer;transition:opacity .2s var(--ease)}
+.id-ring:hover .av-edit{opacity:1}
+.id-pct{position:absolute;left:50%;bottom:-7px;transform:translateX(-50%);background:var(--grad-brand);color:#fff;font-family:var(--display);font-weight:700;font-size:12px;line-height:1;padding:5px 13px;border-radius:var(--r-pill);border:2px solid var(--surface);box-shadow:var(--sh-sm);white-space:nowrap}
+.rail-nav .rn{display:flex;align-items:center;gap:10px;padding:9px 12px;border-radius:var(--r-sm);font-size:13px;font-weight:500;cursor:pointer;color:var(--ink-2);transition:all .15s}
+.rail-nav .rn:hover{background:var(--surface-3)}
+.rail-nav .rn.on{background:var(--active-bg);color:var(--active-fg);font-weight:600}
+
+.pmain{display:flex;flex-direction:column;gap:20px}
+.sec{padding:0;overflow:hidden;scroll-margin-top:130px}
+.sec-head{display:flex;align-items:center;justify-content:space-between;padding:18px 22px;border-bottom:1px solid var(--line)}
+.sec-head h3{font-size:17px}.sec-head .hint{font-size:12px;color:var(--ink-3);margin-top:2px}
+.sec-body{padding:8px 22px 22px}
+
+/* ── READ / VIEW MODE (definition list) ── */
+.dl{display:grid;grid-template-columns:1fr 1fr;gap:2px 28px}
+@media(max-width:560px){.dl{grid-template-columns:1fr}}
+.dl .full{grid-column:1 / -1}
+.dl-row{padding:12px 0;border-bottom:1px solid var(--line)}
+.dl-k{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.05em;color:var(--ink-4);margin-bottom:4px}
+.dl-v{font-size:14px;color:var(--ink);font-weight:500}
+.dl-v.empty{color:var(--ink-4);font-weight:400;font-style:italic}
+.upload{display:flex;align-items:center;gap:12px;padding:12px;border-radius:var(--r-sm);background:var(--surface-2);border:1px solid var(--line);margin-top:6px}
+.hint{font-size:12px;color:var(--ink-3)}
+
+/* ── Resumes manager (multiple + primary) ── */
+.sub-block{margin-top:20px;padding-top:18px;border-top:1px solid var(--line)}
+.sub-head{display:flex;align-items:flex-start;justify-content:space-between;gap:12px;margin-bottom:12px}
+.sub-title{font-weight:700;font-size:14px}
+.res-list{display:flex;flex-direction:column;gap:10px}
+.res-item{display:flex;align-items:center;gap:12px;padding:12px 14px;border:1px solid var(--line);border-radius:var(--r-sm);background:var(--surface-2);transition:all var(--dur) var(--ease)}
+.res-item:hover{border-color:var(--line-strong)}
+.res-item.primary{border-color:var(--teal-300);background:var(--teal-50)}
+[data-theme="dark"] .res-item.primary{background:rgba(0,150,138,.1);border-color:var(--teal-700)}
+.res-ic{font-size:24px;flex-shrink:0}
+.res-info{flex:1;min-width:0}
+.res-name{font-weight:600;font-size:13px;display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.res-actions{display:flex;align-items:center;gap:6px;flex-shrink:0}
+.res-actions button{border:1px solid var(--line);background:var(--surface);border-radius:9px;height:30px;min-width:30px;display:inline-flex;align-items:center;justify-content:center;gap:4px;cursor:pointer;color:var(--ink-3);font-size:12.5px;font-weight:600;transition:all var(--dur) var(--ease)}
+.res-actions button:hover{border-color:var(--teal-400);color:var(--teal-600)}
+.res-actions button.del:hover{border-color:var(--rose);color:var(--rose)}
+.res-actions .set-primary{padding:0 11px}
+.res-item.primary .set-primary{display:none}
+.sw-row{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:12px 14px;border:1px solid var(--line);border-radius:var(--r-sm);background:var(--surface-2)}
+.sw{width:42px;height:24px;border-radius:12px;position:relative;flex-shrink:0;cursor:pointer;background:var(--teal-500);transition:background var(--dur)}
+.sw i{position:absolute;width:18px;height:18px;border-radius:50%;background:#fff;top:3px;right:3px;transition:all var(--dur)}
+.sw.off{background:var(--surface-3)}.sw.off i{left:3px;right:auto}
+.pri-radio{width:20px;height:20px;border-radius:50%;border:2px solid var(--line-strong);background:var(--surface);cursor:pointer;flex-shrink:0;position:relative;padding:0}
+.pri-radio.on{border-color:var(--teal-500)}
+.pri-radio.on::after{content:"";position:absolute;inset:3px;border-radius:50%;background:var(--teal-500)}
+.pri-radio:hover{border-color:var(--teal-400)}
+
+/* ── SIDE DRAWER (edit form) ── */
+.overlay{position:fixed;inset:0;background:rgba(6,20,18,.5);backdrop-filter:blur(2px);opacity:0;visibility:hidden;transition:opacity .3s var(--ease);z-index:300}
+.overlay.open{opacity:1;visibility:visible}
+.drawer{position:fixed;top:0;right:0;height:100vh;width:min(440px,94vw);background:var(--surface);border-left:1px solid var(--line);box-shadow:var(--sh-lg);transform:translateX(100%);transition:transform .34s var(--ease);z-index:301;display:flex;flex-direction:column}
+.drawer.open{transform:translateX(0)}
+.drawer-head{display:flex;align-items:center;justify-content:space-between;padding:20px 22px;border-bottom:1px solid var(--line)}
+.drawer-head h3{font-size:18px}.drawer-head .sub{font-size:12px;color:var(--ink-3);margin-top:2px}
+.drawer-close{width:34px;height:34px;border-radius:10px;border:1px solid var(--line);background:var(--surface);display:grid;place-items:center;cursor:pointer;color:var(--ink-3)}
+.drawer-close:hover{border-color:var(--rose);color:var(--rose)}
+.drawer-body{flex:1;overflow-y:auto;padding:22px}
+.drawer-foot{display:flex;gap:10px;justify-content:flex-end;padding:16px 22px;border-top:1px solid var(--line);background:var(--surface-2)}
+.field{margin-bottom:16px}
+.field label{display:block;font-size:12px;font-weight:600;color:var(--ink-2);margin-bottom:6px}
+.inp{display:flex;align-items:center;gap:9px;border:1.5px solid var(--line-strong);border-radius:var(--r-sm);padding:11px 13px;font-size:13px;color:var(--ink);background:var(--surface)}
+.inp.focus{border-color:var(--teal-500);box-shadow:0 0 0 4px rgba(0,150,138,.16)}
+.row2{display:grid;grid-template-columns:1fr 1fr;gap:14px}@media(max-width:560px){.row2{grid-template-columns:1fr}}
+.dz{border:2px dashed var(--line-strong);border-radius:var(--r-sm);padding:16px;text-align:center;font-size:12px;color:var(--ink-3)}
+
+.note{max-width:1200px;margin:8px auto 0;padding:22px}
+.note h4{font-size:15px;margin-bottom:10px}
+.note ul{list-style:none;display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:12px}
+.note li{font-size:12.5px;color:var(--ink-2);padding-left:22px;position:relative;line-height:1.5}
+.note li::before{content:"◆";position:absolute;left:0;color:var(--teal-500)}
+.foot{padding:22px;text-align:center;color:var(--ink-4);font-size:12px;border-top:1px solid var(--line);margin-top:20px}
+</style>
+</head>
+<body>
+
+<header class="chrome">
+  <div class="c-brand"><div class="logo">P</div><div>Profile Manager<small>My Profile · view + edit drawer</small></div></div>
+  <button class="toggle" id="themeBtn"><span id="ti">🌙</span><span id="tt">Dark</span></button>
+</header>
+
+<div class="shell">
+  <aside class="sidebar">
+    <div class="side-brand"><div class="logo">P</div>Profile<span style="color:var(--teal-600)">MGR</span></div>
+    <div class="nav-group">Overview</div>
+    <div class="nav-i"><span class="ic">▦</span>Dashboard</div>
+    <div class="nav-i"><span class="ic">👥</span>Users</div>
+    <div class="nav-group">My Profile</div>
+    <div class="nav-i active"><span class="ic">👤</span>My Profile <span style="margin-left:auto" class="chip chip-teal">3→1</span></div>
+    <div class="nav-i"><span class="ic">🎓</span>Education</div>
+    <div class="nav-i"><span class="ic">💼</span>Experience</div>
+    <div class="nav-i"><span class="ic">📁</span>Projects</div>
+    <div class="nav-i"><span class="ic">🔧</span>Skills</div>
+    <div class="nav-i"><span class="ic">🛡️</span>Certifications</div>
+    <div class="nav-i"><span class="ic">🗂️</span>Documents</div>
+  </aside>
+
+  <main>
+    <div class="appbar">
+      <div class="searchbox">🔍 Search…</div>
+      <div style="margin-left:auto;display:flex;gap:10px;align-items:center">
+        <div class="icon-btn">🔔</div><div class="icon-btn" onclick="document.getElementById('themeBtn').click()">🌗</div>
+        <span class="avatar" style="width:38px;height:38px;font-size:13px">AL</span>
+      </div>
+    </div>
+
+    <div class="content">
+      <div class="page-head">
+        <div><h1>My Profile</h1><div class="sub">Your completion, personal details and contact — all in one place</div></div>
+        <button class="btn btn-ghost btn-sm">👁 Preview portfolio</button>
+      </div>
+
+      <div class="profile-grid">
+        <!-- STICKY SUMMARY RAIL -->
+        <aside class="prail">
+          <div class="card identity">
+            <div class="id-ring" title="Profile 74% complete" aria-label="Profile 74% complete">
+              <div class="avatar id-av">AL</div>
+              <div class="av-edit" data-drawer="drawer-personal"><span style="font-size:17px">📷</span>Edit</div>
+              <div class="id-pct">74%</div>
+            </div>
+            <h3 style="font-size:18px">Ada Lovelace</h3>
+            <div class="muted" style="font-size:12.5px">Senior Frontend Engineer</div>
+            <div style="display:flex;gap:6px;justify-content:center;margin-top:10px;flex-wrap:wrap"><span class="chip chip-green">✓ Verified</span><span class="chip chip-violet">Admin</span></div>
+            <div class="muted" style="font-size:11.5px;margin-top:14px">6 of 9 sections completed · <span style="color:var(--teal-600);font-weight:600;cursor:pointer">View details</span></div>
+          </div>
+          <div class="card" style="padding:14px">
+            <div class="nav-group" style="padding:2px 8px 8px">On this page</div>
+            <div class="rail-nav">
+              <div class="rn on" data-go="sec-personal"><span>👤</span>Personal Details<span style="margin-left:auto" class="chip chip-green">Done</span></div>
+              <div class="rn" data-go="sec-contact"><span>📇</span>Contact Details<span style="margin-left:auto" class="chip chip-green">Done</span></div>
+            </div>
+            <div class="nav-group" style="padding:12px 8px 8px">Complete next</div>
+            <div class="rail-nav">
+              <div class="rn"><span>📁</span>Projects<span style="margin-left:auto" class="chip chip-amber">Todo ›</span></div>
+              <div class="rn"><span>🛡️</span>Certifications<span style="margin-left:auto" class="chip chip-amber">Todo ›</span></div>
+              <div class="rn"><span>🌐</span>Portfolio<span style="margin-left:auto" class="chip chip-amber">Todo ›</span></div>
+            </div>
+          </div>
+        </aside>
+
+        <!-- READ-ONLY SECTIONS with EDIT → opens drawer -->
+        <div class="pmain">
+          <!-- PERSONAL (view) -->
+          <section class="card sec" id="sec-personal">
+            <div class="sec-head">
+              <div><h3>Personal Details</h3><div class="hint">Identity, photo &amp; resume</div></div>
+              <button class="btn-edit" data-drawer="drawer-personal">✎ Edit</button>
+            </div>
+            <div class="sec-body">
+              <div class="dl">
+                <div class="dl-row"><div class="dl-k">First name</div><div class="dl-v">Ada</div></div>
+                <div class="dl-row"><div class="dl-k">Last name</div><div class="dl-v">Lovelace</div></div>
+                <div class="dl-row"><div class="dl-k">Date of birth</div><div class="dl-v">10 Dec 1815</div></div>
+                <div class="dl-row"><div class="dl-k">Gender</div><div class="dl-v">Female</div></div>
+                <div class="dl-row full"><div class="dl-k">Headline</div><div class="dl-v">Senior Frontend Engineer · Design Systems</div></div>
+                <div class="dl-row full"><div class="dl-k">Bio</div><div class="dl-v" style="font-weight:400;line-height:1.55">Frontend engineer focused on design systems and accessible, delightful product UI. Currently leading the profile platform team.</div></div>
+              </div>
+              <div class="sub-block">
+                <div class="sub-head">
+                  <div><div class="sub-title">Resume</div><div class="hint">Your primary resume — shown on your profile &amp; portfolio</div></div>
+                  <button class="btn-edit" data-drawer="drawer-resume">✎ Edit</button>
+                </div>
+                <div class="res-list">
+                  <div class="res-item primary">
+                    <span class="res-ic">📄</span>
+                    <div class="res-info"><div class="res-name">Frontend_Resume.pdf <span class="chip chip-teal">★ Primary</span></div><div class="hint">240 KB · updated 2 days ago</div></div>
+                    <div class="res-actions"><button title="Download">⭳</button></div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </section>
+
+          <!-- CONTACT (view) -->
+          <section class="card sec" id="sec-contact">
+            <div class="sec-head">
+              <div><h3>Contact Details</h3><div class="hint">How people reach you</div></div>
+              <button class="btn-edit" data-drawer="drawer-contact">✎ Edit</button>
+            </div>
+            <div class="sec-body">
+              <div class="dl">
+                <div class="dl-row"><div class="dl-k">Email</div><div class="dl-v">ada@company.com</div></div>
+                <div class="dl-row"><div class="dl-k">Phone</div><div class="dl-v">+1 555 0100</div></div>
+                <div class="dl-row"><div class="dl-k">Alternate phone</div><div class="dl-v empty">Not added</div></div>
+                <div class="dl-row"><div class="dl-k">Address</div><div class="dl-v">London, United Kingdom</div></div>
+                <div class="dl-row full" style="border-bottom:none"><div class="dl-k">Social links</div>
+                  <div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:6px"><span class="chip chip-teal">in LinkedIn</span><span class="chip chip-teal">⌥ GitHub</span><span class="chip chip-teal">🐦 X</span></div>
+                </div>
+              </div>
+            </div>
+          </section>
+        </div>
+      </div>
+    </div>
+
+    <div class="note card">
+      <h4>How it works</h4>
+      <ul>
+        <li><b>Data is always visible.</b> Each section renders read-only (label → value); nothing is an input until the user chooses to edit.</li>
+        <li><b>Edit → side drawer.</b> The “✎ Edit” button on every section opens that section’s form in the right-side drawer — identical to Education/Experience/Projects across the app.</li>
+        <li><b>Reuses the real components.</b> The drawer hosts the existing <code>PersonalDetailsSection</code> / <code>ContactDetailsSection</code> forms (react-hook-form + zod) inside the shared <code>SideDrawer</code>.</li>
+        <li><b>Save = drawer.</b> Save/Cancel live in the drawer footer. On save it closes, the view refreshes, and the completion ring re-fetches.</li>
+        <li><b>Camera + Edit share the drawer.</b> The avatar camera badge opens the same Personal drawer (photo lives in that form).</li>
+        <li><b>Responsive.</b> Rail stacks on top below 980px; the drawer becomes near-full-width (94vw) on phones.</li>
+      </ul>
+    </div>
+
+    <div class="foot">Try it → click any <b>✎ Edit</b> button (or the avatar 📷). Toggle theme top-right. Mirrors src/theme/index.ts &amp; the SideDrawer pattern.</div>
+  </main>
+</div>
+
+<!-- ── DRAWERS ── -->
+<div class="overlay" id="overlay"></div>
+
+<!-- Personal edit drawer -->
+<aside class="drawer" id="drawer-personal">
+  <div class="drawer-head">
+    <div><h3>Edit Personal Details</h3><div class="sub">Update your identity, photo &amp; resume</div></div>
+    <button class="drawer-close" data-close>✕</button>
+  </div>
+  <div class="drawer-body">
+    <div class="field"><label>Profile photo</label>
+      <div style="display:flex;align-items:center;gap:14px"><span class="avatar" style="width:56px;height:56px;font-size:18px">AL</span><div class="dz" style="flex:1">⬆ Drop an image or <span style="color:var(--teal-600);font-weight:600">browse</span></div></div>
+    </div>
+    <div class="row2"><div class="field"><label>First name *</label><div class="inp focus">Ada</div></div><div class="field"><label>Last name *</label><div class="inp">Lovelace</div></div></div>
+    <div class="row2"><div class="field"><label>Date of birth</label><div class="inp">📅 10 Dec 1815</div></div><div class="field"><label>Gender</label><div class="inp">Female ▾</div></div></div>
+    <div class="field"><label>Headline</label><div class="inp">Senior Frontend Engineer · Design Systems</div></div>
+    <div class="field" style="margin-bottom:0"><label>Bio</label><div class="inp" style="align-items:flex-start;min-height:92px">Frontend engineer focused on design systems…</div></div>
+  </div>
+  <div class="drawer-foot"><button class="btn btn-ghost btn-sm" data-close>Cancel</button><button class="btn btn-primary btn-sm" data-close>💾 Save changes</button></div>
+</aside>
+
+<!-- Contact edit drawer -->
+<aside class="drawer" id="drawer-contact">
+  <div class="drawer-head">
+    <div><h3>Edit Contact Details</h3><div class="sub">Update how people reach you</div></div>
+    <button class="drawer-close" data-close>✕</button>
+  </div>
+  <div class="drawer-body">
+    <div class="field"><label>Email *</label><div class="inp focus">✉️ ada@company.com</div></div>
+    <div class="field"><label>Phone</label><div class="inp">📞 +1 555 0100</div></div>
+    <div class="field"><label>Alternate phone</label><div class="inp muted">📞 Add another number</div></div>
+    <div class="field"><label>Address</label><div class="inp">📍 London, United Kingdom</div></div>
+    <div class="field" style="margin-bottom:0"><label>Social links</label>
+      <div style="display:flex;flex-direction:column;gap:8px;margin-top:4px">
+        <div class="inp">in https://linkedin.com/in/ada</div>
+        <div class="inp">⌥ https://github.com/ada</div>
+        <div class="dz" style="cursor:pointer">＋ Add another link</div>
+      </div>
+    </div>
+  </div>
+  <div class="drawer-foot"><button class="btn btn-ghost btn-sm" data-close>Cancel</button><button class="btn btn-primary btn-sm" data-close>💾 Save changes</button></div>
+</aside>
+
+<!-- Resume manager drawer (add · update · make primary · delete) -->
+<aside class="drawer" id="drawer-resume">
+  <div class="drawer-head">
+    <div><h3>Manage resumes</h3><div class="sub">Add, update, set primary or remove</div></div>
+    <button class="drawer-close" data-close>✕</button>
+  </div>
+  <div class="drawer-body">
+    <div class="dz" style="margin-bottom:20px;cursor:pointer">⬆ <b style="color:var(--teal-600)">Add a resume</b>
+      <div class="muted" style="font-size:11px;margin-top:4px">PDF · up to 5 MB</div>
+    </div>
+    <div class="dl-k" style="margin-bottom:10px">Your resumes (2)</div>
+    <div class="res-list mgr">
+      <div class="res-item primary">
+        <button class="pri-radio on" title="Primary"></button>
+        <span class="res-ic">📄</span>
+        <div class="res-info"><div class="res-name">Frontend_Resume.pdf <span class="chip chip-teal">★ Primary</span></div><div class="hint">240 KB · 2 days ago</div></div>
+        <div class="res-actions"><button title="Replace / rename">✎</button><button class="del" title="Delete">✕</button></div>
+      </div>
+      <div class="res-item">
+        <button class="pri-radio" title="Set as primary"></button>
+        <span class="res-ic">📄</span>
+        <div class="res-info"><div class="res-name">Fullstack_Resume.pdf</div><div class="hint">198 KB · last month</div></div>
+        <div class="res-actions"><button title="Replace / rename">✎</button><button class="del" title="Delete">✕</button></div>
+      </div>
+    </div>
+    <div class="muted" style="font-size:11.5px;margin-top:14px">Tap the circle to make a resume primary. Only the primary one appears on your profile.</div>
+  </div>
+  <div class="drawer-foot"><button class="btn btn-primary btn-sm" data-close>Done</button></div>
+</aside>
+
+<script>
+const root=document.documentElement,tb=document.getElementById('themeBtn'),ti=document.getElementById('ti'),tt=document.getElementById('tt');
+tb.addEventListener('click',()=>{const d=root.getAttribute('data-theme')==='dark';root.setAttribute('data-theme',d?'light':'dark');ti.textContent=d?'🌙':'☀️';tt.textContent=d?'Dark':'Light';});
+/* drawers */
+const overlay=document.getElementById('overlay');
+function openDrawer(id){overlay.classList.add('open');document.getElementById(id).classList.add('open');document.body.style.overflow='hidden';}
+function closeDrawer(){overlay.classList.remove('open');document.querySelectorAll('.drawer').forEach(d=>d.classList.remove('open'));document.body.style.overflow='';}
+document.querySelectorAll('[data-drawer]').forEach(b=>b.addEventListener('click',()=>openDrawer(b.dataset.drawer)));
+document.querySelectorAll('[data-close]').forEach(x=>x.addEventListener('click',closeDrawer));
+overlay.addEventListener('click',closeDrawer);
+document.addEventListener('keydown',e=>{if(e.key==='Escape')closeDrawer();});
+/* rail nav scroll */
+document.querySelectorAll('.rn[data-go]').forEach(r=>r.addEventListener('click',()=>{
+  document.querySelectorAll('.rn[data-go]').forEach(x=>x.classList.remove('on'));r.classList.add('on');
+  document.getElementById(r.dataset.go).scrollIntoView({behavior:'smooth',block:'start'});
+}));
+const io=new IntersectionObserver(es=>es.forEach(e=>{if(e.isIntersecting){document.querySelectorAll('.rn[data-go]').forEach(x=>x.classList.toggle('on',x.dataset.go===e.target.id));}}),{rootMargin:'-40% 0px -50% 0px'});
+['sec-personal','sec-contact'].forEach(id=>io.observe(document.getElementById(id)));
+/* resume manager: radio = make primary (one at a time), ✕ = delete */
+document.querySelectorAll('.res-list.mgr').forEach(list=>{
+  list.addEventListener('click',e=>{
+    const del=e.target.closest('.del');
+    if(del){ del.closest('.res-item').remove(); return; }
+    const r=e.target.closest('.pri-radio'); if(!r)return;
+    list.querySelectorAll('.res-item').forEach(it=>{
+      it.classList.remove('primary');
+      it.querySelector('.pri-radio').classList.remove('on');
+      const chip=it.querySelector('.res-name .chip'); if(chip) chip.remove();
+    });
+    const item=r.closest('.res-item'); item.classList.add('primary'); r.classList.add('on');
+    const chip=document.createElement('span'); chip.className='chip chip-teal'; chip.textContent='★ Primary';
+    item.querySelector('.res-name').appendChild(chip);
+  });
+});
+</script>
+</body>
+</html>

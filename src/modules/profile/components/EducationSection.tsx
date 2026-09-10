@@ -4,7 +4,7 @@
  */
 
 import { useState, useEffect } from "react";
-import { Box, Typography, Grid } from "@mui/material";
+import { Box, Grid } from "@mui/material";
 import {
   Add,
   Edit,
@@ -20,10 +20,12 @@ import {
   SkeletonLoader,
   EntityCard,
   type EntityCardChip,
+  ResponsiveButton,
+  PageHeader,
+  EmptyState,
 } from "@/common/components";
 import { EducationForm } from "./EducationForm";
 import { HelperFunctions } from "@/utils/helpers";
-import { ResponsiveButton } from "@/common/components";
 
 export const EducationSection = () => {
   const { showSuccess, showError } = useToast();
@@ -115,45 +117,32 @@ export const EducationSection = () => {
 
   return (
     <Box>
-      <Box
-        sx={{
-          display: "flex",
-          justifyContent: "space-between",
-          alignItems: "center",
-          mb: 3,
-        }}
-      >
-        <Box>
-          <Typography variant="h5" gutterBottom>
-            Education
-          </Typography>
-          <Typography variant="body2" color="text.secondary">
-            Manage your educational background
-          </Typography>
-        </Box>
-        <ResponsiveButton
-          collapseBreakpoint="sm"
-          icon={<Add />}
-          onClick={handleAdd}
-        >
-          Add
-        </ResponsiveButton>
-      </Box>
+      <PageHeader
+        title="Education"
+        subtitle="Manage your educational background"
+        count={education.length}
+        action={
+          <ResponsiveButton collapseBreakpoint="sm" icon={<Add />} onClick={handleAdd}>
+            Add Education
+          </ResponsiveButton>
+        }
+      />
 
       {loading ? (
-        <SkeletonLoader count={3} minItemWidth={320} gap={2} lines={2} />
+        <SkeletonLoader count={3} minItemWidth={320} gap={3} lines={2} />
       ) : education.length === 0 ? (
-        <Box sx={{ textAlign: "center", py: 4 }}>
-          <Typography variant="body1" color="text.secondary">
-            No education entries yet. Add your first one!
-          </Typography>
-        </Box>
+        <EmptyState
+          icon={<School />}
+          title="No education yet"
+          description="Add your degrees, schools and qualifications to complete your profile."
+          onClick={handleAdd}
+        />
       ) : (
         <Grid
           sx={{
             display: "grid",
             gridTemplateColumns: "repeat(auto-fill, minmax(320px, 1fr))",
-            gap: 2,
+            gap: 3,
           }}
         >
           {education.map((edu) => {

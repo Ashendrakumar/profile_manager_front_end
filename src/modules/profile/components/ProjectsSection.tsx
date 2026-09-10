@@ -21,6 +21,8 @@ import {
   SkeletonLoader,
   EntityCard,
   ResponsiveButton,
+  PageHeader,
+  EmptyState,
 } from "@/common/components";
 import { ProjectForm } from "./ProjectForm";
 import { ProjectDetails } from "./ProjectDetails";
@@ -117,53 +119,40 @@ export const ProjectsSection = () => {
 
   return (
     <Box>
-      <Box
-        sx={{
-          display: "flex",
-          justifyContent: "space-between",
-          alignItems: "center",
-          mb: 3,
-        }}
-      >
-        <Box>
-          <Typography variant="h5" gutterBottom>
-            Projects
-          </Typography>
-          <Typography variant="body2" color="text.secondary">
-            Showcase your projects and work
-          </Typography>
-        </Box>
-        <ResponsiveButton
-          collapseBreakpoint="sm"
-          icon={<Add />}
-          onClick={handleAdd}
-        >
-          Add
-        </ResponsiveButton>
-      </Box>
+      <PageHeader
+        title="Projects"
+        subtitle="Showcase your projects and work"
+        count={projects.length}
+        action={
+          <ResponsiveButton collapseBreakpoint="sm" icon={<Add />} onClick={handleAdd}>
+            Add Project
+          </ResponsiveButton>
+        }
+      />
 
       {loading && (
         <SkeletonLoader
           count={4}
           minItemWidth={320}
-          gap={2}
+          gap={3}
           lines={3}
           showActions={false}
         />
       )}
 
       {projects.length === 0 && !loading ? (
-        <Box sx={{ textAlign: "center", py: 4 }}>
-          <Typography variant="body1" color="text.secondary">
-            No projects yet. Add your first one!
-          </Typography>
-        </Box>
+        <EmptyState
+          icon={<Folder />}
+          title="No projects yet"
+          description="Add the projects you've built to showcase your work and skills."
+          onClick={handleAdd}
+        />
       ) : (
         <Grid
           sx={{
             display: "grid",
             gridTemplateColumns: "repeat(auto-fill, minmax(320px, 1fr))",
-            gap: 2,
+            gap: 3,
           }}
         >
           {projects.map((project) => (

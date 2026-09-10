@@ -14,6 +14,8 @@ import {
   EntityCard,
   type EntityCardChip,
   ResponsiveButton,
+  PageHeader,
+  EmptyState,
 } from "@/common/components";
 import { CertificationForm } from "./CertificationForm";
 import { HelperFunctions } from "@/utils/helpers";
@@ -177,47 +179,34 @@ export const CertificationSection = () => {
 
   return (
     <Box>
-      <Box
-        sx={{
-          display: "flex",
-          justifyContent: "space-between",
-          alignItems: "center",
-          mb: 3,
-        }}
-      >
-        <Box>
-          <Typography variant="h5" gutterBottom>
-            Certifications
-          </Typography>
-          <Typography variant="body2" color="text.secondary">
-            Manage your professional certifications
-          </Typography>
-        </Box>
-        <ResponsiveButton
-          collapseBreakpoint="sm"
-          icon={<Add />}
-          onClick={handleAdd}
-        >
-          Add
-        </ResponsiveButton>
-      </Box>
+      <PageHeader
+        title="Certifications"
+        subtitle="Manage your professional certifications"
+        count={certifications.length}
+        action={
+          <ResponsiveButton collapseBreakpoint="sm" icon={<Add />} onClick={handleAdd}>
+            Add Certification
+          </ResponsiveButton>
+        }
+      />
 
       {loading && (
-        <SkeletonLoader count={3} minItemWidth={320} gap={2} lines={2} />
+        <SkeletonLoader count={3} minItemWidth={320} gap={3} lines={2} />
       )}
 
       {!hasCertifications && !loading ? (
-        <Box sx={{ textAlign: "center", py: 4 }}>
-          <Typography variant="body1" color="text.secondary">
-            No certifications yet. Add your first one!
-          </Typography>
-        </Box>
+        <EmptyState
+          icon={<Verified />}
+          title="No certifications yet"
+          description="Add the certifications and credentials you've earned."
+          onClick={handleAdd}
+        />
       ) : (
         <Grid
           sx={{
             display: "grid",
             gridTemplateColumns: "repeat(auto-fill, minmax(320px, 1fr))",
-            gap: 2,
+            gap: 3,
           }}
         >
           {certifications.map((certification) => {

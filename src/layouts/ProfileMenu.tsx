@@ -72,7 +72,7 @@ export const ProfileMenu = () => {
 
   const handleUserInfo = () => {
     handleMenuClose();
-    navigate(ROUTES.PROFILE_COMPLETION);
+    navigate(ROUTES.PROFILE);
   };
 
   const handleThemeToggle = () => {

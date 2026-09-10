@@ -4,7 +4,7 @@
  */
 
 import { useState, useEffect } from "react";
-import { Box, Typography, Grid } from "@mui/material";
+import { Box, Grid } from "@mui/material";
 import { Add, Edit, Delete, Work } from "@mui/icons-material";
 import { useToast } from "@/contexts/toastContext";
 import { profileService, type Experience } from "../services/profileService";
@@ -14,6 +14,8 @@ import {
   EntityCard,
   type EntityCardChip,
   ResponsiveButton,
+  PageHeader,
+  EmptyState,
 } from "@/common/components";
 import { ExperienceForm } from "./ExperienceForm";
 import { HelperFunctions } from "@/utils/helpers";
@@ -106,51 +108,38 @@ export const ExperienceSection = () => {
 
   return (
     <Box>
-      <Box
-        sx={{
-          display: "flex",
-          justifyContent: "space-between",
-          alignItems: "center",
-          mb: 3,
-        }}
-      >
-        <Box>
-          <Typography variant="h5" gutterBottom>
-            Experience
-          </Typography>
-          <Typography variant="body2" color="text.secondary">
-            Manage your work experience
-          </Typography>
-        </Box>
-        <ResponsiveButton
-          collapseBreakpoint="sm"
-          icon={<Add />}
-          onClick={handleAdd}
-        >
-          Add
-        </ResponsiveButton>
-      </Box>
+      <PageHeader
+        title="Experience"
+        subtitle="Manage your work experience"
+        count={experience.length}
+        action={
+          <ResponsiveButton collapseBreakpoint="sm" icon={<Add />} onClick={handleAdd}>
+            Add Experience
+          </ResponsiveButton>
+        }
+      />
 
       {loading ? (
         <SkeletonLoader
           count={4}
           minItemWidth={320}
-          gap={2}
+          gap={3}
           lines={3}
           showActions={false}
         />
       ) : experience.length === 0 ? (
-        <Box sx={{ textAlign: "center", py: 4 }}>
-          <Typography variant="body1" color="text.secondary">
-            No experience entries yet. Add your first one!
-          </Typography>
-        </Box>
+        <EmptyState
+          icon={<Work />}
+          title="No experience yet"
+          description="Add your roles and work history to showcase your career journey."
+          onClick={handleAdd}
+        />
       ) : (
         <Grid
           sx={{
             display: "grid",
             gridTemplateColumns: "repeat(auto-fill, minmax(320px, 1fr))",
-            gap: 2,
+            gap: 3,
           }}
         >
           {experience.map((exp) => {

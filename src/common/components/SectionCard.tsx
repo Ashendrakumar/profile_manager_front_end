@@ -1,3 +1,11 @@
+/**
+ * SectionCard — the design system's "Grouped list" primitive.
+ *
+ * A titled card with a count chip in the header and a list body rendered from
+ * `items` via `renderItem`. Static by default (no hover); the rows inside can
+ * be interactive on their own. Reusable across profile/section screens.
+ */
+
 import {
   Card,
   CardHeader,

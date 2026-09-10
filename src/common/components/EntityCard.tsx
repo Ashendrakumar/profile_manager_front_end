@@ -100,22 +100,13 @@ export const EntityCard = ({
   return (
     <Card
       onClick={onClick}
+      // Only clickable entity cards get the interactive hover lift; static
+      // ones (no onClick) stay flat. See the MuiCard theme override.
+      data-interactive={clickable ? "true" : undefined}
       sx={{
         height: "100%",
         display: "flex",
         flexDirection: "column",
-        border: "1px solid",
-        borderColor: "divider",
-        cursor: clickable ? "pointer" : "default",
-        transition: (theme) =>
-          theme.transitions.create(
-            ["transform", "box-shadow", "border-color"],
-            { duration: theme.transitions.duration.standard },
-          ),
-        "&:hover": {
-          transform: "translateY(-5px)",
-          borderColor: "primary.main",
-        },
       }}
     >
       <CardContent sx={{ flex: 1, p: 2.5 }}>

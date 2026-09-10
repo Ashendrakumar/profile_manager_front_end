@@ -1,53 +1,70 @@
 /**
  * LoadingSpinner (PageLoader)
- * Full-screen loading component: centered icon with two rings
- * spinning in opposite directions, over a subtle space/star backdrop.
- * Pure CSS animations — no framer-motion dependency.
+ *
+ * The app's full-screen loading experience, built to the Profile Manager
+ * design language: a soft teal-tinted backdrop with drifting brand blobs, the
+ * signature conic-gradient ring sweeping around a glass brand disc, a shimmering
+ * wordmark and a slim indeterminate progress bar.
+ *
+ * Token-driven (teal brand + coral accent), first-class in light and dark, and
+ * fully gated behind `prefers-reduced-motion`. Pure CSS animations — no
+ * framer-motion dependency.
  */
 
 import { Fragment } from "react";
+import type { ReactNode } from "react";
 
+import Box from "@mui/material/Box";
 import Portal from "@mui/material/Portal";
-import { styled, keyframes } from "@mui/material/styles";
+import { styled, keyframes, alpha } from "@mui/material/styles";
 import Typography from "@mui/material/Typography";
+
+import { APP_NAME } from "@/constants";
 
 // ----------------------------------------------------------------------
 
 type LoadingSpinnerProps = {
+  /** Cover the whole viewport in a portal (default) vs. fill the parent box. */
   fullScreen?: boolean;
+  /** Caption under the wordmark. */
   label?: string;
+  /** Optional image to show inside the brand disc; falls back to the "P" mark. */
   logoSrc?: string;
 };
 
 export function LoadingSpinner({
   fullScreen = true,
   label = "Loading",
-  logoSrc = "/favicon.png",
+  logoSrc,
 }: LoadingSpinnerProps) {
   const PortalWrapper = fullScreen ? Portal : Fragment;
 
   return (
     <PortalWrapper>
-      <LoaderScreen>
-        <StarField />
+      <LoaderScreen data-fullscreen={fullScreen || undefined}>
+        <Blob data-blob="1" />
+        <Blob data-blob="2" />
+        <Blob data-blob="3" />
 
         <LoaderCenter>
-          <SpinnerLogo src={logoSrc} />
+          <BrandSpinner logoSrc={logoSrc} />
+
+          <Wordmark variant="h5">{APP_NAME}</Wordmark>
 
           {label && (
-            <Typography
-              variant="subtitle2"
-              sx={{
-                mt: 3,
-                letterSpacing: 3,
-                textTransform: "uppercase",
-                color: "text.secondary",
-              }}
-            >
+            <Caption variant="subtitle2">
               {label}
-              <Dots />
-            </Typography>
+              <Dots>
+                <span />
+                <span />
+                <span />
+              </Dots>
+            </Caption>
           )}
+
+          <ProgressTrack aria-hidden>
+            <ProgressBar />
+          </ProgressTrack>
         </LoaderCenter>
       </LoaderScreen>
     </PortalWrapper>
@@ -55,108 +72,146 @@ export function LoadingSpinner({
 }
 
 // ----------------------------------------------------------------------
-// Icon centered + two rings spinning in opposite directions
+// Brand disc wrapped by a sweeping conic ring + a counter-rotating accent ring.
 
-function SpinnerLogo({ src }: { src: string }) {
+function BrandSpinner({ logoSrc }: { logoSrc?: string }) {
   return (
     <SpinnerRoot>
-      <RingOuterWrap>
-        <RingOuter />
-      </RingOuterWrap>
+      <Halo />
+      <RingSweep />
+      <RingAccent />
+      <RingTrack />
 
-      <RingInnerWrap>
-        <RingInner />
-      </RingInnerWrap>
-
-      <IconWrap>
-        <IconImg src={src} alt="Logo" />
-      </IconWrap>
+      <Disc>
+        {logoSrc ? (
+          <DiscImg src={logoSrc} alt="" />
+        ) : (
+          <Monogram aria-hidden>P</Monogram>
+        )}
+      </Disc>
     </SpinnerRoot>
   );
 }
 
-function Dots() {
-  return <DotsSpan>...</DotsSpan>;
+function Dots({ children }: { children: ReactNode }) {
+  return <DotsRoot aria-hidden>{children}</DotsRoot>;
 }
+
+// ----------------------------------------------------------------------
+// Helpers
+
+/** Brand gradient assembled from theme tokens so it adapts to light/dark. */
+const brandGradient = (p: {
+  light: string;
+  main: string;
+  dark: string;
+}) => `linear-gradient(135deg, ${p.light} 0%, ${p.main} 55%, ${p.dark} 100%)`;
 
 // ----------------------------------------------------------------------
 // Keyframes
 
-const spinClockwise = keyframes`
-  from { transform: rotate(0deg); }
-  to   { transform: rotate(360deg); }
+const screenIn = keyframes`
+  from { opacity: 0; }
+  to   { opacity: 1; }
 `;
 
-const spinCounterClockwise = keyframes`
-  from { transform: rotate(0deg); }
-  to   { transform: rotate(-360deg); }
+const spin = keyframes`
+  to { transform: rotate(360deg); }
 `;
 
-const pulse = keyframes`
+const spinReverse = keyframes`
+  to { transform: rotate(-360deg); }
+`;
+
+const discPulse = keyframes`
   0%, 100% { transform: scale(1); }
-  50% { transform: scale(0.92); }
+  50%      { transform: scale(0.94); }
 `;
 
-const fadeInOut = keyframes`
-  0%, 100% { opacity: 0; }
-  50% { opacity: 1; }
+const haloPulse = keyframes`
+  0%, 100% { opacity: 0.45; transform: scale(0.9); }
+  50%      { opacity: 0.9;  transform: scale(1.08); }
 `;
 
-const twinkle = keyframes`
-  0%, 100% { opacity: 0.2; transform: scale(1); }
-  50% { opacity: 1; transform: scale(1.4); }
+const dotBounce = keyframes`
+  0%, 80%, 100% { transform: translateY(0); opacity: 0.4; }
+  40%           { transform: translateY(-5px); opacity: 1; }
+`;
+
+const indeterminate = keyframes`
+  0%   { left: -40%; width: 40%; }
+  50%  { left: 25%;  width: 55%; }
+  100% { left: 100%; width: 40%; }
+`;
+
+const blobDrift = keyframes`
+  0%, 100% { transform: translate(0, 0) scale(1); }
+  33%      { transform: translate(30px, -24px) scale(1.08); }
+  66%      { transform: translate(-24px, 20px) scale(0.95); }
 `;
 
 // ----------------------------------------------------------------------
-// Background star field
-
-const STAR_COUNT = 40;
-
-function StarField() {
-  const stars = Array.from({ length: STAR_COUNT }, (_, i) => {
-    const top = Math.random() * 100;
-    const left = Math.random() * 100;
-    const size = Math.random() * 2 + 1;
-    const delay = Math.random() * 3;
-    const duration = Math.random() * 2 + 2;
-
-    return (
-      <Star
-        key={i}
-        style={{
-          top: `${top}%`,
-          left: `${left}%`,
-          width: size,
-          height: size,
-          animationDelay: `${delay}s`,
-          animationDuration: `${duration}s`,
-        }}
-      />
-    );
-  });
-
-  return <StarFieldRoot>{stars}</StarFieldRoot>;
-}
-
-// ----------------------------------------------------------------------
-// Styled parts — layout
+// Screen + backdrop
 
 const LoaderScreen = styled("div")(({ theme }) => ({
-  top: 0,
-  left: 0,
-  zIndex: 9998,
+  inset: 0,
+  zIndex: theme.zIndex.modal + 10,
   width: "100%",
   height: "100%",
   display: "flex",
-  position: "fixed",
+  position: "absolute",
   overflow: "hidden",
   alignItems: "center",
   justifyContent: "center",
+  isolation: "isolate",
   background:
     theme.palette.mode === "dark"
-      ? `radial-gradient(circle at 50% 40%, ${theme.palette.primary.dark}22, ${theme.palette.background.default} 70%)`
-      : `radial-gradient(circle at 50% 40%, ${theme.palette.primary.light}33, ${theme.palette.background.default} 70%)`,
+      ? `radial-gradient(120% 120% at 50% 0%, ${alpha(
+          theme.palette.primary.dark,
+          0.28,
+        )} 0%, ${theme.palette.background.default} 60%)`
+      : `radial-gradient(120% 120% at 50% 0%, ${alpha(
+          theme.palette.primary.light,
+          0.22,
+        )} 0%, ${theme.palette.background.default} 60%)`,
+  animation: `${screenIn} 0.4s ${theme.transitions.easing.easeOut} both`,
+  '&[data-fullscreen="true"]': { position: "fixed" },
 }));
+
+const Blob = styled("span")(({ theme }) => {
+  const p = theme.palette;
+  return {
+    position: "absolute",
+    borderRadius: "50%",
+    filter: "blur(60px)",
+    pointerEvents: "none",
+    opacity: p.mode === "dark" ? 0.5 : 0.55,
+    animation: `${blobDrift} 14s ${theme.transitions.easing.easeInOut} infinite`,
+    '&[data-blob="1"]': {
+      width: 340,
+      height: 340,
+      top: "-6%",
+      left: "-4%",
+      background: `radial-gradient(circle, ${alpha(p.primary.main, 0.55)} 0%, transparent 70%)`,
+    },
+    '&[data-blob="2"]': {
+      width: 300,
+      height: 300,
+      right: "-6%",
+      bottom: "-8%",
+      animationDelay: "-5s",
+      background: `radial-gradient(circle, ${alpha(p.secondary.main, 0.4)} 0%, transparent 70%)`,
+    },
+    '&[data-blob="3"]': {
+      width: 240,
+      height: 240,
+      bottom: "10%",
+      left: "12%",
+      animationDelay: "-9s",
+      background: `radial-gradient(circle, ${alpha(p.primary.light, 0.45)} 0%, transparent 70%)`,
+    },
+  };
+});
 
 const LoaderCenter = styled("div")({
   zIndex: 1,
@@ -166,102 +221,168 @@ const LoaderCenter = styled("div")({
 });
 
 // ----------------------------------------------------------------------
-// Styled parts — spinner
+// Spinner
+
+const RING = 132; // echoes the Profile Completion signature ring
+const THICKNESS = 6;
 
 const SpinnerRoot = styled("div")({
-  width: 120,
-  height: 120,
+  width: RING,
+  height: RING,
   position: "relative",
   display: "inline-flex",
   alignItems: "center",
   justifyContent: "center",
 });
 
-const RingOuterWrap = styled("span")({
+const Halo = styled("span")(({ theme }) => ({
   position: "absolute",
-  width: "100%",
-  height: "100%",
-  display: "block",
-  animation: `${spinClockwise} 2.6s linear infinite`,
-});
-
-const RingInnerWrap = styled("span")({
-  position: "absolute",
-  width: "calc(100% - 22px)",
-  height: "calc(100% - 22px)",
-  display: "block",
-  animation: `${spinCounterClockwise} 1.8s linear infinite`,
-});
-
-const RingOuter = styled("span")(({ theme }) => ({
-  width: "100%",
-  height: "100%",
-  display: "block",
+  inset: -14,
   borderRadius: "50%",
-  border: "solid 3px transparent",
-  borderTopColor: theme.palette.primary.main,
-  borderBottomColor: theme.palette.primary.main,
+  background: `radial-gradient(circle, ${alpha(theme.palette.primary.main, 0.45)} 0%, transparent 68%)`,
+  filter: "blur(6px)",
+  animation: `${haloPulse} 2.4s ${theme.transitions.easing.easeInOut} infinite`,
 }));
 
-const RingInner = styled("span")(({ theme }) => ({
-  width: "100%",
-  height: "100%",
-  display: "block",
+// Full static track the sweep rides on, so the circle always reads as a ring.
+const RingTrack = styled("span")(({ theme }) => ({
+  position: "absolute",
+  inset: 0,
   borderRadius: "50%",
-  border: "solid 3px transparent",
-  borderLeftColor: theme.palette.primary.light,
-  borderRightColor: theme.palette.primary.light,
+  border: `${THICKNESS}px solid ${alpha(theme.palette.primary.main, theme.palette.mode === "dark" ? 0.16 : 0.14)}`,
 }));
 
-// Icon container: fixed circle, clips the image so no square/black
-// corners can ever show, regardless of the source image's own bg.
-const IconWrap = styled("div")(({ theme }) => ({
+// The moving arc: a conic brand gradient masked down to a ring band.
+const ringMask = `radial-gradient(farthest-side, transparent calc(100% - ${THICKNESS}px), #000 calc(100% - ${THICKNESS}px))`;
+
+const RingSweep = styled("span")(({ theme }) => ({
   position: "absolute",
-  width: 64,
-  height: 64,
+  inset: 0,
   borderRadius: "50%",
+  background: `conic-gradient(from 90deg, transparent 0deg, ${alpha(
+    theme.palette.primary.main,
+    0.15,
+  )} 90deg, ${theme.palette.primary.main} 300deg, ${theme.palette.primary.light} 360deg)`,
+  WebkitMask: ringMask,
+  mask: ringMask,
+  animation: `${spin} 1.1s linear infinite`,
+}));
+
+// A thinner accent ring going the other way for depth.
+const accentMask = `radial-gradient(farthest-side, transparent calc(100% - 3px), #000 calc(100% - 3px))`;
+
+const RingAccent = styled("span")(({ theme }) => ({
+  position: "absolute",
+  inset: THICKNESS + 4,
+  borderRadius: "50%",
+  background: `conic-gradient(from 0deg, transparent 0deg, ${alpha(
+    theme.palette.secondary.main,
+    0.9,
+  )} 140deg, transparent 220deg)`,
+  WebkitMask: accentMask,
+  mask: accentMask,
+  animation: `${spinReverse} 1.8s linear infinite`,
+}));
+
+const Disc = styled("div")(({ theme }) => ({
+  position: "absolute",
+  width: RING - 44,
+  height: RING - 44,
+  borderRadius: "50%",
+  display: "grid",
+  placeItems: "center",
   overflow: "hidden",
-  display: "flex",
-  alignItems: "center",
-  justifyContent: "center",
   backgroundColor: theme.palette.background.paper,
-  boxShadow: theme.shadows[2],
-  animation: `${pulse} 1.6s ease-in-out infinite`,
+  border: `1px solid ${theme.palette.divider}`,
+  boxShadow:
+    theme.palette.mode === "dark"
+      ? "0 8px 24px rgba(0,0,0,0.5)"
+      : "0 12px 30px rgba(0,137,123,0.28)",
+  animation: `${discPulse} 1.8s ${theme.transitions.easing.easeInOut} infinite`,
 }));
 
-const IconImg = styled("img")({
-  width: "100%",
-  height: "100%",
-  objectFit: "cover",
+const Monogram = styled("span")(({ theme }) => ({
+  fontFamily: '"Sora", "Inter", sans-serif',
+  fontWeight: 800,
+  fontSize: RING * 0.34,
+  lineHeight: 1,
+  letterSpacing: "-0.03em",
+  background: brandGradient(theme.palette.primary),
+  WebkitBackgroundClip: "text",
+  backgroundClip: "text",
+  color: "transparent",
+  WebkitTextFillColor: "transparent",
+}));
+
+const DiscImg = styled("img")({
+  width: "76%",
+  height: "76%",
+  objectFit: "contain",
   display: "block",
 });
 
 // ----------------------------------------------------------------------
-// Styled parts — label dots
+// Wordmark + caption
 
-const DotsSpan = styled("span")({
-  display: "inline-block",
-  width: 18,
-  textAlign: "left",
-  animation: `${fadeInOut} 1.4s ease-in-out infinite`,
+const Wordmark = styled(Typography)(({ theme }) => ({
+  marginTop: theme.spacing(3.5),
+  fontFamily: '"Sora", "Inter", sans-serif',
+  fontWeight: 800,
+  letterSpacing: "-0.02em",
+  background: brandGradient(theme.palette.primary),
+  WebkitBackgroundClip: "text",
+  backgroundClip: "text",
+  color: "transparent",
+  WebkitTextFillColor: "transparent",
+}));
+
+const Caption = styled(Typography)(({ theme }) => ({
+  marginTop: theme.spacing(0.75),
+  display: "inline-flex",
+  alignItems: "center",
+  gap: theme.spacing(0.75),
+  letterSpacing: "0.18em",
+  textTransform: "uppercase",
+  color: theme.palette.text.secondary,
+}));
+
+const DotsRoot = styled("span")({
+  display: "inline-flex",
+  alignItems: "flex-end",
+  gap: 4,
+  height: "1em",
+  "& span": {
+    width: 4,
+    height: 4,
+    borderRadius: "50%",
+    backgroundColor: "currentColor",
+    animation: `${dotBounce} 1.4s ease-in-out infinite`,
+  },
+  "& span:nth-of-type(2)": { animationDelay: "0.16s" },
+  "& span:nth-of-type(3)": { animationDelay: "0.32s" },
 });
 
 // ----------------------------------------------------------------------
-// Styled parts — star field
+// Indeterminate progress bar
 
-const StarFieldRoot = styled("div")({
+const ProgressTrack = styled(Box)(({ theme }) => ({
+  position: "relative",
+  overflow: "hidden",
+  width: 180,
+  height: 4,
+  marginTop: theme.spacing(3),
+  borderRadius: 999,
+  backgroundColor: alpha(
+    theme.palette.primary.main,
+    theme.palette.mode === "dark" ? 0.16 : 0.12,
+  ),
+}));
+
+const ProgressBar = styled("span")(({ theme }) => ({
+  position: "absolute",
   top: 0,
-  left: 0,
-  width: "100%",
-  height: "100%",
-  position: "absolute",
-  pointerEvents: "none",
-});
-
-const Star = styled("span")(({ theme }) => ({
-  position: "absolute",
-  borderRadius: "50%",
-  backgroundColor:
-    theme.palette.mode === "dark" ? "#fff" : theme.palette.primary.main,
-  animation: `${twinkle} 3s ease-in-out infinite`,
+  bottom: 0,
+  borderRadius: 999,
+  background: brandGradient(theme.palette.primary),
+  animation: `${indeterminate} 1.4s ${theme.transitions.easing.easeInOut} infinite`,
 }));

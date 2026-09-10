@@ -13,6 +13,8 @@ import {
   SkeletonLoader,
   EntityCard,
   ResponsiveButton,
+  PageHeader,
+  EmptyState,
 } from "@/common/components";
 import { SkillForm } from "./SkillForm";
 import { HelperFunctions } from "@/utils/helpers";
@@ -125,46 +127,33 @@ export const SkillsSection = () => {
 
   return (
     <Box>
-      <Box
-        sx={{
-          display: "flex",
-          justifyContent: "space-between",
-          alignItems: "center",
-          mb: 3,
-        }}
-      >
-        <Box>
-          <Typography variant="h5" gutterBottom>
-            Skills
-          </Typography>
-          <Typography variant="body2" color="text.secondary">
-            Manage your skills and expertise
-          </Typography>
-        </Box>
-        <ResponsiveButton
-          collapseBreakpoint="sm"
-          icon={<Add />}
-          onClick={handleAdd}
-        >
-          Add
-        </ResponsiveButton>
-      </Box>
+      <PageHeader
+        title="Skills"
+        subtitle="Manage your skills and expertise"
+        count={skills.length}
+        action={
+          <ResponsiveButton collapseBreakpoint="sm" icon={<Add />} onClick={handleAdd}>
+            Add Skill
+          </ResponsiveButton>
+        }
+      />
 
       {loading && (
         <SkeletonLoader
           count={6}
           minItemWidth={320}
-          gap={2}
+          gap={3}
           showActions={false}
         />
       )}
 
       {skills.length === 0 && !loading ? (
-        <Box sx={{ textAlign: "center", py: 4 }}>
-          <Typography variant="body1" color="text.secondary">
-            No skills yet. Add your first one!
-          </Typography>
-        </Box>
+        <EmptyState
+          icon={<Code />}
+          title="No skills yet"
+          description="Add the skills and technologies you work with, grouped by category."
+          onClick={handleAdd}
+        />
       ) : (
         <Box>
           {Object.entries(groupedSkills).map(([category, categorySkills]) => (
@@ -176,7 +165,7 @@ export const SkillsSection = () => {
                 sx={{
                   display: "grid",
                   gridTemplateColumns: "repeat(auto-fill, minmax(320px, 1fr))",
-                  gap: 2,
+                  gap: 3,
                 }}
               >
                 {categorySkills.map((skill) => (

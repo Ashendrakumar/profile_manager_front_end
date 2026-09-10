@@ -4,6 +4,7 @@
  */
 
 import { lazy } from "react";
+import { Navigate } from "react-router-dom";
 import type { RouteObject } from "react-router-dom";
 import type { PageMetadata } from "@/utils/metadata";
 import { RouteGuard } from "./RouteGuard";
@@ -56,14 +57,6 @@ const lazyNamed = <T extends Record<string, unknown>>(
     })),
   );
 
-const PersonalDetailsSection = lazyNamed(
-  () => import("@/modules/profile/components/PersonalDetailsSection"),
-  "PersonalDetailsSection",
-);
-const ContactDetailsSection = lazyNamed(
-  () => import("@/modules/profile/components/ContactDetailsSection"),
-  "ContactDetailsSection",
-);
 const EducationSection = lazyNamed(
   () => import("@/modules/profile/components/EducationSection"),
   "EducationSection",
@@ -84,10 +77,6 @@ const SkillsSection = lazyNamed(
   () => import("@/modules/profile/components/SkillsSection"),
   "SkillsSection",
 );
-const ProfileCompletionDashboard = lazyNamed(
-  () => import("@/modules/profile/components/ProfileCompletionDashboard"),
-  "ProfileCompletionDashboard",
-);
 
 const NotFoundPage = lazy(
   () => import("@/modules/notFound/pages/NotFoundPage"),
@@ -96,6 +85,9 @@ const NotFoundPage = lazy(
 const Inprogress = lazy(() => import("@/modules/Inprogress/Inprogress"));
 const DocumentsPage = lazy(
   () => import("@/modules/documents/pages/DocumentsPage"),
+);
+const MyProfilePage = lazy(
+  () => import("@/modules/profile/pages/MyProfilePage"),
 );
 
 // ── Helper: wrap a page element with RouteGuard ────────────────────────────────
@@ -170,23 +162,15 @@ export const routes: AppRoute[] = [
       keywords: "about, information, company",
     },
   },
+  // ── Retired: Personal & Contact are now merged into My Profile (/profile).
+  //    Keep the old paths as redirects so existing links/bookmarks still land.
   {
     path: ROUTES.PERSONAL_DETAILS,
-    element: guard(<PersonalDetailsSection />, { isProtected: true }),
-    isProtected: true,
-    metadata: {
-      title: "Personal Details - Profile Manager",
-      description: "Manage your personal details",
-    },
+    element: <Navigate to={ROUTES.PROFILE} replace />,
   },
   {
     path: ROUTES.CONTACT,
-    element: guard(<ContactDetailsSection />, { isProtected: true }),
-    isProtected: true,
-    metadata: {
-      title: "Contact Details - Profile Manager",
-      description: "Manage your contact information",
-    },
+    element: <Navigate to={ROUTES.PROFILE} replace />,
   },
   {
     path: ROUTES.EDUCATION,
@@ -234,12 +218,20 @@ export const routes: AppRoute[] = [
     },
   },
   {
+    // Retired: the Profile Completion dashboard is now folded into My Profile.
+    // Keep the old path as a redirect so existing links/bookmarks still land.
     path: ROUTES.PROFILE_COMPLETION,
-    element: guard(<ProfileCompletionDashboard />, { isProtected: true }),
+    element: <Navigate to={ROUTES.PROFILE} replace />,
+  },
+  {
+    path: ROUTES.PROFILE,
+    element: guard(<MyProfilePage />, { isProtected: true }),
     isProtected: true,
     metadata: {
-      title: "Profile Completion - Profile Manager",
-      description: "Track your profile completion",
+      title: "My Profile - Profile Manager",
+      description:
+        "Manage your personal details, contact information and resume in one place",
+      keywords: "profile, personal, contact, resume",
     },
   },
   {

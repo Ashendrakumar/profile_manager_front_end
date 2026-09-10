@@ -1,170 +1,258 @@
 /**
- * Material UI Theme Configuration
- * Centralized theme setup with customization options
+ * Material UI Theme — Profile Manager Design System v2.0
+ *
+ * The single source of truth for the app's look. Everything is token-driven:
+ * change a value here and it cascades to every screen (per the ui-design-system
+ * skill). Encodes the teal brand scale, warm coral accent, Inter/Sora type,
+ * soft teal-tinted elevation, gradient primary buttons, input focus-glow, and a
+ * global reduced-motion guard. Light + dark are both first-class.
  */
 
 import { createTheme } from "@mui/material/styles";
-import type {
-  PaletteOptions,
-  SimplePaletteColorOptions,
-  ThemeOptions,
-} from "@mui/material/styles";
-import type { ColorPartial } from "@mui/material/styles/createPalette";
+import type { ThemeOptions } from "@mui/material/styles";
 
-// Custom theme options interface
-interface CustomThemeOptions extends ThemeOptions {
-  // Add custom theme properties here if needed
-  palette: CustomPaletteOptions;
-}
-type CustomPaletteColorOptions = SimplePaletteColorOptions & ColorPartial;
+type Mode = "light" | "dark";
 
-interface CustomPaletteOptions extends PaletteOptions {
-  // Add custom theme properties here if needed
-  primary: CustomPaletteColorOptions;
-}
-
-// Teal color palette
-const tealColors = {
-  main: "#00897b", // Teal 600
-  light: "#4fb3bf", // Teal 400
-  dark: "#00695c", // Teal 800
-  contrastText: "#ffffff",
-  50: "#E0F2F1",
-  100: "#B2DFDB",
-  200: "#80CBC4",
-  300: "#4DB6AC",
-  400: "#26A69A",
-  500: "#009688",
-  600: "#00897B",
-  700: "#00796B",
-  800: "#9FE1CB",
-  900: "#004D40",
+// ── Brand + semantic tokens ──────────────────────────────────────────────────
+const teal = {
+  50: "#e6f6f4",
+  100: "#c2e9e4",
+  200: "#8fd6cd",
+  300: "#4fbdb0",
+  400: "#26a698",
+  500: "#00968a",
+  600: "#00897b", // primary.main
+  700: "#00796b",
+  800: "#00655a",
+  900: "#004d40",
 };
 
-// Light theme configuration with teal primary color
-const lightThemeOptions: CustomThemeOptions = {
-  palette: {
-    mode: "light",
+const coral = { light: "#ff7a66", main: "#ff5a3c", dark: "#e94a2e" };
+
+const BRAND_GRADIENT =
+  "linear-gradient(135deg, #00b3a0 0%, #00897b 55%, #00655a 100%)";
+const CORAL_GRADIENT =
+  "linear-gradient(135deg, #ff7a66 0%, #ff5a3c 55%, #e94a2e 100%)";
+
+// ── Type ─────────────────────────────────────────────────────────────────────
+const FONT_UI = '"Inter", "Helvetica", "Arial", sans-serif';
+const FONT_DISPLAY = '"Sora", "Inter", sans-serif';
+
+// ── Motion ───────────────────────────────────────────────────────────────────
+const EASE = "cubic-bezier(0.22, 0.61, 0.36, 1)";
+
+// ── Elevation ────────────────────────────────────────────────────────────────
+const TEAL_GLOW = "0 12px 30px rgba(0,137,123,0.28)";
+const TEAL_GLOW_HOVER = "0 16px 38px rgba(0,137,123,0.40)";
+const CORAL_GLOW = "0 12px 30px rgba(255,90,60,0.30)";
+const FOCUS_RING = "0 0 0 4px rgba(0,150,138,0.16)";
+const ERROR_RING = "0 0 0 4px rgba(244,63,110,0.15)";
+
+// ── Per-mode surface + primary tokens ────────────────────────────────────────
+const modeTokens = {
+  light: {
+    background: { default: "#f4f7f8", paper: "#ffffff" },
+    divider: "#e4ebec",
+    dividerStrong: "#d3dedf",
+    text: { primary: "#0f1e1c", secondary: "#5c6d6a", disabled: "#9aa8a5" },
     primary: {
-      light: tealColors[400],
-      main: tealColors[600],
-      dark: tealColors[800],
-      contrastText: tealColors.contrastText,
-      50: tealColors[50],
-      100: tealColors[100],
-      200: tealColors[200],
-      300: tealColors[300],
-      400: tealColors[400],
-      500: tealColors[500],
-      600: tealColors[600],
-      700: tealColors[700],
-      800: tealColors[800],
-      900: tealColors[900],
-    },
-    secondary: {
-      main: "#dc004e",
-      light: "#ff5983",
-      dark: "#9a0036",
+      light: teal[400],
+      main: teal[600],
+      dark: teal[800],
       contrastText: "#ffffff",
+      50: teal[50],
+      100: teal[100],
+      200: teal[200],
+      300: teal[300],
+      400: teal[400],
+      500: teal[500],
+      600: teal[600],
+      700: teal[700],
+      800: teal[800],
+      900: teal[900],
     },
-    background: {
-      default: "#f5f5f5",
-      paper: "#ffffff",
-    },
-    error: {
-      main: "#d32f2f",
-    },
-    warning: {
-      main: "#ed6c02",
-    },
-    info: {
-      main: "#0288d1",
-    },
-    success: {
-      main: "#2e7d32",
-    },
+    cardShadow:
+      "0 2px 12px rgba(6,32,29,0.08), 0 1px 4px rgba(6,32,29,0.05)",
+    cardShadowHover:
+      "0 8px 24px rgba(6,32,29,0.12), 0 2px 8px rgba(6,32,29,0.06)",
+    paperShadow:
+      "0 2px 12px rgba(6,32,29,0.08), 0 1px 4px rgba(6,32,29,0.05)",
+    inputHoverBorder: teal[300],
+    focusBorder: teal[600],
   },
-  typography: {
-    fontFamily: '"Roboto", "Helvetica", "Arial", sans-serif',
-    fontSize: 14,
-    h1: {
-      fontSize: "2.5rem",
-      fontWeight: 600,
-      lineHeight: 1.2,
+  dark: {
+    background: { default: "#0b1413", paper: "#111d1b" },
+    divider: "#22322f",
+    dividerStrong: "#2c3d3a",
+    text: { primary: "#eaf4f2", secondary: "#9fb2ae", disabled: "#5f716e" },
+    // Scale is inverted for dark so low indices read dark (surfaces / active bg)
+    // and high indices read light (active text) — keeps sidebar/active states legible.
+    primary: {
+      light: teal[300],
+      main: teal[400],
+      dark: teal[600],
+      contrastText: "#ffffff",
+      50: teal[900],
+      100: teal[200],
+      200: teal[700],
+      300: teal[600],
+      400: teal[400],
+      500: teal[500],
+      600: teal[200],
+      700: teal[100],
+      800: teal[50],
+      900: teal[50],
     },
-    h2: {
-      fontSize: "2rem",
-      fontWeight: 600,
-      lineHeight: 1.3,
-    },
-    h3: {
-      fontSize: "1.75rem",
-      fontWeight: 600,
-      lineHeight: 1.3,
-    },
-    h4: {
-      fontSize: "1.5rem",
-      fontWeight: 600,
-      lineHeight: 1.4,
-    },
-    h5: {
-      fontSize: "1.25rem",
-      fontWeight: 600,
-      lineHeight: 1.4,
-    },
-    h6: {
-      fontSize: "1.125rem",
-      fontWeight: 600,
-      lineHeight: 1.4,
-    },
-    body1: {
-      fontSize: "1rem",
-      lineHeight: 1.5,
-    },
-    body2: {
-      fontSize: "0.875rem",
-      lineHeight: 1.5,
-    },
-    button: {
-      fontSize: "0.875rem",
-      fontWeight: 500,
-      textTransform: "none",
-    },
+    cardShadow: "0 2px 12px rgba(0,0,0,0.40), 0 1px 4px rgba(0,0,0,0.30)",
+    cardShadowHover: "0 10px 28px rgba(0,0,0,0.55)",
+    paperShadow: "0 2px 12px rgba(0,0,0,0.40), 0 1px 4px rgba(0,0,0,0.30)",
+    inputHoverBorder: teal[400],
+    focusBorder: teal[400],
   },
-  shape: {
-    borderRadius: 10,
+} as const;
+
+// ── Shared typography ────────────────────────────────────────────────────────
+const heading = (fontSize: string, fontWeight: number, lineHeight = 1.2) => ({
+  fontFamily: FONT_DISPLAY,
+  fontWeight,
+  fontSize,
+  lineHeight,
+  letterSpacing: "-0.02em",
+});
+
+const typography: ThemeOptions["typography"] = {
+  fontFamily: FONT_UI,
+  fontSize: 14,
+  h1: heading("2.5rem", 800, 1.1),
+  h2: heading("2rem", 800, 1.15),
+  h3: heading("1.75rem", 700, 1.2),
+  h4: heading("1.5rem", 700, 1.25),
+  h5: heading("1.25rem", 600, 1.35),
+  h6: heading("1.125rem", 600, 1.4),
+  subtitle1: { fontWeight: 600 },
+  subtitle2: { fontWeight: 600 },
+  body1: { fontSize: "1rem", lineHeight: 1.55 },
+  body2: { fontSize: "0.875rem", lineHeight: 1.55 },
+  button: { fontSize: "0.875rem", fontWeight: 600, textTransform: "none" },
+  overline: {
+    fontWeight: 700,
+    fontSize: "0.72rem",
+    letterSpacing: "0.12em",
+    textTransform: "uppercase",
   },
-  components: {
-    MuiButton: {
-      defaultProps: {
-        size: "large", // ✅ default size
-      },
-    },
-    MuiCard: {
+};
+
+// ── Component overrides (per mode) ───────────────────────────────────────────
+const buildComponents = (mode: Mode): ThemeOptions["components"] => {
+  const t = modeTokens[mode];
+
+  return {
+    MuiCssBaseline: {
       styleOverrides: {
-        root: {
-          borderRadius: 12,
-          boxShadow: "0 2px 12px rgba(0,0,0,0.08), 0 1px 4px rgba(0,0,0,0.05)",
-          transition: "box-shadow 0.3s ease-in-out",
-          "&:hover": {
-            boxShadow:
-              "0 4px 20px rgba(0,0,0,0.12), 0 2px 8px rgba(0,0,0,0.08)",
+        body: {
+          WebkitFontSmoothing: "antialiased",
+          MozOsxFontSmoothing: "grayscale",
+        },
+        // Global accessibility guard for users who prefer reduced motion.
+        "@media (prefers-reduced-motion: reduce)": {
+          "*, *::before, *::after": {
+            animationDuration: "0.01ms !important",
+            animationIterationCount: "1 !important",
+            transitionDuration: "0.01ms !important",
+            scrollBehavior: "auto !important",
           },
         },
       },
     },
-    MuiPaper: {
+
+    MuiButton: {
+      defaultProps: { size: "large" },
       styleOverrides: {
         root: {
           borderRadius: 12,
-          boxShadow: "0 2px 12px rgba(0,0,0,0.08), 0 1px 4px rgba(0,0,0,0.05)",
+          fontWeight: 600,
+          textTransform: "none",
+          paddingInline: "22px",
+          transition: `background 0.28s ${EASE}, box-shadow 0.28s ${EASE}, transform 0.28s ${EASE}, border-color 0.28s ${EASE}`,
+        },
+        containedPrimary: {
+          background: BRAND_GRADIENT,
+          color: "#ffffff",
+          boxShadow: TEAL_GLOW,
+          "&:hover": { boxShadow: TEAL_GLOW_HOVER, transform: "translateY(-2px)" },
+          "&:active": { transform: "translateY(0)" },
+          "&.Mui-disabled": {
+            background: "rgba(0,137,123,0.35)",
+            color: "rgba(255,255,255,0.85)",
+            boxShadow: "none",
+          },
+        },
+        containedSecondary: {
+          background: CORAL_GRADIENT,
+          color: "#ffffff",
+          boxShadow: CORAL_GLOW,
+          "&:hover": { transform: "translateY(-2px)" },
+          "&:active": { transform: "translateY(0)" },
+        },
+        outlined: {
+          borderWidth: 1.5,
+          "&:hover": { borderWidth: 1.5, transform: "translateY(-2px)" },
         },
       },
     },
-    MuiAppBar: {
+
+    MuiCard: {
+      defaultProps: { elevation: 0 },
       styleOverrides: {
         root: {
-          borderRadius: 0,
+          borderRadius: 16,
+          border: `1px solid ${t.divider}`,
+          boxShadow: t.cardShadow,
+          backgroundImage: "none",
+          transition: `box-shadow 0.28s ${EASE}, transform 0.28s ${EASE}, border-color 0.28s ${EASE}`,
+          // Cards are static by default — no hover lift. Only cards that are
+          // genuinely interactive (clickable list/entity cards) opt in with
+          // `data-interactive="true"` to get the pointer + hover lift.
+          '&[data-interactive="true"]': { cursor: "pointer" },
+          '&[data-interactive="true"]:hover': {
+            boxShadow: t.cardShadowHover,
+            transform: "translateY(-4px)",
+            borderColor: t.primary.main,
+          },
+        },
+      },
+    },
+
+    MuiPaper: {
+      styleOverrides: {
+        root: { backgroundImage: "none", borderRadius: 16 },
+        elevation1: { boxShadow: t.paperShadow },
+      },
+    },
+
+    MuiAppBar: {
+      styleOverrides: { root: { borderRadius: 0, backgroundImage: "none" } },
+    },
+
+    MuiOutlinedInput: {
+      styleOverrides: {
+        root: {
+          borderRadius: 12,
+          transition: `box-shadow 0.2s ${EASE}`,
+          "& .MuiOutlinedInput-notchedOutline": {
+            borderColor: t.divider,
+            borderWidth: 1.5,
+            transition: `border-color 0.2s ${EASE}`,
+          },
+          "&:hover .MuiOutlinedInput-notchedOutline": {
+            borderColor: t.inputHoverBorder,
+          },
+          "&.Mui-focused": { boxShadow: FOCUS_RING },
+          "&.Mui-focused .MuiOutlinedInput-notchedOutline": {
+            borderColor: t.focusBorder,
+            borderWidth: 1.5,
+          },
+          "&.Mui-error.Mui-focused": { boxShadow: ERROR_RING },
         },
       },
     },
@@ -172,34 +260,38 @@ const lightThemeOptions: CustomThemeOptions = {
     MuiChip: {
       styleOverrides: {
         root: {
+          borderRadius: 999,
           fontSize: "0.8rem",
-          fontWeight: 500,
-          height: "28px",
+          fontWeight: 600,
+          height: 28,
         },
       },
     },
+
     MuiTab: {
       styleOverrides: {
         root: {
           fontSize: "0.9rem",
-          fontWeight: 500,
-          minHeight: "48px",
+          fontWeight: 600,
+          minHeight: 48,
           textTransform: "none",
         },
       },
     },
+
     MuiTableCell: {
       styleOverrides: {
-        root: {
-          fontSize: "0.9rem",
-          padding: "12px 16px",
-        },
+        root: { fontSize: "0.9rem", padding: "12px 16px" },
         head: {
-          fontWeight: 600,
-          fontSize: "0.85rem",
+          fontWeight: 700,
+          fontSize: "0.78rem",
+          letterSpacing: "0.04em",
+          textTransform: "uppercase",
+          color: t.text.secondary,
         },
       },
     },
+
     MuiContainer: {
       styleOverrides: {
         root: {
@@ -209,73 +301,46 @@ const lightThemeOptions: CustomThemeOptions = {
             paddingLeft: "32px",
             paddingRight: "32px",
           },
-          "@media (min-width: 1200px)": {
-            maxWidth: "1400px",
-          },
+          "@media (min-width: 1200px)": { maxWidth: "1400px" },
         },
       },
     },
-  },
+  };
 };
 
-// Dark theme configuration with teal primary color
-const darkThemeOptions: CustomThemeOptions = {
-  ...lightThemeOptions,
-  palette: {
-    ...lightThemeOptions.palette,
-    mode: "dark",
-    primary: {
-      light: tealColors[300],
-      main: tealColors[400],
-      dark: tealColors[600],
-      contrastText: tealColors.contrastText,
-      50: tealColors[900],
-      100: tealColors[800],
-      200: tealColors[700],
-      300: tealColors[600],
-      400: tealColors[400],
-      500: tealColors[500],
-      600: tealColors[200],
-      700: tealColors[100],
-      800: tealColors[50],
-      900: tealColors[50],
-    },
-    background: {
-      default: "#121212",
-      paper: "#1e1e1e",
-    },
-  },
-  components: {
-    ...lightThemeOptions.components,
-    MuiCard: {
-      styleOverrides: {
-        root: {
-          borderRadius: 16,
-          boxShadow: "0 2px 12px rgba(0,0,0,0.3), 0 1px 4px rgba(0,0,0,0.2)",
-        },
+// ── Theme assembly ───────────────────────────────────────────────────────────
+const buildTheme = (mode: Mode) => {
+  const t = modeTokens[mode];
+
+  const options: ThemeOptions = {
+    palette: {
+      mode,
+      primary: t.primary,
+      secondary: {
+        light: coral.light,
+        main: coral.main,
+        dark: coral.dark,
+        contrastText: "#ffffff",
       },
+      background: t.background,
+      divider: t.divider,
+      text: t.text,
+      error: { main: "#f43f6e" },
+      warning: { main: "#f5a524" },
+      info: { main: "#2e9bff" },
+      success: { main: "#18b368" },
     },
-    MuiPaper: {
-      styleOverrides: {
-        root: {
-          borderRadius: 16,
-          boxShadow: "0 2px 12px rgba(0,0,0,0.3), 0 1px 4px rgba(0,0,0,0.2)",
-        },
-      },
-    },
-    MuiAppBar: {
-      styleOverrides: {
-        root: {
-          borderRadius: 0,
-        },
-      },
-    },
-  },
+    typography,
+    shape: { borderRadius: 12 },
+    components: buildComponents(mode),
+  };
+
+  return createTheme(options);
 };
 
 // Create themes
-export const lightTheme = createTheme(lightThemeOptions);
-export const darkTheme = createTheme(darkThemeOptions);
+export const lightTheme = buildTheme("light");
+export const darkTheme = buildTheme("dark");
 
 // Export default theme (light)
 export const theme = lightTheme;
