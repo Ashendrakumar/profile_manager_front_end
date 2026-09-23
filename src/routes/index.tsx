@@ -89,6 +89,9 @@ const DocumentsPage = lazy(
 const MyProfilePage = lazy(
   () => import("@/modules/profile/pages/MyProfilePage"),
 );
+const SettingsPage = lazy(
+  () => import("@/modules/settings/pages/SettingsPage"),
+);
 
 // ── Helper: wrap a page element with RouteGuard ────────────────────────────────
 
@@ -252,6 +255,16 @@ export const routes: AppRoute[] = [
       title: "Documents - Profile Manager",
       description: "Manage your folders and uploaded documents",
       keywords: "documents, folders, upload",
+    },
+  },
+  {
+    path: ROUTES.SETTINGS,
+    element: guard(<SettingsPage />, { isProtected: true }),
+    isProtected: true,
+    metadata: {
+      title: "Settings - Profile Manager",
+      description: "Manage your preferences, privacy and account security",
+      keywords: "settings, preferences, privacy, password",
     },
   },
 

@@ -111,6 +111,7 @@ export interface Certification {
   credentialId?: string;
   credentialUrl?: string;
   description?: string;
+  isExpired?: boolean;
 }
 
 export interface CreateCertificationRequest {

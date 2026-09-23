@@ -7,7 +7,11 @@ import { useState, useEffect, useMemo } from "react";
 import { Box, Typography, Grid } from "@mui/material";
 import { Add, Edit, Delete, Verified } from "@mui/icons-material";
 import { useToast } from "@/contexts/toastContext";
-import type { Certification } from "../services/profileService";
+import {
+  profileService,
+  type Certification,
+  type CreateCertificationRequest,
+} from "../services/profileService";
 import {
   ConfirmDialog,
   SkeletonLoader,
@@ -20,47 +24,9 @@ import {
 import { CertificationForm } from "./CertificationForm";
 import { HelperFunctions } from "@/utils/helpers";
 
-const dummyCertifications: Certification[] = [
-  {
-    _id: "cert-1",
-    title: "AWS Certified Developer - Associate",
-    issuer: "Amazon Web Services",
-    issueDate: "2024-01-15",
-    expiryDate: "2027-01-15",
-    credentialId: "AWS-DEV-1234",
-    credentialUrl: "https://aws.amazon.com/certification",
-    description:
-      "Validated expertise in building and deploying applications on AWS.",
-  },
-  {
-    _id: "cert-2",
-    title: "Google Cloud Professional Developer",
-    issuer: "Google Cloud",
-    issueDate: "2023-08-20",
-    expiryDate: "2026-08-20",
-    credentialId: "GCP-DEV-5678",
-    credentialUrl: "https://cloud.google.com/certification",
-    description:
-      "Demonstrated strong cloud architecture and development skills.",
-  },
-];
-
-const STORAGE_KEY = "profile-certifications";
-
 export const CertificationSection = () => {
   const { showSuccess, showError } = useToast();
-  const [certifications, setCertifications] = useState<Certification[]>(() => {
-    if (typeof globalThis.window === "undefined") return dummyCertifications;
-
-    const stored = globalThis.window.localStorage.getItem(STORAGE_KEY);
-    if (!stored) return dummyCertifications;
-
-    try {
-      return JSON.parse(stored) as Certification[];
-    } catch {
-      return dummyCertifications;
-    }
-  });
+  const [certifications, setCertifications] = useState<Certification[]>([]);
   const [formOpen, setFormOpen] = useState(false);
   const [selectedCertification, setSelectedCertification] =
     useState<Certification | null>(null);
@@ -74,25 +40,11 @@ export const CertificationSection = () => {
     fetchCertifications();
   }, []);
 
-  const syncToStorage = (items: Certification[]) => {
-    if (typeof globalThis.window !== "undefined") {
-      globalThis.window.localStorage.setItem(
-        STORAGE_KEY,
-        JSON.stringify(items),
-      );
-    }
-  };
-
   const fetchCertifications = async () => {
     try {
       setLoading(true);
-      const stored = globalThis.window?.localStorage.getItem(STORAGE_KEY);
-      if (stored) {
-        setCertifications(JSON.parse(stored) as Certification[]);
-      } else {
-        setCertifications(dummyCertifications);
-        syncToStorage(dummyCertifications);
-      }
+      const response = await profileService.getCertifications();
+      setCertifications(response.certifications || []);
     } catch (err) {
       showError(
         err instanceof Error ? err.message : "Failed to fetch certifications",
@@ -117,26 +69,25 @@ export const CertificationSection = () => {
     setDeleteDialogOpen(true);
   };
 
-  const handleFormSubmit = async (data: any) => {
+  const handleFormSubmit = async (data: CreateCertificationRequest) => {
     try {
       setActionLoading(true);
 
-      const nextItems = selectedCertification?._id
-        ? certifications.map((item) =>
-            item._id === selectedCertification._id
-              ? { ...item, ...data }
-              : item,
-          )
-        : [
-            {
-              _id: `cert-${Date.now()}`,
-              ...data,
-            } as Certification,
-            ...certifications,
-          ];
+      if (selectedCertification?._id) {
+        const { certification } = await profileService.updateCertification(
+          selectedCertification._id,
+          data,
+        );
+        setCertifications((items) =>
+          items.map((item) =>
+            item._id === certification._id ? certification : item,
+          ),
+        );
+      } else {
+        const { certification } = await profileService.addCertification(data);
+        setCertifications((items) => [certification, ...items]);
+      }
 
-      setCertifications(nextItems);
-      syncToStorage(nextItems);
       setFormOpen(false);
       setSelectedCertification(null);
       showSuccess(
@@ -158,11 +109,10 @@ export const CertificationSection = () => {
 
     try {
       setActionLoading(true);
-      const nextItems = certifications.filter(
-        (item) => item._id !== certificationToDelete._id,
+      await profileService.deleteCertification(certificationToDelete._id);
+      setCertifications((items) =>
+        items.filter((item) => item._id !== certificationToDelete._id),
       );
-      setCertifications(nextItems);
-      syncToStorage(nextItems);
       showSuccess("Certification deleted successfully");
       setDeleteDialogOpen(false);
       setCertificationToDelete(null);
@@ -222,7 +172,11 @@ export const CertificationSection = () => {
               chips.push({ label: `Issued: ${certification.issueDate}` });
             }
             if (certification.expiryDate) {
-              chips.push({ label: `Expires: ${certification.expiryDate}` });
+              chips.push(
+                certification.isExpired
+                  ? { label: `Expired: ${certification.expiryDate}`, color: "error" }
+                  : { label: `Expires: ${certification.expiryDate}` },
+              );
             }
             if (certification.credentialId) {
               chips.push({

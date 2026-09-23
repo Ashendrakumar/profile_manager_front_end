@@ -3,8 +3,13 @@ export interface DocumentItem {
   displayName: string;
   fileName: string;
   fileType: string;
-  fileData?: string;
+  fileSize?: number;
+  filePath?: string;
+  /** Absolute URL of the stored file (local uploads or Cloudflare R2). */
+  fileUrl?: string;
+  folderId?: string;
   uploadedAt: string;
+  updatedAt?: string;
 }
 
 export interface FolderItem {
@@ -13,6 +18,7 @@ export interface FolderItem {
   description?: string;
   parentFolderId?: string | null;
   createdAt: string;
+  updatedAt?: string;
   documents: DocumentItem[];
 }
 
