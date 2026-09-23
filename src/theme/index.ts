@@ -29,7 +29,7 @@ const teal = {
 
 const coral = { light: "#ff7a66", main: "#ff5a3c", dark: "#e94a2e" };
 
-const BRAND_GRADIENT =
+export const BRAND_GRADIENT =
   "linear-gradient(135deg, #00b3a0 0%, #00897b 55%, #00655a 100%)";
 const CORAL_GRADIENT =
   "linear-gradient(135deg, #ff7a66 0%, #ff5a3c 55%, #e94a2e 100%)";
@@ -42,7 +42,7 @@ const FONT_DISPLAY = '"Sora", "Inter", sans-serif';
 const EASE = "cubic-bezier(0.22, 0.61, 0.36, 1)";
 
 // ── Elevation ────────────────────────────────────────────────────────────────
-const TEAL_GLOW = "0 12px 30px rgba(0,137,123,0.28)";
+export const TEAL_GLOW = "0 12px 30px rgba(0,137,123,0.28)";
 const TEAL_GLOW_HOVER = "0 16px 38px rgba(0,137,123,0.40)";
 const CORAL_GLOW = "0 12px 30px rgba(255,90,60,0.30)";
 const FOCUS_RING = "0 0 0 4px rgba(0,150,138,0.16)";

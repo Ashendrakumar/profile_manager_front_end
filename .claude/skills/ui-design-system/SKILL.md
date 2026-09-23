@@ -72,13 +72,13 @@ an old one, map to these tokens instead of inventing values.
 | Buttons | `ResponsiveButton`, MUI `Button` | Primary = teal gradient + glow; Ghost = 1.5px outline; Coral = CTA only. Rounded-rectangle radius (`sm` = 12, matches inputs). `textTransform:none`. Hover `translateY(-2px)`. |
 | Text input | `Input` | 1.5px border, radius sm. Focus = teal border + `0 0 0 4px teal-50` glow. Error = rose border + helper text. |
 | Select / textarea | `Select`, `TextArea`, `TextEditor` | Same border/focus treatment. |
-| Entity list item | `EntityCard` | Avatar/icon + title + meta + description + tag chips + action menu (`⋯`). Hover lift **only when clickable** (`onClick` set). |
-| Grouped list | `SectionCard` | Title + count chip + `＋` add button + chip/row body. |
+| Entity list item | `EntityCard` | Avatar/icon + title (+ `headerChip` inline) + subtitle, then **`metaChips`** (dates / status / counts), body, **`chips`** (tags, with optional `chipsLabel`), optional pinned `footer` for links + a read action. Facts and tags never share a row. Hover lift **only when clickable** (`onClick` set). |
+| Grouped list | `SectionCard` | Title + count chip + optional header `action`; body is either `items`/`renderItem` or custom `children` (e.g. a tile grid). Use when the entity is too thin for a full card — see Skills. |
 | Add / edit form | `SideDrawer` + `*Form` | Forms open in a right side drawer (react-hook-form + zod), never a full page. |
 | Confirm destructive | `ConfirmDialog` | Rose primary action. |
 | Loading | `SkeletonLoader`, `LoadingSpinner`, `TopProgressBar` | Skeleton on first load; keep old data + subtle spinner on refresh. |
 | Feedback | `toastContext` | Success = green, error = rose, top-right, auto-dismiss. |
-| Chips | MUI `Chip` | teal (default/tech), green (done), amber (pending/todo), violet (skills), rose (overdue/delete). Height 28, weight 600. |
+| Chips | MUI `Chip`, `EntityCardChip` | Three tones: `soft` (tinted fill, no border — the default for dense rows), `filled` (at most one per card, for live status), `outlined` (clickable links). Colours: teal (tech/tags), grey `default` (dates, counts), green (done/live), amber (pending/todo), violet (skills), rose (overdue/delete). Height 28, weight 600. |
 
 ---
 
@@ -127,7 +127,8 @@ rail of **My Profile** (`/profile`). Keep it recognizable:
 - Motivational message + emoji by threshold (0 🚀 · ≤30 ✨ · ≤70 💪 · <100 🎯 · 100 🎉).
 - Linear progress + "X of N sections".
 - Two rail cards: **To complete** (amber rows, click → scroll to on-page section
-  or navigate) and **Completed** (green rows). The right column holds the
+  or navigate) and **Completed** (teal rows — the rail tracks progress in the
+  brand colour; green stays reserved for semantic success). The right column holds the
   editable Personal Details and Contact Details cards (edit via `SideDrawer`).
 
 ---

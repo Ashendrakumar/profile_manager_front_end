@@ -4,19 +4,20 @@
  */
 
 import { useState, useEffect } from "react";
-import { Box, Typography, Grid } from "@mui/material";
-import { Add, Edit, Delete, Code, AccessTime } from "@mui/icons-material";
+import { Box } from "@mui/material";
+import { Add, Edit, Delete, Code } from "@mui/icons-material";
 import { useToast } from "@/contexts/toastContext";
 import { profileService, type Skill } from "../services/profileService";
 import {
   ConfirmDialog,
   SkeletonLoader,
-  EntityCard,
+  SectionCard,
   ResponsiveButton,
   PageHeader,
   EmptyState,
 } from "@/common/components";
 import { SkillForm } from "./SkillForm";
+import { SkillTile } from "./SkillTile";
 import { HelperFunctions } from "@/utils/helpers";
 
 export const SkillsSection = () => {
@@ -97,33 +98,18 @@ export const SkillsSection = () => {
     }
   };
 
-  const getLevelColor = (level: string) => {
-    switch (level) {
-      case "BEGINNER":
-        return "primary";
-      case "INTERMEDIATE":
-        return "info";
-      case "ADVANCED":
-        return "warning";
-      case "EXPERT":
-        return "success";
-      default:
-        return "primary";
-    }
-  };
-
-  // Group skills by category
-  const groupedSkills = skills.reduce(
-    (acc, skill) => {
-      const category = (skill.category || "Other").toLowerCase();
-      if (!acc[category]) {
-        acc[category] = [];
-      }
-      acc[category].push(skill);
-      return acc;
-    },
-    {} as Record<string, Skill[]>,
-  );
+  // Group skills by category, then order the categories by size so the
+  // strongest areas lead the page.
+  const groupedSkills = Object.entries(
+    skills.reduce(
+      (acc, skill) => {
+        const category = (skill.category || "Other").toLowerCase();
+        (acc[category] ||= []).push(skill);
+        return acc;
+      },
+      {} as Record<string, Skill[]>,
+    ),
+  ).sort(([, a], [, b]) => b.length - a.length);
 
   return (
     <Box>
@@ -138,16 +124,15 @@ export const SkillsSection = () => {
         }
       />
 
-      {loading && (
+      {loading ? (
         <SkeletonLoader
-          count={6}
-          minItemWidth={320}
+          variant="grouped"
+          count={2}
+          itemsPerGroup={8}
+          minItemWidth={190}
           gap={3}
-          showActions={false}
         />
-      )}
-
-      {skills.length === 0 && !loading ? (
+      ) : skills.length === 0 ? (
         <EmptyState
           icon={<Code />}
           title="No skills yet"
@@ -155,58 +140,56 @@ export const SkillsSection = () => {
           onClick={handleAdd}
         />
       ) : (
-        <Box>
-          {Object.entries(groupedSkills).map(([category, categorySkills]) => (
-            <Box key={category} sx={{ mb: 4 }}>
-              <Typography variant="h6" gutterBottom sx={{ mb: 2 }}>
-                {HelperFunctions.capitalizeString(category)}
-              </Typography>
-              <Grid
+        // One card per category; the tiles inside are dense enough that a
+        // category of 12 skills costs roughly the height a single old card did.
+        <Box
+          sx={{
+            display: "grid",
+            gridTemplateColumns: {
+              xs: "1fr",
+              lg: "repeat(2, minmax(0, 1fr))",
+            },
+            gap: 3,
+            alignItems: "start",
+          }}
+        >
+          {groupedSkills.map(([category, categorySkills]) => (
+            <SectionCard
+              key={category}
+              title={HelperFunctions.capitalizeString(category)}
+              count={categorySkills.length}
+              icon={<Code color="primary" />}
+            >
+              <Box
                 sx={{
                   display: "grid",
-                  gridTemplateColumns: "repeat(auto-fill, minmax(320px, 1fr))",
-                  gap: 3,
+                  gridTemplateColumns:
+                    "repeat(auto-fill, minmax(190px, 1fr))",
+                  gap: 1.5,
                 }}
               >
                 {categorySkills.map((skill) => (
-                  <Grid item xs={12} sm={6} md={4} key={skill._id}>
-                    <EntityCard
-                      title={skill.name}
-                      avatar={<Code />}
-                      headerChip={{
-                        label: skill.level,
-                        color: getLevelColor(skill.level),
-                        variant: "outlined",
-                      }}
-                      info={
-                        skill.yearsOfExperience !== undefined
-                          ? [
-                              {
-                                icon: <AccessTime fontSize="small" />,
-                                text: `${skill.yearsOfExperience} years of experience`,
-                              },
-                            ]
-                          : undefined
-                      }
-                      actions={[
-                        {
-                          label: "Edit",
-                          icon: <Edit fontSize="small" />,
-                          onClick: () => handleEdit(skill),
-                        },
-                        {
-                          label: "Delete",
-                          icon: <Delete fontSize="small" />,
-                          color: "error",
-                          dividerBefore: true,
-                          onClick: () => handleDelete(skill),
-                        },
-                      ]}
-                    />
-                  </Grid>
+                  <SkillTile
+                    key={skill._id}
+                    skill={skill}
+                    actions={[
+                      {
+                        label: "Edit",
+                        icon: <Edit fontSize="small" />,
+                        onClick: () => handleEdit(skill),
+                      },
+                      {
+                        label: "Delete",
+                        icon: <Delete fontSize="small" />,
+                        color: "error",
+                        dividerBefore: true,
+                        onClick: () => handleDelete(skill),
+                      },
+                    ]}
+                  />
                 ))}
-              </Grid>
-            </Box>
+              </Box>
+            </SectionCard>
           ))}
         </Box>
       )}

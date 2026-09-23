@@ -3,7 +3,7 @@
  * Manages certification entries (CRUD)
  */
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo } from "react";
 import { Box, Typography, Grid } from "@mui/material";
 import { Add, Edit, Delete, Verified } from "@mui/icons-material";
 import { useToast } from "@/contexts/toastContext";
@@ -177,6 +177,13 @@ export const CertificationSection = () => {
 
   const hasCertifications = certifications.length > 0;
 
+  // Most recently issued first.
+  const sortedCertifications = useMemo(
+    () =>
+      HelperFunctions.sortByRecency(certifications, (item) => item.issueDate),
+    [certifications],
+  );
+
   return (
     <Box>
       <PageHeader
@@ -209,7 +216,7 @@ export const CertificationSection = () => {
             gap: 3,
           }}
         >
-          {certifications.map((certification) => {
+          {sortedCertifications.map((certification) => {
             const chips: EntityCardChip[] = [];
             if (certification.issueDate) {
               chips.push({ label: `Issued: ${certification.issueDate}` });

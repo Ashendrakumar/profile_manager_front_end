@@ -27,12 +27,13 @@ export const Body = ({ open, children, isCollapsed }: BodyProps) => {
         flexDirection: "column",
       }}
     >
+      {/* The sidebar offset lives on this column so the footer stays aligned
+          with the content instead of running underneath the sidebar. */}
       <Box
-        component="main"
         sx={{
           flex: 1,
-          my: { xs: 2, sm: 3, md: 4 },
-          px: { xs: 2, sm: 3, md: 4 },
+          display: "flex",
+          flexDirection: "column",
           ml: {
             xs: 0,
             md: open
@@ -43,11 +44,20 @@ export const Body = ({ open, children, isCollapsed }: BodyProps) => {
           },
           transition: "margin 0.3s ease",
         }}
-        id="main-content"
       >
-        {children}
+        <Box
+          component="main"
+          sx={{
+            flex: 1,
+            my: { xs: 2, sm: 3, md: 4 },
+            px: { xs: 2, sm: 3, md: 4 },
+          }}
+          id="main-content"
+        >
+          {children}
+        </Box>
+        <Footer show />
       </Box>
-      <Footer show />
     </Box>
   );
 };

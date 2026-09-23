@@ -2,11 +2,11 @@
  * LoadingSpinner (PageLoader)
  *
  * The app's full-screen loading experience, built to the Profile Manager
- * design language: a soft teal-tinted backdrop with drifting brand blobs, the
+ * design language: a soft green-tinted backdrop with drifting brand blobs, the
  * signature conic-gradient ring sweeping around a glass brand disc, a shimmering
  * wordmark and a slim indeterminate progress bar.
  *
- * Token-driven (teal brand + coral accent), first-class in light and dark, and
+ * Token-driven (green brand + coral accent), first-class in light and dark, and
  * fully gated behind `prefers-reduced-motion`. Pure CSS animations — no
  * framer-motion dependency.
  */
@@ -19,6 +19,9 @@ import Portal from "@mui/material/Portal";
 import { styled, keyframes, alpha } from "@mui/material/styles";
 import Typography from "@mui/material/Typography";
 
+import { TEAL_GLOW } from "@/theme";
+import { Logo } from "./Logo";
+
 import { APP_NAME } from "@/constants";
 
 // ----------------------------------------------------------------------
@@ -28,7 +31,7 @@ type LoadingSpinnerProps = {
   fullScreen?: boolean;
   /** Caption under the wordmark. */
   label?: string;
-  /** Optional image to show inside the brand disc; falls back to the "P" mark. */
+  /** Optional image to show inside the brand disc; falls back to the logo mark. */
   logoSrc?: string;
 };
 
@@ -86,7 +89,7 @@ function BrandSpinner({ logoSrc }: { logoSrc?: string }) {
         {logoSrc ? (
           <DiscImg src={logoSrc} alt="" />
         ) : (
-          <Monogram aria-hidden>P</Monogram>
+          <Logo size={RING * 0.42} />
         )}
       </Disc>
     </SpinnerRoot>
@@ -297,21 +300,8 @@ const Disc = styled("div")(({ theme }) => ({
   boxShadow:
     theme.palette.mode === "dark"
       ? "0 8px 24px rgba(0,0,0,0.5)"
-      : "0 12px 30px rgba(0,137,123,0.28)",
+      : TEAL_GLOW,
   animation: `${discPulse} 1.8s ${theme.transitions.easing.easeInOut} infinite`,
-}));
-
-const Monogram = styled("span")(({ theme }) => ({
-  fontFamily: '"Sora", "Inter", sans-serif',
-  fontWeight: 800,
-  fontSize: RING * 0.34,
-  lineHeight: 1,
-  letterSpacing: "-0.03em",
-  background: brandGradient(theme.palette.primary),
-  WebkitBackgroundClip: "text",
-  backgroundClip: "text",
-  color: "transparent",
-  WebkitTextFillColor: "transparent",
 }));
 
 const DiscImg = styled("img")({

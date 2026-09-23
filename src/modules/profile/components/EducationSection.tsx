@@ -3,7 +3,7 @@
  * Manages education entries (CRUD)
  */
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo } from "react";
 import { Box, Grid } from "@mui/material";
 import {
   Add,
@@ -115,6 +115,12 @@ export const EducationSection = () => {
     }
   };
 
+  // Newest qualification first.
+  const sortedEducation = useMemo(
+    () => HelperFunctions.sortByRecency(education, (edu) => edu.passingYear),
+    [education],
+  );
+
   return (
     <Box>
       <PageHeader
@@ -145,7 +151,7 @@ export const EducationSection = () => {
             gap: 3,
           }}
         >
-          {education.map((edu) => {
+          {sortedEducation.map((edu) => {
             const chips: EntityCardChip[] = [
               { label: `Passing Year: ${edu.passingYear}` },
             ];

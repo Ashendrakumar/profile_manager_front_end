@@ -3,9 +3,16 @@
  * Manages experience entries (CRUD)
  */
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo } from "react";
 import { Box, Grid } from "@mui/material";
-import { Add, Edit, Delete, Work } from "@mui/icons-material";
+import {
+  Add,
+  Edit,
+  Delete,
+  Work,
+  CalendarMonth,
+  FolderOutlined,
+} from "@mui/icons-material";
 import { useToast } from "@/contexts/toastContext";
 import { profileService, type Experience } from "../services/profileService";
 import {
@@ -106,6 +113,15 @@ export const ExperienceSection = () => {
     }
   };
 
+  // Newest first, with the current role leading.
+  const sortedExperience = useMemo(
+    () =>
+      HelperFunctions.sortByRecency(experience, (exp) => exp.startDate, {
+        isOngoing: (exp) => exp.isCurrentlyWorking,
+      }),
+    [experience],
+  );
+
   return (
     <Box>
       <PageHeader
@@ -142,29 +158,37 @@ export const ExperienceSection = () => {
             gap: 3,
           }}
         >
-          {experience.map((exp) => {
-            const chips: EntityCardChip[] = [
+          {sortedExperience.map((exp) => {
+            // Row 1 — the facts about the role: when, whether it's live, how
+            // much was shipped. Row 2 (below) is the tech stack, kept separate
+            // so a long stack never pushes the dates onto another line.
+            const metaChips: EntityCardChip[] = [
               {
-                label: `${new Date(exp.startDate).toLocaleDateString()} - ${
-                  exp.isCurrentlyWorking
-                    ? "Present"
-                    : exp.endDate
-                      ? new Date(exp.endDate).toLocaleDateString()
-                      : "N/A"
-                }`,
+                label: HelperFunctions.formatDateRange(
+                  exp.startDate,
+                  exp.endDate,
+                  exp.isCurrentlyWorking,
+                ),
+                variant: "soft",
+                icon: <CalendarMonth />,
               },
             ];
             if (exp.isCurrentlyWorking)
-              chips.push({ label: "Current", color: "success" });
+              metaChips.push({ label: "Current", color: "primary" });
             if (exp.projects && exp.projects.length > 0)
-              chips.push({
+              metaChips.push({
                 label: `${exp.projects.length} Project${exp.projects.length !== 1 ? "s" : ""}`,
-                color: "info",
-                variant: "outlined",
+                variant: "soft",
+                icon: <FolderOutlined />,
               });
-            (exp.technologiesUsed || []).forEach((tech) =>
-              chips.push({ label: tech, variant: "outlined" }),
-            );
+
+            const techChips: EntityCardChip[] = (
+              exp.technologiesUsed || []
+            ).map((tech) => ({
+              label: tech,
+              color: "primary" as const,
+              variant: "soft" as const,
+            }));
 
             return (
               <Grid key={exp._id}>
@@ -172,7 +196,9 @@ export const ExperienceSection = () => {
                   title={HelperFunctions.capitalizeString(exp.role)}
                   subtitle={HelperFunctions.capitalizeString(exp.companyName)}
                   avatar={<Work />}
-                  chips={chips}
+                  metaChips={metaChips}
+                  chips={techChips}
+                  chipsLabel={techChips.length > 0 ? "Tech stack" : undefined}
                   actions={[
                     {
                       label: "Edit",

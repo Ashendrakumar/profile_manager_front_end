@@ -12,6 +12,7 @@ export { ConfirmDialog } from "./ConfirmDialog";
 export { ActionMenu } from "./ActionMenu";
 export type { ActionMenuProps, ActionMenuItem } from "./ActionMenu";
 export { EntityCard } from "./EntityCard";
+export { SectionCard } from "./SectionCard";
 export type {
   EntityCardProps,
   EntityCardChip,
@@ -29,6 +30,8 @@ export { Select } from "./Select";
 export type { SelectProps, SelectOption } from "./Select";
 export { ResponsiveButton } from "./ResponsiveButton";
 export { BrandMark } from "./BrandMark";
+export { Logo } from "./Logo";
+export type { LogoProps } from "./Logo";
 export type { BrandMarkProps } from "./BrandMark";
 export { PageHeader } from "./PageHeader";
 export type { PageHeaderProps } from "./PageHeader";

@@ -127,7 +127,7 @@ const RailCard = ({
   tone: "todo" | "done";
   children: React.ReactNode;
 }) => {
-  const color = tone === "todo" ? "warning" : "success";
+  const color = tone === "todo" ? "warning" : "primary";
   return (
     <Card>
       <CardContent sx={{ p: 2.5 }}>
@@ -573,7 +573,7 @@ const MyProfilePage = () => {
                         borderRadius: 1.5,
                       }}
                     >
-                      <CheckCircleRounded sx={{ fontSize: 18, color: "success.main" }} />
+                      <CheckCircleRounded sx={{ fontSize: 18, color: "primary.main" }} />
                       <Typography variant="body2" sx={{ flex: 1, fontWeight: 500 }}>
                         {prettySection(key)}
                       </Typography>

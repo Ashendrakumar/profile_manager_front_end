@@ -21,11 +21,10 @@ import { CheckCircleRounded } from "@mui/icons-material";
 import { useLocation } from "react-router-dom";
 import { BrandMark } from "@/common/components";
 import { APP_NAME, ROUTES } from "@/constants";
+import { BRAND_GRADIENT } from "@/theme";
 
-// Brand gradient — a fixed teal identity surface, consistent across themes.
-// Mirrors the `--grad-brand` token from the design system.
-const BRAND_GRADIENT =
-  "linear-gradient(140deg, #00b3a0 0%, #00897b 52%, #00655a 100%)";
+// Brand gradient — a fixed green identity surface, consistent across themes.
+// Single-sourced from the theme so the brand only ever changes in one place.
 
 type AuthStep = "login" | "register" | "otp" | "google";
 
