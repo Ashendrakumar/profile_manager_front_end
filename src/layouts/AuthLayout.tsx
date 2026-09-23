@@ -88,7 +88,10 @@ export const AuthLayout = ({ children }: { children: ReactNode }) => {
         width: "100%",
         height: "100%",
         minHeight: "100vh",
-        bgcolor: "background.default",
+        // Transparent rather than an opaque fill, so the body's ambient brand
+        // wash reaches the sign-in panel too. The body already paints
+        // `background.default` underneath.
+        bgcolor: "transparent",
       }}
     >
       {/* ── Branded aside (hidden below md) ──────────────────────────────── */}

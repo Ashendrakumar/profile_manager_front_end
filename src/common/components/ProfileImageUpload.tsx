@@ -115,7 +115,11 @@ export const ProfileImageUpload = ({
       setSuccess(true);
       setLoading(false);
 
-      if (onSuccess) onSuccess(res.profileImage || previewUrl, file.name);
+      // Prefer the absolute URL the backend resolves for us (works for both the
+      // local disk and R2 drivers); fall back to the raw stored value, then the
+      // local data-URL preview.
+      if (onSuccess)
+        onSuccess(res.profileImageUrl || res.profileImage || previewUrl, file.name);
 
       successTimeoutRef.current = setTimeout(() => setSuccess(false), 3000);
     } catch (err) {

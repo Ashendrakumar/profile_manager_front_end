@@ -46,7 +46,7 @@ an old one, map to these tokens instead of inventing values.
 | bg (default) | `#f4f7f8` | `#0b1413` |
 | surface (paper) | `#ffffff` | `#111d1b` |
 | surface-2 | `#f8fafb` | `#0f1a19` |
-| line (divider) | `#e4ebec` | `#22322f` |
+| line (divider) | `#e1ecea` | `#22322f` |
 | ink (text) | `#0f1e1c` | `#eaf4f2` |
 | ink-3 (muted) | `#6c7c7a` | `#859894` |
 
@@ -55,6 +55,14 @@ an old one, map to these tokens instead of inventing values.
 - Spacing: 8px grid → `4 / 8 / 12 / 16 / 24 / 32`
 - Shadows: `sm 0 2px 8px rgba(6,32,29,.06)` · `md 0 8px 24px rgba(6,32,29,.10)` ·
   `lg 0 20px 48px rgba(6,32,29,.16)` · teal-glow `0 12px 30px rgba(0,137,123,.28)`
+- **Light-mode depth** (set in `MuiCssBaseline` + `modeTokens.light`): the page
+  carries a fixed ambient brand wash — three teal radial gradients over
+  `background.default` — and card elevation is a three-layer cast (hairline
+  contact + mid diffusion + wide `rgba(0,137,123,…)` ambient). Together these
+  are what lift white cards off the page; without the wash the tinted shadow
+  has nothing to read against. Dark mode keeps a flat body — its depth comes
+  from the surfaces themselves. **Never paint an opaque `background.default`
+  over a full-page container** — it covers the wash; leave it transparent.
 - Ease: `cubic-bezier(.22,.61,.36,1)` · Duration: `.28s` standard, `.4s` theme swap
 - Brand gradient: `linear-gradient(135deg,#00b3a0,#00897b 55%,#00655a)`
 

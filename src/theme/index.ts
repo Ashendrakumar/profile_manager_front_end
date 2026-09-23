@@ -52,8 +52,10 @@ const ERROR_RING = "0 0 0 4px rgba(244,63,110,0.15)";
 const modeTokens = {
   light: {
     background: { default: "#f4f7f8", paper: "#ffffff" },
-    divider: "#e4ebec",
-    dividerStrong: "#d3dedf",
+    // Hairlines carry a trace of the brand hue so they sit in the same family
+    // as the ambient wash instead of reading as neutral grey on top of it.
+    divider: "#e1ecea",
+    dividerStrong: "#cfdedb",
     text: { primary: "#0f1e1c", secondary: "#5c6d6a", disabled: "#9aa8a5" },
     primary: {
       light: teal[400],
@@ -71,12 +73,15 @@ const modeTokens = {
       800: teal[800],
       900: teal[900],
     },
+    // Three layers instead of two: a hairline contact shadow, a mid diffusion,
+    // and a wide teal-tinted ambient cast. The tint is what stops light mode
+    // reading as grey cards on a grey page.
     cardShadow:
-      "0 2px 12px rgba(6,32,29,0.08), 0 1px 4px rgba(6,32,29,0.05)",
+      "0 1px 2px rgba(6,40,36,0.04), 0 4px 12px rgba(6,40,36,0.055), 0 12px 28px rgba(0,137,123,0.05)",
     cardShadowHover:
-      "0 8px 24px rgba(6,32,29,0.12), 0 2px 8px rgba(6,32,29,0.06)",
+      "0 2px 4px rgba(6,40,36,0.05), 0 8px 20px rgba(6,40,36,0.09), 0 22px 46px rgba(0,137,123,0.11)",
     paperShadow:
-      "0 2px 12px rgba(6,32,29,0.08), 0 1px 4px rgba(6,32,29,0.05)",
+      "0 1px 2px rgba(6,40,36,0.04), 0 4px 12px rgba(6,40,36,0.055), 0 12px 28px rgba(0,137,123,0.05)",
     inputHoverBorder: teal[300],
     focusBorder: teal[600],
   },
@@ -152,6 +157,20 @@ const buildComponents = (mode: Mode): ThemeOptions["components"] => {
         body: {
           WebkitFontSmoothing: "antialiased",
           MozOsxFontSmoothing: "grayscale",
+          // Light mode gets an ambient brand wash behind everything, so the
+          // pure-white cards lift off the page instead of blending into a flat
+          // near-white slab. Fixed attachment keeps it reading as a backdrop
+          // rather than as content that scrolls. Dark mode keeps its flat
+          // surface — the depth there already comes from the surfaces.
+          ...(mode === "light" && {
+            backgroundImage: [
+              "radial-gradient(900px 520px at 8% -10%, rgba(0,178,160,0.13), transparent 62%)",
+              "radial-gradient(760px 460px at 98% 2%, rgba(0,137,123,0.085), transparent 58%)",
+              "radial-gradient(700px 540px at 45% 115%, rgba(0,101,90,0.06), transparent 60%)",
+            ].join(", "),
+            backgroundAttachment: "fixed",
+            backgroundRepeat: "no-repeat",
+          }),
         },
         // Global accessibility guard for users who prefer reduced motion.
         "@media (prefers-reduced-motion: reduce)": {
