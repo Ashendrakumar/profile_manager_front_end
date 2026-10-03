@@ -1,0 +1,19 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" width="64" height="64" role="img" aria-labelledby="pmLogoTitle">
+  <title id="pmLogoTitle">Profile Manager</title>
+  <defs>
+    <linearGradient id="pmBrand" x1="6" y1="4" x2="58" y2="60" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#00b3a0"/>
+      <stop offset="0.55" stop-color="#00897b"/>
+      <stop offset="1" stop-color="#00655a"/>
+    </linearGradient>
+  </defs>
+
+  <!-- The completion ring: the app's signature progress arc, swept ~78% and
+       left open so the mark reads as "a profile in progress". -->
+  <circle cx="32" cy="32" r="25" fill="none" stroke="url(#pmBrand)" stroke-width="6.5"
+          stroke-linecap="round" stroke-dasharray="122.5 34.6" transform="rotate(-90 32 32)"/>
+
+  <!-- Profile glyph -->
+  <circle cx="32" cy="24" r="7" fill="url(#pmBrand)"/>
+  <path d="M19 47v-0.5c0-7.18 5.82-13 13-13s13 5.82 13 13V47Z" fill="url(#pmBrand)"/>
+</svg>

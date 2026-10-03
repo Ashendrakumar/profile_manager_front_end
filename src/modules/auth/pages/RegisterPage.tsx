@@ -11,6 +11,7 @@ import { z } from "zod";
 import { Box, Button, Typography, Link, CircularProgress } from "@mui/material";
 import { useAuth, useToast } from "@/contexts";
 import { ROUTES } from "@/constants";
+import { HelperFunctions } from "@/utils/helpers";
 import { Input } from "@/common/components";
 
 /**
@@ -78,6 +79,7 @@ const RegisterPage = () => {
     isLoading,
     error,
     clearError,
+    user,
   } = useAuth();
   const { showError } = useToast();
 
@@ -118,12 +120,12 @@ const RegisterPage = () => {
   const passwordValue = watch("password");
   const confirmPasswordValue = watch("confirmPassword");
 
-  // Redirect if already authenticated
+  // Redirect if already authenticated — role-based landing.
   useEffect(() => {
     if (isAuthenticated && !isLoading) {
-      navigate(ROUTES.HOME, { replace: true });
+      navigate(HelperFunctions.getLandingRoute(user?.role), { replace: true });
     }
-  }, [isAuthenticated, isLoading, navigate]);
+  }, [isAuthenticated, isLoading, navigate, user?.role]);
 
   // Clear error when component unmounts
   useEffect(() => {

@@ -8,10 +8,11 @@ import {
   Tooltip,
 } from "@mui/material";
 
-import { NavLink } from "react-router-dom";
+import { NavLink, Link } from "react-router-dom";
 import { sidebarMenus } from "./menu";
-import { DIMENSIONS } from "@/constants";
+import { DIMENSIONS, ROUTES } from "@/constants";
 import { useAuth } from "@/contexts";
+import { BrandMark } from "@/common/components";
 import { SidebarFooter } from "./SidebarFooter";
 
 type SidebarProps = {
@@ -67,6 +68,33 @@ export function Sidebar({
         },
       }}
     >
+      {/* Brand header — mobile only (desktop shows it in the app Header above) */}
+      {isMobile && (
+        <Box
+          sx={{
+            px: 2,
+            py: 1.75,
+            borderBottom: "1px solid",
+            borderColor: "divider",
+          }}
+        >
+          <Box
+            component={Link}
+            to={ROUTES.PROFILE}
+            onClick={() => setOpen(false)}
+            sx={{
+              display: "inline-flex",
+              alignItems: "center",
+              textDecoration: "none",
+              transition: "opacity 0.15s ease",
+              "&:hover": { opacity: 0.85 },
+            }}
+          >
+            <BrandMark variant="default" size={30} />
+          </Box>
+        </Box>
+      )}
+
       {/* Nav scrolls; footer stays pinned at bottom */}
       <Box sx={{ flex: 1, overflowY: "auto", overflowX: "hidden", pt: 0.5 }}>
         <List disablePadding>

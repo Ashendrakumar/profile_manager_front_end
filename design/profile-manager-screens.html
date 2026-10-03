@@ -1,0 +1,719 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Profile Manager · Complete Screen Designs</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Sora:wght@600;700;800&display=swap" rel="stylesheet" />
+<style>
+/* ============================================================
+   PROFILE MANAGER — COMPLETE SCREEN DESIGNS
+   Interactive prototype built on the implemented design system.
+   Tokens mirror src/theme/index.ts exactly.
+   ============================================================ */
+:root{
+  --teal-50:#e6f6f4;--teal-100:#c2e9e4;--teal-200:#8fd6cd;--teal-300:#4fbdb0;--teal-400:#26a698;
+  --teal-500:#00968a;--teal-600:#00897b;--teal-700:#00796b;--teal-800:#00655a;--teal-900:#004d40;
+  --coral-400:#ff7a66;--coral-500:#ff5a3c;--coral-600:#e94a2e;
+  --amber:#f5a524;--violet:#7c5cff;--sky:#2e9bff;--rose:#f43f6e;--green:#18b368;
+
+  --bg:#f4f7f8;--surface:#ffffff;--surface-2:#f8fafb;--surface-3:#eef3f4;
+  --line:#e4ebec;--line-strong:#d3dedf;
+  --ink:#0f1e1c;--ink-2:#3d4f4d;--ink-3:#5c6d6a;--ink-4:#95a3a1;
+  --active-bg:#e6f6f4;--active-fg:#00796b;
+
+  --grad-brand:linear-gradient(135deg,#00b3a0 0%,#00897b 55%,#00655a 100%);
+  --grad-coral:linear-gradient(135deg,#ff7a66,#ff5a3c 55%,#e94a2e);
+  --sh-sm:0 2px 12px rgba(6,32,29,.08),0 1px 4px rgba(6,32,29,.05);
+  --sh-md:0 8px 24px rgba(6,32,29,.12),0 2px 8px rgba(6,32,29,.06);
+  --sh-lg:0 20px 48px rgba(6,32,29,.16),0 6px 16px rgba(6,32,29,.08);
+  --sh-teal:0 12px 30px rgba(0,137,123,.28);
+  --r-sm:12px;--r-md:16px;--r-lg:22px;--r-pill:999px;
+  --ease:cubic-bezier(.22,.61,.36,1);--dur:.28s;
+  --font:'Inter',system-ui,sans-serif;--display:'Sora','Inter',sans-serif;
+}
+[data-theme="dark"]{
+  --bg:#0b1413;--surface:#111d1b;--surface-2:#0f1a19;--surface-3:#16221f;
+  --line:#22322f;--line-strong:#2c3d3a;
+  --ink:#eaf4f2;--ink-2:#b9c9c6;--ink-3:#9fb2ae;--ink-4:#5f716e;
+  --active-bg:rgba(0,150,138,.16);--active-fg:#8fd6cd;
+  --sh-sm:0 2px 12px rgba(0,0,0,.4);--sh-md:0 10px 28px rgba(0,0,0,.5);--sh-lg:0 24px 54px rgba(0,0,0,.6);
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:var(--font);background:var(--bg);color:var(--ink);-webkit-font-smoothing:antialiased;transition:background .4s var(--ease),color .4s var(--ease)}
+h1,h2,h3,h4{font-family:var(--display);letter-spacing:-.02em;line-height:1.2}
+::selection{background:var(--teal-300);color:#012}
+button{font-family:inherit}
+
+/* ── Artifact chrome ── */
+.chrome{position:sticky;top:0;z-index:200;display:flex;align-items:center;gap:16px;padding:12px 22px;
+  background:color-mix(in srgb,var(--surface) 82%,transparent);backdrop-filter:blur(18px) saturate(160%);border-bottom:1px solid var(--line)}
+.c-brand{display:flex;align-items:center;gap:10px;font-family:var(--display);font-weight:800}
+.c-brand .logo{width:32px;height:32px;border-radius:10px;background:var(--grad-brand);display:grid;place-items:center;color:#fff;box-shadow:var(--sh-teal);font-weight:800}
+.c-brand small{display:block;font-size:10.5px;font-weight:600;color:var(--ink-3);text-transform:uppercase;letter-spacing:.05em}
+.seg{display:inline-flex;background:var(--surface-3);border-radius:var(--r-pill);padding:4px;gap:4px;margin:0 auto}
+.seg button{border:none;background:transparent;font-weight:600;font-size:13px;color:var(--ink-3);padding:8px 18px;border-radius:var(--r-pill);cursor:pointer;transition:all var(--dur) var(--ease)}
+.seg button.on{background:var(--surface);color:var(--teal-600);box-shadow:var(--sh-sm)}
+.toggle{display:flex;align-items:center;gap:8px;border:1px solid var(--line-strong);background:var(--surface);border-radius:var(--r-pill);padding:7px 14px;cursor:pointer;font-weight:600;font-size:13px;color:var(--ink-2);transition:all var(--dur) var(--ease)}
+.toggle:hover{border-color:var(--teal-400);color:var(--teal-600)}
+
+.view{display:none}.view.on{display:block}
+
+/* ── Buttons / chips / bits (shared) ── */
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;font-weight:600;font-size:13.5px;cursor:pointer;border:none;border-radius:var(--r-pill);padding:11px 20px;transition:all var(--dur) var(--ease)}
+.btn-primary{background:var(--grad-brand);color:#fff;box-shadow:var(--sh-teal)}
+.btn-primary:hover{transform:translateY(-2px)}
+.btn-coral{background:var(--grad-coral);color:#fff}
+.btn-ghost{background:var(--surface);color:var(--ink);border:1.5px solid var(--line-strong)}
+.btn-ghost:hover{border-color:var(--teal-400);color:var(--teal-600);transform:translateY(-2px)}
+.btn-sm{padding:8px 14px;font-size:12.5px}
+.chip{display:inline-flex;align-items:center;gap:5px;font-size:12px;font-weight:600;padding:5px 12px;border-radius:var(--r-pill);height:28px;white-space:nowrap}
+.chip-teal{background:var(--teal-50);color:var(--teal-700)}
+.chip-green{background:rgba(24,179,104,.13);color:#0d7a48}
+.chip-amber{background:rgba(245,165,36,.15);color:#a86b00}
+.chip-violet{background:rgba(124,92,255,.13);color:#5a3fd6}
+.chip-rose{background:rgba(244,63,110,.13);color:#c31d47}
+.chip-gray{background:var(--surface-3);color:var(--ink-3)}
+[data-theme="dark"] .chip-teal{background:rgba(0,150,138,.18);color:var(--teal-200)}
+.bar{height:8px;border-radius:var(--r-pill);background:var(--surface-3);overflow:hidden}
+.bar>i{display:block;height:100%;border-radius:var(--r-pill);background:var(--grad-brand)}
+.card{background:var(--surface);border:1px solid var(--line);border-radius:var(--r-md);padding:20px;box-shadow:var(--sh-sm);transition:all var(--dur) var(--ease)}
+.card.hov:hover{box-shadow:var(--sh-md);transform:translateY(-3px);border-color:var(--line-strong)}
+.grid{display:grid;gap:18px}
+.g2{grid-template-columns:repeat(2,1fr)}.g3{grid-template-columns:repeat(3,1fr)}.g4{grid-template-columns:repeat(4,1fr)}
+@media(max-width:1100px){.g4{grid-template-columns:repeat(2,1fr)}}
+@media(max-width:900px){.g3{grid-template-columns:repeat(2,1fr)}}
+@media(max-width:640px){.g2,.g3,.g4{grid-template-columns:1fr}}
+.tag{font-size:10.5px;font-weight:700;color:var(--ink-4);text-transform:uppercase;letter-spacing:.08em;margin-bottom:10px}
+.muted{color:var(--ink-3)}
+.avatar{border-radius:50%;background:var(--grad-brand);color:#fff;display:inline-grid;place-items:center;font-weight:700}
+
+/* ── App shell ── */
+.shell{display:grid;grid-template-columns:248px 1fr;min-height:calc(100vh - 57px)}
+@media(max-width:860px){.shell{grid-template-columns:1fr}.sidebar{display:none}}
+.sidebar{background:var(--surface-2);border-right:1px solid var(--line);display:flex;flex-direction:column;padding:14px 12px;position:sticky;top:57px;height:calc(100vh - 57px);overflow-y:auto}
+.side-brand{display:flex;align-items:center;gap:10px;padding:6px 10px 14px;font-family:var(--display);font-weight:800}
+.side-brand .logo{width:30px;height:30px;border-radius:9px;background:var(--teal-50);color:var(--teal-600);display:grid;place-items:center;font-weight:800;border:1px solid rgba(0,137,123,.2)}
+[data-theme="dark"] .side-brand .logo{background:rgba(0,150,138,.14)}
+.nav-group{font-size:10px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--ink-4);padding:14px 12px 6px}
+.nav-i{display:flex;align-items:center;gap:12px;padding:10px 12px;border-radius:var(--r-sm);font-size:13.5px;font-weight:500;color:var(--ink-2);cursor:pointer;transition:all .15s var(--ease);margin-bottom:1px;position:relative}
+.nav-i .ic{width:19px;text-align:center;font-size:15px;opacity:.9}
+.nav-i:hover{background:var(--surface-3);color:var(--ink)}
+.nav-i.active{background:var(--active-bg);color:var(--active-fg);font-weight:600}
+.nav-i.active::before{content:"";position:absolute;left:0;top:7px;bottom:7px;width:3px;border-radius:0 3px 3px 0;background:var(--teal-400)}
+.side-foot{margin-top:auto;border-top:1px solid var(--line);padding-top:10px;display:flex;align-items:center;gap:10px;padding:12px 8px 4px}
+
+.appbar{position:sticky;top:57px;z-index:50;display:flex;align-items:center;gap:14px;padding:12px 22px;
+  background:color-mix(in srgb,var(--surface) 80%,transparent);backdrop-filter:blur(18px) saturate(160%);border-bottom:1px solid var(--line)}
+.searchbox{flex:1;max-width:420px;display:flex;align-items:center;gap:10px;background:var(--surface-3);border:1px solid var(--line);border-radius:var(--r-pill);padding:9px 16px;font-size:13px;color:var(--ink-3)}
+.icon-btn{width:38px;height:38px;border-radius:11px;display:grid;place-items:center;background:var(--surface);border:1px solid var(--line);cursor:pointer;color:var(--ink-3);transition:all var(--dur) var(--ease)}
+.icon-btn:hover{border-color:var(--teal-400);color:var(--teal-600)}
+.hamb{display:none}
+@media(max-width:860px){.hamb{display:grid}}
+.content{padding:26px;max-width:1280px}
+@media(max-width:640px){.content{padding:18px}}
+
+.page-head{display:flex;justify-content:space-between;align-items:flex-start;flex-wrap:wrap;gap:14px;margin-bottom:22px}
+.page-head h2{font-size:24px}
+.page-head .sub{font-size:13.5px;color:var(--ink-3);margin-top:3px}
+
+.screen{display:none}.screen.on{display:block;animation:fade .35s var(--ease)}
+@keyframes fade{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+
+/* ring */
+.ring{width:130px;height:130px;border-radius:50%;display:grid;place-items:center;position:relative;flex-shrink:0;
+  background:conic-gradient(var(--teal-500) 0deg 266deg,var(--line-strong) 266deg 360deg);box-shadow:var(--sh-md)}
+.ring.small{width:92px;height:92px}
+.ring::before{content:"";position:absolute;inset:11px;border-radius:50%;background:var(--surface)}
+.ring b{position:relative;font-family:var(--display);font-size:26px;color:var(--teal-600)}
+.ring.small b{font-size:19px}
+.ring span{position:relative;font-size:10.5px;color:var(--ink-3);margin-top:-3px}
+
+/* form field */
+.field{margin-bottom:15px}
+.field label{display:block;font-size:12px;font-weight:600;color:var(--ink-2);margin-bottom:6px}
+.inp{display:flex;align-items:center;gap:9px;border:1.5px solid var(--line-strong);border-radius:var(--r-sm);padding:11px 13px;font-size:13px;color:var(--ink-3);background:var(--surface)}
+.inp.focus{border-color:var(--teal-500);box-shadow:0 0 0 4px rgba(0,150,138,.16)}
+.row2{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+@media(max-width:560px){.row2{grid-template-columns:1fr}}
+.toggle-sw{width:42px;height:24px;border-radius:12px;position:relative;flex-shrink:0}
+.toggle-sw.on{background:var(--teal-500)}.toggle-sw.off{background:var(--surface-3)}
+.toggle-sw i{position:absolute;width:18px;height:18px;border-radius:50%;background:#fff;top:3px;transition:all var(--dur)}
+.toggle-sw.on i{right:3px}.toggle-sw.off i{left:3px}
+
+/* table */
+.tbl{width:100%;border-collapse:collapse;font-size:13px}
+.tbl th{text-align:left;font-size:10.5px;text-transform:uppercase;letter-spacing:.06em;color:var(--ink-3);padding:12px 14px;border-bottom:1px solid var(--line);font-weight:700}
+.tbl td{padding:12px 14px;border-bottom:1px solid var(--line);color:var(--ink-2)}
+.tbl tbody tr{cursor:pointer;transition:background .15s}
+.tbl tbody tr:hover td{background:var(--surface-2)}
+.mini-av{width:30px;height:30px;font-size:11px;margin-right:10px;vertical-align:middle}
+
+/* chart */
+.chart{display:flex;align-items:flex-end;gap:12px;height:150px;padding-top:10px}
+.chart .col{flex:1;display:flex;flex-direction:column;align-items:center;gap:8px;justify-content:flex-end;height:100%}
+.chart .col b{width:100%;border-radius:8px 8px 0 0;background:var(--grad-brand);opacity:.9}
+.chart .col:nth-child(even) b{background:linear-gradient(180deg,var(--teal-300),var(--teal-500))}
+.chart .col span{font-size:11px;color:var(--ink-3)}
+.dot{width:9px;height:9px;border-radius:50%;display:inline-block}
+
+/* kpi */
+.kpi{display:flex;flex-direction:column;gap:6px}
+.kpi .ico{width:44px;height:44px;border-radius:13px;display:grid;place-items:center;font-size:20px;margin-bottom:6px}
+.kpi b{font-family:var(--display);font-size:28px}
+.kpi .lbl{font-size:12.5px;color:var(--ink-3);font-weight:500}
+.kpi .delta{font-size:11.5px;font-weight:700}
+
+/* empty / add tile */
+.add-tile{border:2px dashed var(--line-strong);border-radius:var(--r-md);padding:22px;text-align:center;color:var(--ink-3);font-size:13px;cursor:pointer;transition:all var(--dur) var(--ease)}
+.add-tile:hover{border-color:var(--teal-400);color:var(--teal-600);background:var(--surface-2)}
+
+/* file */
+.file{text-align:center;padding:18px}
+.file .ic{font-size:32px}
+.file .nm{font-weight:600;font-size:12.5px;margin-top:8px}
+.file .mt{font-size:11px;color:var(--ink-3)}
+
+/* auth */
+.auth-wrap{min-height:calc(100vh - 57px);display:grid;place-items:center;padding:32px 20px;background:radial-gradient(1000px 500px at 15% -10%,rgba(0,179,160,.14),transparent 60%)}
+.auth-frame{display:grid;grid-template-columns:1.05fr 1fr;width:100%;max-width:940px;border-radius:var(--r-lg);overflow:hidden;box-shadow:var(--sh-lg);border:1px solid var(--line)}
+@media(max-width:760px){.auth-frame{grid-template-columns:1fr}.auth-aside{display:none}}
+.auth-aside{background:var(--grad-brand);color:#fff;padding:40px;position:relative;overflow:hidden;display:flex;flex-direction:column;justify-content:space-between;min-height:520px}
+.auth-aside::after{content:"";position:absolute;width:320px;height:320px;border-radius:50%;background:rgba(255,255,255,.1);right:-120px;bottom:-130px}
+.auth-aside::before{content:"";position:absolute;width:200px;height:200px;border-radius:50%;background:rgba(255,255,255,.08);left:-70px;top:-60px}
+.auth-aside h3{font-size:26px;position:relative;z-index:1}
+.auth-aside p{opacity:.92;position:relative;z-index:1;font-size:14px;margin-top:10px}
+.auth-aside .hl{position:relative;z-index:1;display:flex;flex-direction:column;gap:10px;font-size:13px}
+.auth-main{background:var(--surface);padding:40px;display:flex;flex-direction:column;justify-content:center}
+.a-tabs{display:inline-flex;background:var(--surface-3);border-radius:var(--r-pill);padding:4px;gap:3px;margin-bottom:20px;flex-wrap:wrap}
+.a-tabs button{border:none;background:transparent;font-weight:600;font-size:12.5px;color:var(--ink-3);padding:7px 14px;border-radius:var(--r-pill);cursor:pointer}
+.a-tabs button.on{background:var(--surface);color:var(--teal-600);box-shadow:var(--sh-sm)}
+.a-screen{display:none}.a-screen.on{display:block;animation:fade .35s var(--ease)}
+.otp{display:flex;gap:8px;justify-content:center;margin:6px 0 18px}
+.otp .b{width:44px;height:52px;border:1.5px solid var(--line-strong);border-radius:var(--r-sm);display:grid;place-items:center;font-family:var(--display);font-size:20px;font-weight:700}
+.otp .b.on{border-color:var(--teal-500);box-shadow:0 0 0 4px rgba(0,150,138,.16);color:var(--teal-600)}
+.spin{width:56px;height:56px;border-radius:50%;border:4px solid var(--teal-50);border-top-color:var(--teal-500);animation:sp 1s linear infinite;margin:0 auto 18px}
+[data-theme="dark"] .spin{border-color:rgba(0,150,138,.2)}
+@keyframes sp{to{transform:rotate(360deg)}}
+.foot{padding:22px;text-align:center;color:var(--ink-4);font-size:12px;border-top:1px solid var(--line)}
+</style>
+</head>
+<body>
+
+<!-- ============ CHROME ============ -->
+<header class="chrome">
+  <div class="c-brand"><div class="logo">P</div><div>Profile Manager<small>All Screens</small></div></div>
+  <div class="seg" id="viewSeg">
+    <button class="on" data-view="app">App Screens</button>
+    <button data-view="auth">Auth Flow</button>
+  </div>
+  <button class="toggle" id="themeBtn"><span id="ti">🌙</span><span id="tt">Dark</span></button>
+</header>
+
+<!-- ============ APP VIEW ============ -->
+<section class="view on" id="view-app">
+  <div class="shell">
+    <!-- SIDEBAR -->
+    <aside class="sidebar" id="sidebar">
+      <div class="side-brand"><div class="logo">P</div>Profile<span style="color:var(--teal-600)">MGR</span></div>
+      <div class="nav-group">Overview</div>
+      <div class="nav-i active" data-target="s-dashboard"><span class="ic">▦</span>Dashboard</div>
+      <div class="nav-i" data-target="s-about"><span class="ic">ℹ️</span>About</div>
+      <div class="nav-i" data-target="s-users"><span class="ic">👥</span>Users</div>
+      <div class="nav-group">My Profile</div>
+      <div class="nav-i" data-target="s-completion"><span class="ic">✅</span>Profile Completion</div>
+      <div class="nav-i" data-target="s-contact"><span class="ic">📇</span>Contact Details</div>
+      <div class="nav-i" data-target="s-personal"><span class="ic">👤</span>Personal</div>
+      <div class="nav-i" data-target="s-education"><span class="ic">🎓</span>Education</div>
+      <div class="nav-i" data-target="s-experience"><span class="ic">💼</span>Experience</div>
+      <div class="nav-i" data-target="s-projects"><span class="ic">📁</span>Projects</div>
+      <div class="nav-i" data-target="s-skills"><span class="ic">🔧</span>Skills</div>
+      <div class="nav-i" data-target="s-certs"><span class="ic">🛡️</span>Certifications</div>
+      <div class="nav-i" data-target="s-documents"><span class="ic">🗂️</span>Documents</div>
+      <div class="nav-i" data-target="s-achievements"><span class="ic">🏆</span>Achievements</div>
+      <div class="nav-i" data-target="s-portfolio"><span class="ic">🌐</span>Portfolio</div>
+      <div class="side-foot">
+        <span class="avatar" style="width:34px;height:34px;font-size:12px">AL</span>
+        <div style="font-size:12px"><b>Ada Lovelace</b><div class="muted">Admin</div></div>
+        <span class="ic" style="margin-left:auto;cursor:pointer" data-target="s-settings">⚙️</span>
+      </div>
+    </aside>
+
+    <!-- MAIN -->
+    <main>
+      <div class="appbar">
+        <div class="icon-btn hamb">☰</div>
+        <div class="searchbox">🔍 Search sections, skills, users, documents…</div>
+        <div style="margin-left:auto;display:flex;gap:10px;align-items:center">
+          <div class="icon-btn">🔔</div>
+          <div class="icon-btn" onclick="document.getElementById('themeBtn').click()">🌗</div>
+          <span class="avatar" style="width:38px;height:38px;font-size:13px">AL</span>
+        </div>
+      </div>
+
+      <div class="content">
+
+        <!-- ===== DASHBOARD ===== -->
+        <div class="screen on" id="s-dashboard">
+          <div class="page-head">
+            <div><h2>Dashboard</h2><div class="sub">Overview of members, completion and activity</div></div>
+            <div style="display:flex;gap:8px"><button class="btn btn-ghost btn-sm">⭳ Export</button><button class="btn btn-primary btn-sm">＋ Invite user</button></div>
+          </div>
+          <div class="grid g4" style="margin-bottom:18px">
+            <div class="card kpi"><div class="ico" style="background:var(--teal-50);color:var(--teal-600)">👥</div><b>1,284</b><div class="lbl">Total users</div><div class="delta" style="color:var(--green)">▲ 8.2% this month</div></div>
+            <div class="card kpi"><div class="ico" style="background:rgba(124,92,255,.14);color:var(--violet)">📈</div><b>72%</b><div class="lbl">Avg. completion</div><div class="delta" style="color:var(--green)">▲ 4.1%</div></div>
+            <div class="card kpi"><div class="ico" style="background:rgba(46,155,255,.14);color:var(--sky)">⚡</div><b>318</b><div class="lbl">Active today</div><div class="delta" style="color:var(--green)">▲ 2.0%</div></div>
+            <div class="card kpi"><div class="ico" style="background:rgba(245,165,36,.16);color:#a86b00">🗂️</div><b>5,942</b><div class="lbl">Documents</div><div class="delta" style="color:var(--rose)">▼ 1.3%</div></div>
+          </div>
+          <div class="grid" style="grid-template-columns:1.6fr 1fr">
+            <div class="card">
+              <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px"><h4 style="font-size:16px">Signups &amp; completions</h4>
+                <div style="display:flex;gap:12px;font-size:11.5px;color:var(--ink-3)"><span><i class="dot" style="background:var(--teal-500)"></i> Signups</span><span><i class="dot" style="background:var(--teal-300)"></i> Completed</span></div></div>
+              <div class="chart">
+                <div class="col"><b style="height:45%"></b><span>Apr</span></div>
+                <div class="col"><b style="height:62%"></b><span>May</span></div>
+                <div class="col"><b style="height:50%"></b><span>Jun</span></div>
+                <div class="col"><b style="height:78%"></b><span>Jul</span></div>
+                <div class="col"><b style="height:66%"></b><span>Aug</span></div>
+                <div class="col"><b style="height:90%"></b><span>Sep</span></div>
+              </div>
+            </div>
+            <div class="card">
+              <h4 style="font-size:16px;margin-bottom:14px">Recent members</h4>
+              <div style="display:flex;flex-direction:column;gap:12px">
+                <div style="display:flex;align-items:center;gap:10px"><span class="avatar mini-av" style="margin:0">GH</span><div style="flex:1"><div style="font-weight:600;font-size:13px">Grace Hopper</div><div class="muted" style="font-size:11.5px">Joined 2h ago</div></div><span class="chip chip-green">100%</span></div>
+                <div style="display:flex;align-items:center;gap:10px"><span class="avatar mini-av" style="margin:0;background:linear-gradient(135deg,#7c5cff,#5a3fd6)">AT</span><div style="flex:1"><div style="font-weight:600;font-size:13px">Alan Turing</div><div class="muted" style="font-size:11.5px">Joined 5h ago</div></div><span class="chip chip-amber">45%</span></div>
+                <div style="display:flex;align-items:center;gap:10px"><span class="avatar mini-av" style="margin:0;background:linear-gradient(135deg,#ff7a66,#e94a2e)">MC</span><div style="flex:1"><div style="font-weight:600;font-size:13px">Marie Curie</div><div class="muted" style="font-size:11.5px">Joined 1d ago</div></div><span class="chip chip-teal">88%</span></div>
+              </div>
+              <button class="btn btn-ghost btn-sm" style="width:100%;margin-top:16px" data-target="s-users">View all users</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- ===== PROFILE COMPLETION ===== -->
+        <div class="screen" id="s-completion">
+          <div class="page-head"><div><h2>Profile Completion</h2><div class="sub">Track progress and finish what's missing</div></div><button class="btn btn-ghost btn-sm">↻ Refresh</button></div>
+          <div class="card" style="display:flex;gap:26px;align-items:center;flex-wrap:wrap;margin-bottom:18px">
+            <div class="ring"><b>74%</b><span>Complete</span></div>
+            <div style="flex:1;min-width:240px">
+              <div style="font-weight:700;font-size:17px;margin-bottom:6px">You're making great progress! 💪</div>
+              <div class="muted" style="font-size:13px;margin-bottom:10px">6 of 9 sections completed</div>
+              <div class="bar" style="height:10px"><i style="width:74%"></i></div>
+            </div>
+          </div>
+          <div class="grid g2">
+            <div class="card">
+              <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px"><h4 style="font-size:16px">To complete</h4><span class="chip chip-amber">3</span></div>
+              <div style="display:flex;flex-direction:column;gap:10px">
+                <div class="nav-i" style="background:rgba(245,165,36,.1);border:1px solid rgba(245,165,36,.25);color:var(--ink)">🟠 Projects <span style="margin-left:auto;color:var(--amber)">›</span></div>
+                <div class="nav-i" style="background:rgba(245,165,36,.1);border:1px solid rgba(245,165,36,.25);color:var(--ink)">🟠 Certifications <span style="margin-left:auto;color:var(--amber)">›</span></div>
+                <div class="nav-i" style="background:rgba(245,165,36,.1);border:1px solid rgba(245,165,36,.25);color:var(--ink)">🟠 Portfolio <span style="margin-left:auto;color:var(--amber)">›</span></div>
+              </div>
+            </div>
+            <div class="card">
+              <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px"><h4 style="font-size:16px">Completed</h4><span class="chip chip-green">6</span></div>
+              <div style="display:flex;flex-direction:column;gap:10px">
+                <div class="nav-i" style="background:rgba(24,179,104,.09);border:1px solid rgba(24,179,104,.22);color:var(--ink)">✅ Personal Details <span class="chip chip-green" style="margin-left:auto">Done</span></div>
+                <div class="nav-i" style="background:rgba(24,179,104,.09);border:1px solid rgba(24,179,104,.22);color:var(--ink)">✅ Contact <span class="chip chip-green" style="margin-left:auto">Done</span></div>
+                <div class="nav-i" style="background:rgba(24,179,104,.09);border:1px solid rgba(24,179,104,.22);color:var(--ink)">✅ Skills <span class="chip chip-green" style="margin-left:auto">Done</span></div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- ===== PERSONAL ===== -->
+        <div class="screen" id="s-personal">
+          <div class="page-head"><div><h2>Personal Details</h2><div class="sub">Your identity, photo and resume</div></div><button class="btn btn-primary btn-sm">💾 Save changes</button></div>
+          <div class="grid" style="grid-template-columns:300px 1fr">
+            <div class="card" style="text-align:center">
+              <div class="avatar" style="width:120px;height:120px;font-size:40px;margin:0 auto 14px">AL</div>
+              <button class="btn btn-ghost btn-sm">⬆ Change photo</button>
+              <div style="margin-top:20px;padding-top:18px;border-top:1px solid var(--line)">
+                <div class="tag">Resume</div>
+                <div style="display:flex;align-items:center;gap:10px;padding:12px;border-radius:var(--r-sm);background:var(--surface-2);border:1px solid var(--line)"><span style="font-size:22px">📄</span><div style="text-align:left;flex:1"><div style="font-weight:600;font-size:12.5px">Ada_Resume.pdf</div><div class="muted" style="font-size:11px">240 KB</div></div><span style="color:var(--rose);cursor:pointer">✕</span></div>
+              </div>
+            </div>
+            <div class="card">
+              <div class="row2"><div class="field"><label>First name</label><div class="inp">Ada</div></div><div class="field"><label>Last name</label><div class="inp">Lovelace</div></div></div>
+              <div class="row2"><div class="field"><label>Date of birth</label><div class="inp">📅 10 Dec 1815</div></div><div class="field"><label>Gender</label><div class="inp">Female ▾</div></div></div>
+              <div class="field"><label>Headline</label><div class="inp focus">Senior Frontend Engineer · Design Systems</div></div>
+              <div class="field"><label>Bio</label><div class="inp" style="align-items:flex-start;min-height:84px">A short professional summary about yourself, your focus areas and what you're looking for…</div></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- ===== CONTACT ===== -->
+        <div class="screen" id="s-contact">
+          <div class="page-head"><div><h2>Contact Details</h2><div class="sub">How people reach you</div></div><button class="btn btn-primary btn-sm">💾 Save</button></div>
+          <div class="grid g2">
+            <div class="card">
+              <div class="tag">Reach</div>
+              <div class="field"><label>Email</label><div class="inp">✉️ ada@company.com</div></div>
+              <div class="field"><label>Phone</label><div class="inp focus">📞 +1 555 0100</div></div>
+              <div class="field"><label>Alternate phone</label><div class="inp">📞 Add another number</div></div>
+            </div>
+            <div class="card">
+              <div class="tag">Location &amp; social</div>
+              <div class="field"><label>Address</label><div class="inp">📍 London, United Kingdom</div></div>
+              <div class="field"><label>Social links</label>
+                <div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:4px"><span class="chip chip-teal">in LinkedIn</span><span class="chip chip-teal">⌥ GitHub</span><span class="chip chip-teal">🐦 X</span><span class="chip chip-gray">＋ Add</span></div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- ===== EDUCATION ===== -->
+        <div class="screen" id="s-education">
+          <div class="page-head"><div><h2>Education</h2><div class="sub">2 entries</div></div><button class="btn btn-primary btn-sm">＋ Add education</button></div>
+          <div class="grid g2">
+            <div class="card hov">
+              <div style="display:flex;justify-content:space-between"><span class="chip chip-teal">🎓 Degree</span><span class="muted">⋯</span></div>
+              <h4 style="font-size:17px;margin-top:12px">B.Sc. Computer Science</h4>
+              <div class="muted" style="font-size:13px;margin:3px 0 10px">University of London · 📍 London · 2014 – 2018</div>
+              <p class="muted" style="font-size:12.5px">First class honours. Focus on distributed systems and human-computer interaction.</p>
+            </div>
+            <div class="card hov">
+              <div style="display:flex;justify-content:space-between"><span class="chip chip-teal">🎓 Diploma</span><span class="muted">⋯</span></div>
+              <h4 style="font-size:17px;margin-top:12px">UX Design Certificate</h4>
+              <div class="muted" style="font-size:13px;margin:3px 0 10px">IDF · 📍 Remote · 2019</div>
+              <p class="muted" style="font-size:12.5px">Interaction design, usability testing and design systems foundations.</p>
+            </div>
+            <div class="add-tile">＋ Add another qualification — opens the side-drawer form</div>
+          </div>
+        </div>
+
+        <!-- ===== EXPERIENCE ===== -->
+        <div class="screen" id="s-experience">
+          <div class="page-head"><div><h2>Work Experience</h2><div class="sub">3 positions · most recent first</div></div><button class="btn btn-primary btn-sm">＋ Add experience</button></div>
+          <div class="grid g2">
+            <div class="card hov">
+              <div style="display:flex;justify-content:space-between"><span class="chip chip-teal">Current</span><span class="muted">⋯</span></div>
+              <h4 style="font-size:17px;margin-top:12px">Senior Frontend Engineer</h4>
+              <div class="muted" style="font-size:13px;margin:3px 0 10px">Acme Corp · Remote · Jan 2021 – Present</div>
+              <p class="muted" style="font-size:12.5px">Owned the design system + profile platform across 6 products; mentored 4 engineers.</p>
+              <div style="display:flex;gap:6px;margin-top:12px;flex-wrap:wrap"><span class="chip chip-violet">React</span><span class="chip chip-violet">TypeScript</span><span class="chip chip-violet">MUI</span></div>
+            </div>
+            <div class="card hov">
+              <div style="display:flex;justify-content:space-between"><span class="chip chip-gray">Past</span><span class="muted">⋯</span></div>
+              <h4 style="font-size:17px;margin-top:12px">Frontend Developer</h4>
+              <div class="muted" style="font-size:13px;margin:3px 0 10px">Globex · Hybrid · 2018 – 2021</div>
+              <p class="muted" style="font-size:12.5px">Built customer dashboards and accessible component libraries.</p>
+              <div style="display:flex;gap:6px;margin-top:12px;flex-wrap:wrap"><span class="chip chip-violet">JS</span><span class="chip chip-violet">Redux</span></div>
+            </div>
+            <div class="add-tile">＋ Add position</div>
+          </div>
+        </div>
+
+        <!-- ===== PROJECTS ===== -->
+        <div class="screen" id="s-projects">
+          <div class="page-head"><div><h2>Projects</h2><div class="sub">Portfolio of work</div></div><button class="btn btn-primary btn-sm">＋ Add project</button></div>
+          <div class="grid g3">
+            <div class="card hov">
+              <div style="height:90px;border-radius:var(--r-sm);background:var(--grad-brand);margin-bottom:12px;display:grid;place-items:center;color:#fff;font-size:28px">🎨</div>
+              <h4 style="font-size:15px">Design System v2</h4>
+              <p class="muted" style="font-size:12px;margin:4px 0 10px">Token-driven MUI system used across the org.</p>
+              <div style="display:flex;gap:6px;flex-wrap:wrap"><span class="chip chip-violet">React</span><span class="chip chip-violet">Figma</span></div>
+            </div>
+            <div class="card hov">
+              <div style="height:90px;border-radius:var(--r-sm);background:linear-gradient(135deg,#7c5cff,#5a3fd6);margin-bottom:12px;display:grid;place-items:center;color:#fff;font-size:28px">📊</div>
+              <h4 style="font-size:15px">Analytics Portal</h4>
+              <p class="muted" style="font-size:12px;margin:4px 0 10px">Realtime dashboards with Recharts + WebSocket.</p>
+              <div style="display:flex;gap:6px;flex-wrap:wrap"><span class="chip chip-violet">TS</span><span class="chip chip-violet">Node</span></div>
+            </div>
+            <div class="add-tile" style="display:grid;place-items:center;min-height:210px">＋ Add project</div>
+          </div>
+        </div>
+
+        <!-- ===== SKILLS ===== -->
+        <div class="screen" id="s-skills">
+          <div class="page-head"><div><h2>Skills</h2><div class="sub">Grouped by category</div></div><button class="btn btn-primary btn-sm">＋ Add skill</button></div>
+          <div class="grid g3">
+            <div class="card">
+              <div class="kpi" style="gap:0"><div class="ico" style="background:var(--teal-50);color:var(--teal-600)">💻</div></div>
+              <h4 style="font-size:15px">Frontend</h4>
+              <div style="margin-top:14px;display:flex;flex-direction:column;gap:12px">
+                <div><div style="display:flex;justify-content:space-between;font-size:12px;margin-bottom:5px"><b>React</b><span class="muted">95%</span></div><div class="bar"><i style="width:95%"></i></div></div>
+                <div><div style="display:flex;justify-content:space-between;font-size:12px;margin-bottom:5px"><b>TypeScript</b><span class="muted">88%</span></div><div class="bar"><i style="width:88%"></i></div></div>
+              </div>
+            </div>
+            <div class="card">
+              <div class="kpi" style="gap:0"><div class="ico" style="background:rgba(124,92,255,.14);color:var(--violet)">🛠️</div></div>
+              <h4 style="font-size:15px">Tooling</h4>
+              <div style="margin-top:14px;display:flex;flex-direction:column;gap:12px">
+                <div><div style="display:flex;justify-content:space-between;font-size:12px;margin-bottom:5px"><b>Figma</b><span class="muted">92%</span></div><div class="bar"><i style="width:92%"></i></div></div>
+                <div><div style="display:flex;justify-content:space-between;font-size:12px;margin-bottom:5px"><b>Vite</b><span class="muted">80%</span></div><div class="bar"><i style="width:80%"></i></div></div>
+              </div>
+            </div>
+            <div class="card">
+              <div class="kpi" style="gap:0"><div class="ico" style="background:rgba(245,165,36,.16);color:#a86b00">☁️</div></div>
+              <h4 style="font-size:15px">Backend</h4>
+              <div style="margin-top:14px;display:flex;gap:6px;flex-wrap:wrap"><span class="chip chip-teal">Node</span><span class="chip chip-teal">Express</span><span class="chip chip-teal">SQL</span><span class="chip chip-teal">AWS</span><span class="chip chip-teal">Docker</span></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- ===== CERTIFICATIONS ===== -->
+        <div class="screen" id="s-certs">
+          <div class="page-head"><div><h2>Certifications</h2><div class="sub">2 credentials</div></div><button class="btn btn-primary btn-sm">＋ Add certification</button></div>
+          <div class="grid g2">
+            <div class="card hov" style="display:flex;gap:14px">
+              <div style="width:52px;height:52px;border-radius:14px;background:rgba(24,179,104,.13);display:grid;place-items:center;font-size:24px;flex-shrink:0">🛡️</div>
+              <div style="flex:1"><div style="display:flex;justify-content:space-between"><h4 style="font-size:15px">AWS Solutions Architect</h4><span class="muted">⋯</span></div><div class="muted" style="font-size:12.5px;margin:2px 0 8px">Amazon Web Services · Issued 2023 · No expiry</div><span class="chip chip-teal">ID: AWS-SA-2023-01</span></div>
+            </div>
+            <div class="card hov" style="display:flex;gap:14px">
+              <div style="width:52px;height:52px;border-radius:14px;background:rgba(46,155,255,.14);display:grid;place-items:center;font-size:24px;flex-shrink:0">🎖️</div>
+              <div style="flex:1"><div style="display:flex;justify-content:space-between"><h4 style="font-size:15px">Professional Scrum Master</h4><span class="muted">⋯</span></div><div class="muted" style="font-size:12.5px;margin:2px 0 8px">Scrum.org · Issued 2022</div><span class="chip chip-teal">ID: PSM-99213</span></div>
+            </div>
+            <div class="add-tile">＋ Add credential</div>
+          </div>
+        </div>
+
+        <!-- ===== DOCUMENTS ===== -->
+        <div class="screen" id="s-documents">
+          <div class="page-head"><div><h2>Documents</h2><div class="sub">Folders &amp; uploads</div></div><div style="display:flex;gap:8px"><button class="btn btn-ghost btn-sm">＋ Folder</button><button class="btn btn-primary btn-sm">⬆ Upload</button></div></div>
+          <div class="grid" style="grid-template-columns:220px 1fr">
+            <div class="card" style="padding:14px">
+              <div class="tag">Folders</div>
+              <div class="nav-i active">📂 All files</div>
+              <div class="nav-i">📁 Resumes</div>
+              <div class="nav-i">📁 Certificates</div>
+              <div class="nav-i">📁 Contracts</div>
+            </div>
+            <div class="grid g4">
+              <div class="card hov file"><div class="ic">📄</div><div class="nm">Resume_2026.pdf</div><div class="mt">240 KB</div></div>
+              <div class="card hov file"><div class="ic">🖼️</div><div class="nm">Headshot.png</div><div class="mt">1.2 MB</div></div>
+              <div class="card hov file"><div class="ic">🏅</div><div class="nm">AWS_Cert.pdf</div><div class="mt">180 KB</div></div>
+              <div class="add-tile" style="display:grid;place-items:center"><div><div style="font-size:24px">⬆</div>Drop files</div></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- ===== ACHIEVEMENTS ===== -->
+        <div class="screen" id="s-achievements">
+          <div class="page-head"><div><h2>Achievements</h2><div class="sub">Awards, milestones &amp; recognition</div></div></div>
+          <div class="card" style="text-align:center;padding:60px 24px">
+            <div style="font-size:64px;margin-bottom:12px">🏆</div>
+            <h3 style="font-size:22px">Achievements are coming soon</h3>
+            <p class="muted" style="max-width:420px;margin:10px auto 20px">This section is in progress. Soon you'll be able to showcase awards, milestones and recognitions on your profile.</p>
+            <button class="btn btn-ghost btn-sm" data-target="s-completion">← Back to completion</button>
+          </div>
+        </div>
+
+        <!-- ===== PORTFOLIO ===== -->
+        <div class="screen" id="s-portfolio">
+          <div class="page-head"><div><h2>Portfolio</h2><div class="sub">A shareable public page generated from your profile</div></div><button class="btn btn-coral btn-sm">✨ Generate link</button></div>
+          <div class="grid" style="grid-template-columns:1fr 320px">
+            <div class="card" style="padding:0;overflow:hidden">
+              <div style="height:120px;background:var(--grad-brand);position:relative"><div class="avatar" style="width:72px;height:72px;font-size:26px;position:absolute;bottom:-32px;left:24px;border:4px solid var(--surface)">AL</div></div>
+              <div style="padding:44px 24px 24px"><h3 style="font-size:20px">Ada Lovelace</h3><div class="muted" style="font-size:13px">Senior Frontend Engineer · London</div>
+                <div style="display:flex;gap:6px;margin:14px 0;flex-wrap:wrap"><span class="chip chip-violet">React</span><span class="chip chip-violet">TypeScript</span><span class="chip chip-violet">Design Systems</span></div>
+                <p class="muted" style="font-size:12.5px">Live preview of your public portfolio — experience, projects and skills rendered from your profile data.</p>
+              </div>
+            </div>
+            <div class="card">
+              <div class="tag">Share</div>
+              <div class="inp" style="font-size:12px">🔗 profilemgr.io/u/ada-lovelace</div>
+              <button class="btn btn-primary btn-sm" style="width:100%;margin-top:12px">⧉ Copy link</button>
+              <div style="display:flex;align-items:center;justify-content:space-between;margin-top:18px;padding-top:16px;border-top:1px solid var(--line)"><div style="font-size:12.5px"><b>Public</b><div class="muted" style="font-size:11.5px">Anyone with the link</div></div><div class="toggle-sw on"><i></i></div></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- ===== USERS (ADMIN) ===== -->
+        <div class="screen" id="s-users">
+          <div class="page-head"><div><h2>Users <span class="chip chip-violet" style="vertical-align:middle">Admin</span></h2><div class="sub">Manage members &amp; roles</div></div><div style="display:flex;gap:8px;align-items:center"><div class="searchbox" style="max-width:220px">🔍 Search…</div><button class="btn btn-primary btn-sm">＋ Invite</button></div></div>
+          <div class="card" style="padding:0;overflow:hidden">
+            <table class="tbl">
+              <thead><tr><th>User</th><th>Role</th><th>Completion</th><th>Status</th><th>Joined</th><th></th></tr></thead>
+              <tbody>
+                <tr onclick="showScreen('s-userdetail')"><td><span class="avatar mini-av">AL</span>Ada Lovelace</td><td><span class="chip chip-violet">Admin</span></td><td><div class="bar" style="width:90px;display:inline-block;vertical-align:middle"><i style="width:74%"></i></div> 74%</td><td><span class="chip chip-green">Active</span></td><td class="muted">Jan 2021</td><td>⋯</td></tr>
+                <tr onclick="showScreen('s-userdetail')"><td><span class="avatar mini-av" style="background:linear-gradient(135deg,#7c5cff,#5a3fd6)">GH</span>Grace Hopper</td><td><span class="chip chip-gray">Member</span></td><td><div class="bar" style="width:90px;display:inline-block;vertical-align:middle"><i style="width:100%"></i></div> 100%</td><td><span class="chip chip-green">Active</span></td><td class="muted">Mar 2022</td><td>⋯</td></tr>
+                <tr onclick="showScreen('s-userdetail')"><td><span class="avatar mini-av" style="background:linear-gradient(135deg,#ff7a66,#e94a2e)">AT</span>Alan Turing</td><td><span class="chip chip-gray">Member</span></td><td><div class="bar" style="width:90px;display:inline-block;vertical-align:middle"><i style="width:45%"></i></div> 45%</td><td><span class="chip chip-amber">Pending</span></td><td class="muted">Sep 2026</td><td>⋯</td></tr>
+                <tr onclick="showScreen('s-userdetail')"><td><span class="avatar mini-av" style="background:linear-gradient(135deg,#2e9bff,#1f6fd6)">MC</span>Marie Curie</td><td><span class="chip chip-gray">Member</span></td><td><div class="bar" style="width:90px;display:inline-block;vertical-align:middle"><i style="width:88%"></i></div> 88%</td><td><span class="chip chip-green">Active</span></td><td class="muted">Jul 2025</td><td>⋯</td></tr>
+              </tbody>
+            </table>
+          </div>
+          <div style="text-align:center;margin-top:14px"><span class="muted" style="font-size:12px">Tip: click a row to open the user detail →</span></div>
+        </div>
+
+        <!-- ===== USER DETAIL (ADMIN) ===== -->
+        <div class="screen" id="s-userdetail">
+          <div style="margin-bottom:16px"><span class="btn btn-ghost btn-sm" data-target="s-users">← Back to users</span></div>
+          <div class="card" style="display:flex;gap:22px;align-items:center;flex-wrap:wrap;margin-bottom:18px">
+            <div class="avatar" style="width:84px;height:84px;font-size:30px">AL</div>
+            <div style="flex:1;min-width:200px"><h2 style="font-size:22px">Ada Lovelace <span class="chip chip-violet" style="vertical-align:middle">Admin</span></h2><div class="muted" style="font-size:13px">ada@company.com · London · Joined Jan 2021</div>
+              <div style="display:flex;gap:6px;margin-top:10px;flex-wrap:wrap"><span class="chip chip-green">Active</span><span class="chip chip-teal">Verified</span></div></div>
+            <div class="ring small"><b>74%</b><span>Complete</span></div>
+          </div>
+          <div class="grid g2">
+            <div class="card"><div class="tag">Experience</div><h4 style="font-size:15px">Senior Frontend Engineer</h4><div class="muted" style="font-size:12.5px">Acme Corp · 2021–Present</div><div style="height:1px;background:var(--line);margin:12px 0"></div><h4 style="font-size:15px">Frontend Developer</h4><div class="muted" style="font-size:12.5px">Globex · 2018–2021</div></div>
+            <div class="card"><div class="tag">Top skills</div><div style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:14px"><span class="chip chip-violet">React 95%</span><span class="chip chip-violet">TS 88%</span><span class="chip chip-violet">Figma 92%</span></div><div class="tag">Documents</div><div style="display:flex;gap:6px;flex-wrap:wrap"><span class="chip chip-teal">📄 Resume</span><span class="chip chip-teal">🏅 AWS Cert</span></div></div>
+          </div>
+        </div>
+
+        <!-- ===== ABOUT / ADMIN ABOUT ===== -->
+        <div class="screen" id="s-about">
+          <div class="page-head"><div><h2>About</h2><div class="sub">App information · editable by admins</div></div><button class="btn btn-primary btn-sm">✎ Edit content</button></div>
+          <div class="grid" style="grid-template-columns:1fr 300px">
+            <div class="card">
+              <div class="tag">Rich text editor (admin)</div>
+              <div style="display:flex;gap:4px;padding:8px;border:1px solid var(--line);border-radius:var(--r-sm) var(--r-sm) 0 0;background:var(--surface-2)">
+                <span class="icon-btn" style="width:30px;height:30px;font-weight:800">B</span><span class="icon-btn" style="width:30px;height:30px;font-style:italic">I</span><span class="icon-btn" style="width:30px;height:30px;text-decoration:underline">U</span><span class="icon-btn" style="width:30px;height:30px">•</span><span class="icon-btn" style="width:30px;height:30px">🔗</span>
+              </div>
+              <div style="border:1px solid var(--line);border-top:none;border-radius:0 0 var(--r-sm) var(--r-sm);padding:16px;font-size:13.5px;color:var(--ink-2);min-height:180px">
+                <b style="color:var(--ink)">Profile Manager</b> helps professionals build and share a complete, always-ready profile — experience, skills, projects, certifications and documents in one polished workspace.<br><br>Our mission is to make your professional story effortless to maintain and beautiful to share.
+              </div>
+            </div>
+            <div class="card"><div class="tag">Meta</div>
+              <div style="display:flex;flex-direction:column;gap:12px;font-size:13px">
+                <div style="display:flex;justify-content:space-between"><span class="muted">Version</span><b>2.0.0</b></div>
+                <div style="display:flex;justify-content:space-between"><span class="muted">Last updated</span><b>Sep 2026</b></div>
+                <div style="display:flex;justify-content:space-between"><span class="muted">Maintainer</span><b>Admin</b></div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- ===== SETTINGS ===== -->
+        <div class="screen" id="s-settings">
+          <div class="page-head"><div><h2>Settings</h2><div class="sub">Preferences, appearance &amp; security</div></div></div>
+          <div class="grid g2">
+            <div class="card">
+              <div class="tag">Appearance</div>
+              <div style="display:flex;justify-content:space-between;align-items:center;padding:12px 0;border-bottom:1px solid var(--line)"><span style="font-size:13.5px;font-weight:600">Theme</span><div style="display:flex;gap:6px"><span class="chip chip-teal">☀️ Light</span><span class="chip chip-gray">🌙 Dark</span></div></div>
+              <div style="display:flex;justify-content:space-between;align-items:center;padding:12px 0"><span style="font-size:13.5px;font-weight:600">Accent</span><div style="display:flex;gap:8px"><span style="width:22px;height:22px;border-radius:50%;background:var(--teal-500);outline:2px solid var(--teal-500);outline-offset:2px"></span><span style="width:22px;height:22px;border-radius:50%;background:var(--violet)"></span><span style="width:22px;height:22px;border-radius:50%;background:var(--coral-500)"></span></div></div>
+            </div>
+            <div class="card">
+              <div class="tag">Security &amp; notifications</div>
+              <div style="display:flex;justify-content:space-between;align-items:center;padding:12px 0;border-bottom:1px solid var(--line)"><div><div style="font-size:13.5px;font-weight:600">Two-factor auth</div><div class="muted" style="font-size:12px">Extra login security</div></div><div class="toggle-sw on"><i></i></div></div>
+              <div style="display:flex;justify-content:space-between;align-items:center;padding:12px 0;border-bottom:1px solid var(--line)"><div><div style="font-size:13.5px;font-weight:600">Email notifications</div><div class="muted" style="font-size:12px">Weekly summary</div></div><div class="toggle-sw off"><i></i></div></div>
+              <div style="display:flex;justify-content:space-between;align-items:center;padding:12px 0"><div><div style="font-size:13.5px;font-weight:600">Product updates</div><div class="muted" style="font-size:12px">New features</div></div><div class="toggle-sw on"><i></i></div></div>
+            </div>
+            <div class="card">
+              <div class="tag">Account</div>
+              <div class="field"><label>Display name</label><div class="inp">Ada Lovelace</div></div>
+              <div class="field"><label>Email</label><div class="inp">ada@company.com</div></div>
+              <button class="btn btn-ghost btn-sm">Change password</button>
+            </div>
+            <div class="card" style="border-color:rgba(244,63,110,.3)">
+              <div class="tag" style="color:var(--rose)">Danger zone</div>
+              <p class="muted" style="font-size:12.5px;margin-bottom:14px">Permanently delete your account and all associated data. This cannot be undone.</p>
+              <button class="btn btn-sm" style="background:rgba(244,63,110,.12);color:#c31d47">Delete account</button>
+            </div>
+          </div>
+          <div style="text-align:center;margin-top:22px"><span class="muted" style="font-size:12px">Looking for the 404 state? </span><span class="btn btn-ghost btn-sm" data-target="s-404">View 404 →</span></div>
+        </div>
+
+        <!-- ===== 404 ===== -->
+        <div class="screen" id="s-404">
+          <div class="card" style="text-align:center;padding:70px 24px">
+            <div style="font-family:var(--display);font-weight:800;font-size:88px;background:var(--grad-brand);-webkit-background-clip:text;background-clip:text;color:transparent;line-height:1">404</div>
+            <h3 style="font-size:22px;margin-top:8px">Page not found</h3>
+            <p class="muted" style="max-width:400px;margin:10px auto 22px">The page you're looking for doesn't exist or has moved.</p>
+            <button class="btn btn-primary btn-sm" data-target="s-dashboard">← Back to dashboard</button>
+          </div>
+        </div>
+
+      </div>
+    </main>
+  </div>
+</section>
+
+<!-- ============ AUTH VIEW ============ -->
+<section class="view" id="view-auth">
+  <div class="auth-wrap">
+    <div class="auth-frame">
+      <div class="auth-aside">
+        <div>
+          <div class="c-brand" style="color:#fff"><div class="logo" style="background:rgba(255,255,255,.2);box-shadow:none">P</div><div>Profile Manager</div></div>
+          <h3 style="margin-top:32px" id="au-title">Your professional story, beautifully managed.</h3>
+          <p id="au-sub">Keep your experience, skills, projects and documents in one polished, always-ready profile.</p>
+        </div>
+        <div class="hl">
+          <span>✓ Track your profile completion in real time</span>
+          <span>✓ Manage experience, skills, projects &amp; documents</span>
+          <span>✓ Secure, private, and always in sync</span>
+        </div>
+      </div>
+      <div class="auth-main">
+        <div class="a-tabs" id="authTabs">
+          <button class="on" data-a="a-login">Sign in</button>
+          <button data-a="a-register">Register</button>
+          <button data-a="a-otp">OTP</button>
+          <button data-a="a-google">Google</button>
+        </div>
+
+        <div class="a-screen on" id="a-login">
+          <h3 style="font-size:22px">Welcome back 👋</h3>
+          <p class="muted" style="font-size:13.5px;margin:5px 0 20px">Sign in to your account to continue</p>
+          <div class="field"><label>Email</label><div class="inp">✉️ you@company.com</div></div>
+          <div class="field"><label>Password</label><div class="inp focus">🔒 ••••••••</div></div>
+          <div style="display:flex;justify-content:space-between;font-size:12px;margin-bottom:18px"><span class="muted">☐ Remember me</span><span style="color:var(--teal-600);font-weight:600">Forgot password?</span></div>
+          <button class="btn btn-primary" style="width:100%">Sign In</button>
+          <div style="display:flex;align-items:center;gap:12px;margin:16px 0;color:var(--ink-4);font-size:12px"><div style="flex:1;height:1px;background:var(--line)"></div>or<div style="flex:1;height:1px;background:var(--line)"></div></div>
+          <button class="btn btn-ghost" style="width:100%">🅖 Continue with Google</button>
+        </div>
+
+        <div class="a-screen" id="a-register">
+          <h3 style="font-size:22px">Create account</h3>
+          <p class="muted" style="font-size:13.5px;margin:5px 0 18px">Build your profile in minutes</p>
+          <div class="row2"><div class="field"><label>First name</label><div class="inp">Ada</div></div><div class="field"><label>Last name</label><div class="inp">Lovelace</div></div></div>
+          <div class="field"><label>Work email</label><div class="inp focus">✉️ ada@company.com</div></div>
+          <div class="field"><label>Password</label><div class="inp">🔒 Create a password</div></div>
+          <div style="display:flex;gap:5px;margin:-4px 0 16px"><i style="flex:1;height:4px;border-radius:2px;background:var(--green)"></i><i style="flex:1;height:4px;border-radius:2px;background:var(--green)"></i><i style="flex:1;height:4px;border-radius:2px;background:var(--amber)"></i><i style="flex:1;height:4px;border-radius:2px;background:var(--surface-3)"></i></div>
+          <button class="btn btn-primary" style="width:100%">Create account →</button>
+        </div>
+
+        <div class="a-screen" id="a-otp" style="text-align:center">
+          <div style="font-size:40px">🔐</div>
+          <h3 style="font-size:22px">Verify your email</h3>
+          <p class="muted" style="font-size:13.5px;margin:5px 0 8px">Code sent to <b style="color:var(--ink)">ada@company.com</b></p>
+          <div class="otp"><div class="b on">4</div><div class="b on">7</div><div class="b on">2</div><div class="b">·</div><div class="b">·</div><div class="b">·</div></div>
+          <button class="btn btn-primary" style="width:100%">Verify &amp; continue</button>
+          <p class="muted" style="font-size:12.5px;margin-top:14px">Resend code in <b style="color:var(--teal-600)">09:58</b></p>
+        </div>
+
+        <div class="a-screen" id="a-google" style="text-align:center">
+          <div class="spin"></div>
+          <h3 style="font-size:21px">Completing Google sign-in</h3>
+          <p class="muted" style="font-size:13.5px;margin-top:8px">Securely setting up your session…</p>
+          <div style="display:flex;gap:8px;justify-content:center;margin-top:20px"><span class="chip chip-green">✓ Authenticated</span><span class="chip chip-teal">↻ Loading profile</span></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="foot">Profile Manager · Complete Screen Designs — mirrors <code>src/theme/index.ts</code> &amp; the ui-design-system pattern · Toggle theme (top-right) · Navigate via the sidebar.</div>
+
+<script>
+const root=document.documentElement;
+/* theme */
+const tb=document.getElementById('themeBtn'),ti=document.getElementById('ti'),tt=document.getElementById('tt');
+tb.addEventListener('click',()=>{const d=root.getAttribute('data-theme')==='dark';root.setAttribute('data-theme',d?'light':'dark');ti.textContent=d?'🌙':'☀️';tt.textContent=d?'Dark':'Light';});
+/* view switch */
+document.getElementById('viewSeg').addEventListener('click',e=>{const b=e.target.closest('button');if(!b)return;
+  document.querySelectorAll('#viewSeg button').forEach(x=>x.classList.remove('on'));b.classList.add('on');
+  document.querySelectorAll('.view').forEach(v=>v.classList.remove('on'));
+  document.getElementById('view-'+b.dataset.view).classList.add('on');window.scrollTo(0,0);});
+/* screen nav */
+function showScreen(id){
+  document.querySelectorAll('.screen').forEach(s=>s.classList.toggle('on',s.id===id));
+  document.querySelectorAll('.nav-i[data-target]').forEach(n=>n.classList.toggle('active',n.dataset.target===id));
+  const c=document.querySelector('#view-app main');if(c)c.scrollTop=0;window.scrollTo(0,0);
+}
+document.querySelectorAll('[data-target]').forEach(n=>n.addEventListener('click',()=>showScreen(n.dataset.target)));
+/* auth tabs */
+const AU={ 'a-login':['Your professional story, beautifully managed.','Keep your experience, skills, projects and documents in one polished, always-ready profile.'],
+  'a-register':['Build a standout profile in minutes.',"Create your account and we'll guide you through every section, step by step."],
+  'a-otp':['Check your inbox to continue.',"We sent a secure 6-digit code to confirm it's really you."],
+  'a-google':['Connecting your Google account.','Hang tight while we securely set up your session.'] };
+document.getElementById('authTabs').addEventListener('click',e=>{const b=e.target.closest('button');if(!b)return;
+  document.querySelectorAll('#authTabs button').forEach(x=>x.classList.remove('on'));b.classList.add('on');
+  document.querySelectorAll('.a-screen').forEach(s=>s.classList.remove('on'));document.getElementById(b.dataset.a).classList.add('on');
+  document.getElementById('au-title').textContent=AU[b.dataset.a][0];document.getElementById('au-sub').textContent=AU[b.dataset.a][1];});
+</script>
+</body>
+</html>

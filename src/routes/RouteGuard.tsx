@@ -14,6 +14,7 @@ import { Navigate, useLocation } from "react-router-dom";
 import { Box, Typography, Button } from "@mui/material";
 import { useAuth } from "@/contexts";
 import { ROUTES } from "@/constants";
+import { HelperFunctions } from "@/utils/helpers";
 import { LoadingSpinner } from "@/common/components";
 
 interface RouteGuardProps {
@@ -41,9 +42,9 @@ export const RouteGuard = ({
   }
 
   // ── Public-only route (login / register / OTP) ───────────────────────────────
-  // Authenticated users have no business here — send them home.
+  // Authenticated users have no business here — send them to their landing page.
   if (isPublic && isAuthenticated) {
-    return <Navigate to={ROUTES.PROFILE_COMPLETION} replace />;
+    return <Navigate to={HelperFunctions.getLandingRoute(user?.role)} replace />;
   }
 
   // ── Protected route ──────────────────────────────────────────────────────────
@@ -71,7 +72,9 @@ export const RouteGuard = ({
         </Typography>
         <Button
           variant="outlined"
-          component={() => <Navigate to={ROUTES.PROFILE_COMPLETION} replace />}
+          component={() => (
+            <Navigate to={HelperFunctions.getLandingRoute(user?.role)} replace />
+          )}
         />
       </Box>
     );

@@ -1,4 +1,20 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100">
-  <circle cx="50" cy="50" r="45" fill="#1976d2"/>
-  <text x="50" y="65" font-family="Arial, sans-serif" font-size="50" font-weight="bold" text-anchor="middle" fill="white">R</text>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" width="64" height="64" role="img" aria-labelledby="pmFaviconTitle">
+  <title id="pmFaviconTitle">Profile Manager</title>
+  <defs>
+    <linearGradient id="pmFavBrand" x1="0" y1="0" x2="64" y2="64" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#00b3a0"/>
+      <stop offset="0.55" stop-color="#00897b"/>
+      <stop offset="1" stop-color="#00655a"/>
+    </linearGradient>
+  </defs>
+
+  <!-- Tab-sized treatment: the mark knocked out of a filled brand tile, so it
+       stays legible at 16px against a light or dark browser chrome. -->
+  <rect width="64" height="64" rx="14" fill="url(#pmFavBrand)"/>
+
+  <circle cx="32" cy="32" r="21" fill="none" stroke="#ffffff" stroke-width="5"
+          stroke-linecap="round" stroke-dasharray="102.9 29" transform="rotate(-90 32 32)"/>
+
+  <circle cx="32" cy="26" r="5.8" fill="#ffffff"/>
+  <path d="M22 44v-0.4c0-5.52 4.48-10 10-10s10 4.48 10 10V44Z" fill="#ffffff"/>
 </svg>

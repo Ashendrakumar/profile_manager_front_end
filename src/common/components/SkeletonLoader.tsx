@@ -5,15 +5,27 @@
  * single detail block while data is loading.
  */
 
-import { Box, Card, CardContent, CardActions, Skeleton } from "@mui/material";
+import {
+  Box,
+  Card,
+  CardContent,
+  CardActions,
+  Divider,
+  Skeleton,
+} from "@mui/material";
 
 export type SkeletonLoaderProps = {
   /** Visual shape of each placeholder. Defaults to `card`. */
-  variant?: "card" | "list" | "detail";
+  variant?: "card" | "list" | "detail" | "grouped";
   /** Number of placeholder items to render (ignored for `detail`). */
   count?: number;
-  /** Min width (px) of each card in the responsive grid (`card` variant). */
+  /**
+   * Min width (px) of each item in the responsive grid. For `card` that is the
+   * card itself; for `grouped` it is the tile inside each group card.
+   */
   minItemWidth?: number;
+  /** Tiles rendered inside each group card (`grouped` variant). */
+  itemsPerGroup?: number;
   /** Number of body text lines per item. */
   lines?: number;
   /** Render action-button placeholders (card footer / list trailing icons). */
@@ -101,6 +113,70 @@ const ListItemSkeleton = ({
   </Card>
 );
 
+/** Mirrors a `SkillTile`: name + kebab, caption, slim proficiency bar. */
+const TileSkeleton = () => (
+  <Box
+    sx={{
+      px: 1.5,
+      py: 1.25,
+      border: 1,
+      borderColor: "divider",
+      borderRadius: "8px",
+    }}
+  >
+    <Box sx={{ display: "flex", alignItems: "center", gap: 0.5 }}>
+      <Skeleton variant="text" width="65%" height={22} sx={{ flex: 1 }} />
+      <Skeleton variant="circular" width={20} height={20} />
+    </Box>
+    <Skeleton variant="text" width="45%" height={16} />
+    <Skeleton variant="rounded" height={3} sx={{ mt: 1, borderRadius: 999 }} />
+  </Box>
+);
+
+/** Mirrors a `SectionCard` holding a dense tile grid (the Skills pattern). */
+const GroupSkeleton = ({
+  items,
+  minItemWidth,
+}: {
+  items: number;
+  minItemWidth: number;
+}) => (
+  <Card>
+    <Box
+      sx={{
+        display: "flex",
+        alignItems: "center",
+        justifyContent: "space-between",
+        gap: 2,
+        px: 2,
+        py: 2,
+      }}
+    >
+      <Box sx={{ display: "flex", alignItems: "center", gap: 1.5, flex: 1 }}>
+        <Skeleton variant="circular" width={24} height={24} />
+        <Skeleton variant="text" width="35%" height={26} />
+      </Box>
+      <Skeleton variant="rounded" width={28} height={22} />
+    </Box>
+
+    <Divider />
+
+    <CardContent sx={{ p: 2, "&:last-child": { pb: 2 } }}>
+      <Box
+        sx={{
+          display: "grid",
+          gridTemplateColumns: `repeat(auto-fill, minmax(${minItemWidth}px, 1fr))`,
+          gap: 1.5,
+        }}
+      >
+        {range(items).map((i) => (
+          <TileSkeleton key={i} />
+        ))}
+      </Box>
+    </CardContent>
+  </Card>
+);
+
 const DetailSkeleton = ({ lines }: { lines: number }) => (
   <Card>
     <CardContent>
@@ -122,11 +198,38 @@ export const SkeletonLoader = ({
   variant = "card",
   count = 6,
   minItemWidth = 320,
+  itemsPerGroup = 6,
   lines = 2,
   showActions = true,
   gap = 3,
   sx = {},
 }: SkeletonLoaderProps) => {
+  if (variant === "grouped") {
+    return (
+      <Box
+        role="status"
+        aria-busy="true"
+        aria-label="Loading"
+        sx={{
+          display: "grid",
+          // Matches the section-card layout: one column, two from lg up.
+          gridTemplateColumns: { xs: "1fr", lg: "repeat(2, minmax(0, 1fr))" },
+          alignItems: "start",
+          gap,
+          ...sx,
+        }}
+      >
+        {range(count).map((i) => (
+          <GroupSkeleton
+            key={i}
+            items={itemsPerGroup}
+            minItemWidth={minItemWidth}
+          />
+        ))}
+      </Box>
+    );
+  }
+
   if (variant === "detail") {
     return (
       <Box role="status" aria-busy="true" aria-label="Loading" sx={sx}>

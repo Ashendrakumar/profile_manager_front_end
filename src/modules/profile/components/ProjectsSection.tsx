@@ -4,7 +4,7 @@
  */
 
 import { useState, useEffect } from "react";
-import { Box, Typography, Grid, Chip, Link } from "@mui/material";
+import { Box, Grid, Chip, Link } from "@mui/material";
 import {
   Add,
   Edit,
@@ -21,6 +21,8 @@ import {
   SkeletonLoader,
   EntityCard,
   ResponsiveButton,
+  PageHeader,
+  EmptyState,
 } from "@/common/components";
 import { ProjectForm } from "./ProjectForm";
 import { ProjectDetails } from "./ProjectDetails";
@@ -117,59 +119,47 @@ export const ProjectsSection = () => {
 
   return (
     <Box>
-      <Box
-        sx={{
-          display: "flex",
-          justifyContent: "space-between",
-          alignItems: "center",
-          mb: 3,
-        }}
-      >
-        <Box>
-          <Typography variant="h5" gutterBottom>
-            Projects
-          </Typography>
-          <Typography variant="body2" color="text.secondary">
-            Showcase your projects and work
-          </Typography>
-        </Box>
-        <ResponsiveButton
-          collapseBreakpoint="sm"
-          icon={<Add />}
-          onClick={handleAdd}
-        >
-          Add
-        </ResponsiveButton>
-      </Box>
+      <PageHeader
+        title="Projects"
+        subtitle="Showcase your projects and work"
+        count={projects.length}
+        action={
+          <ResponsiveButton collapseBreakpoint="sm" icon={<Add />} onClick={handleAdd}>
+            Add Project
+          </ResponsiveButton>
+        }
+      />
 
       {loading && (
         <SkeletonLoader
           count={4}
           minItemWidth={320}
-          gap={2}
+          gap={3}
           lines={3}
           showActions={false}
         />
       )}
 
       {projects.length === 0 && !loading ? (
-        <Box sx={{ textAlign: "center", py: 4 }}>
-          <Typography variant="body1" color="text.secondary">
-            No projects yet. Add your first one!
-          </Typography>
-        </Box>
+        <EmptyState
+          icon={<Folder />}
+          title="No projects yet"
+          description="Add the projects you've built to showcase your work and skills."
+          onClick={handleAdd}
+        />
       ) : (
         <Grid
           sx={{
             display: "grid",
             gridTemplateColumns: "repeat(auto-fill, minmax(320px, 1fr))",
-            gap: 2,
+            gap: 3,
           }}
         >
           {projects.map((project) => (
             <Grid key={project._id}>
               <EntityCard
                 title={HelperFunctions.capitalizeString(project.title)}
+                subtitle={project.company}
                 avatar={<Folder />}
                 headerChip={
                   project.projectType
@@ -179,8 +169,66 @@ export const ProjectsSection = () => {
                           project.projectType === "Professional"
                             ? "primary"
                             : "default",
+                        variant: "soft",
                       }
                     : undefined
+                }
+                chipsLabel={
+                  project.technologies && project.technologies.length > 0
+                    ? "Technologies"
+                    : undefined
+                }
+                chips={(project.technologies || []).map((tech) => ({
+                  label: tech,
+                  color: "primary" as const,
+                  variant: "soft" as const,
+                }))}
+                // Links sit left, the read action sits right — both pinned to
+                // the card foot so every project card ends on the same line.
+                footer={
+                  <>
+                    <Box sx={{ display: "flex", gap: 0.75, flexWrap: "wrap" }}>
+                      {project.projectUrl && (
+                        <Link
+                          href={project.projectUrl}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                        >
+                          <Chip
+                            icon={<Launch />}
+                            label="Live Demo"
+                            size="small"
+                            clickable
+                            variant="outlined"
+                            color="primary"
+                          />
+                        </Link>
+                      )}
+                      {project.githubRepo && (
+                        <Link
+                          href={project.githubRepo}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                        >
+                          <Chip
+                            icon={<Code />}
+                            label="GitHub"
+                            size="small"
+                            clickable
+                            variant="outlined"
+                          />
+                        </Link>
+                      )}
+                    </Box>
+                    <ResponsiveButton
+                      variant="text"
+                      size="small"
+                      icon={<Visibility />}
+                      onClick={() => handleView(project)}
+                    >
+                      View Details
+                    </ResponsiveButton>
+                  </>
                 }
                 actions={[
                   {
@@ -202,18 +250,10 @@ export const ProjectsSection = () => {
                   },
                 ]}
               >
-                {project.company && (
-                  <Typography
-                    variant="caption"
-                    color="text.secondary"
-                    sx={{ display: "block", mb: 1 }}
-                  >
-                    Company: {project.company}
-                  </Typography>
-                )}
                 <Box
                   sx={{
                     color: "text.secondary",
+                    fontSize: "0.875rem",
                     display: "-webkit-box",
                     WebkitLineClamp: 3,
                     WebkitBoxOrient: "vertical",
@@ -228,68 +268,6 @@ export const ProjectsSection = () => {
                     __html: project.description,
                   }}
                 />
-                <ResponsiveButton
-                  variant="text"
-                  icon={<Visibility />}
-                  onClick={() => handleView(project)}
-                >
-                  View Details
-                </ResponsiveButton>
-                {project.technologies && project.technologies.length > 0 && (
-                  <Box
-                    sx={{
-                      display: "flex",
-                      gap: 0.5,
-                      flexWrap: "wrap",
-                      alignItems: "center",
-                      mb: 2,
-                    }}
-                  >
-                    <Typography variant="body2" color="text.secondary">
-                      Technologies :
-                    </Typography>
-                    {project.technologies.map((tech, idx) => (
-                      <Chip
-                        key={idx}
-                        label={tech}
-                        size="small"
-                        color="primary"
-                        variant="outlined"
-                      />
-                    ))}
-                  </Box>
-                )}
-                <Box sx={{ display: "flex", gap: 1, flexWrap: "wrap" }}>
-                  {project.projectUrl && (
-                    <Link
-                      href={project.projectUrl}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                    >
-                      <Chip
-                        icon={<Launch />}
-                        label="Live Demo "
-                        size="small"
-                        clickable
-                        color="primary"
-                      />
-                    </Link>
-                  )}
-                  {project.githubRepo && (
-                    <Link
-                      href={project.githubRepo}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                    >
-                      <Chip
-                        icon={<Code />}
-                        label="GitHub "
-                        size="small"
-                        clickable
-                      />
-                    </Link>
-                  )}
-                </Box>
               </EntityCard>
             </Grid>
           ))}

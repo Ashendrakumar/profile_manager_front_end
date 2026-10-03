@@ -42,7 +42,7 @@ const Inprogress = () => {
         <Button
           variant="contained"
           color="primary"
-          onClick={() => navigate(ROUTES.PROFILE_COMPLETION)}
+          onClick={() => navigate(ROUTES.PROFILE)}
           sx={{ mt: 2 }}
         >
           Go to Profile

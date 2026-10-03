@@ -111,6 +111,7 @@ export interface Certification {
   credentialId?: string;
   credentialUrl?: string;
   description?: string;
+  isExpired?: boolean;
 }
 
 export interface CreateCertificationRequest {
@@ -469,10 +470,18 @@ export const profileService = {
   uploadProfileImage: async (
     file: File,
     onProgress?: (percent: number) => void,
-  ): Promise<{ message: string; profileImage: string }> => {
+  ): Promise<{
+    message: string;
+    profileImage: string;
+    profileImageUrl: string;
+  }> => {
     const formData = new FormData();
     formData.append("profiles", file);
-    return apiService.post<{ message: string; profileImage: string }>(
+    return apiService.post<{
+      message: string;
+      profileImage: string;
+      profileImageUrl: string;
+    }>(
       "/upload/profile-upload",
       formData,
       {

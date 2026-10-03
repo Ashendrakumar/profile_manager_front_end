@@ -19,6 +19,7 @@ import {
   type RegisterRequest,
 } from "@/modules/auth/services/authService";
 import { ROUTES } from "@/constants";
+import { HelperFunctions } from "@/utils/helpers";
 
 interface AuthContextType {
   user: User | null;
@@ -99,7 +100,9 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
         const response = await authService.login(credentials);
         if (response.user) {
           setUser(response.user);
-          navigate(ROUTES.PROFILE_COMPLETION, { replace: true });
+          navigate(HelperFunctions.getLandingRoute(response.user.role), {
+            replace: true,
+          });
         }
       } catch (err) {
         const errorMessage =
@@ -157,7 +160,9 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
         const response = await authService.verifyOtp(email, otp);
         if (response.user) {
           setUser(response.user);
-          navigate(ROUTES.HOME, { replace: true });
+          navigate(HelperFunctions.getLandingRoute(response.user.role), {
+            replace: true,
+          });
         }
       } catch (err) {
         const errorMessage =
@@ -241,7 +246,7 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
         setError(null);
         const user = await authService.loginWithToken(token);
         setUser(user);
-        navigate(ROUTES.PROFILE_COMPLETION, { replace: true });
+        navigate(HelperFunctions.getLandingRoute(user.role), { replace: true });
       } catch (err) {
         const errorMessage =
           err instanceof Error

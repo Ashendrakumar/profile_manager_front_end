@@ -19,6 +19,7 @@ import {
 } from "@mui/material";
 import { useAuth } from "@/contexts";
 import { ROUTES, GOOGLE_AUTH_URL } from "@/constants";
+import { HelperFunctions } from "@/utils/helpers";
 import { Input } from "@/common/components/Input";
 
 /**
@@ -82,7 +83,8 @@ const GoogleLogo = () => (
 const LoginPage = () => {
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
-  const { login, isAuthenticated, isLoading, error, clearError } = useAuth();
+  const { login, isAuthenticated, isLoading, error, clearError, user } =
+    useAuth();
 
   const {
     register,
@@ -101,12 +103,12 @@ const LoginPage = () => {
   const emailValue = watch("email");
   const passwordValue = watch("password");
 
-  // Redirect if already authenticated
+  // Redirect if already authenticated — role-based landing.
   useEffect(() => {
     if (isAuthenticated && !isLoading) {
-      navigate(ROUTES.PROFILE_COMPLETION, { replace: true });
+      navigate(HelperFunctions.getLandingRoute(user?.role), { replace: true });
     }
-  }, [isAuthenticated, isLoading, navigate]);
+  }, [isAuthenticated, isLoading, navigate, user?.role]);
 
   // Clear error when component unmounts
   useEffect(() => {

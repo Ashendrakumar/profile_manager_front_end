@@ -19,6 +19,7 @@ interface FolderDrawerFormProps {
     value: string,
   ) => void;
   folderOptions: FolderOption[];
+  loading?: boolean;
 }
 
 export const FolderDrawerForm = ({
@@ -30,11 +31,13 @@ export const FolderDrawerForm = ({
   draft,
   onDraftChange,
   folderOptions,
+  loading = false,
 }: FolderDrawerFormProps) => {
   return (
     <SideDrawer
       open={open}
-      onClose={onClose}
+      onClose={loading ? undefined : onClose}
+      loading={loading}
       title={title}
       footerActionClick={onSubmit}
       footerActionName={footerActionName}

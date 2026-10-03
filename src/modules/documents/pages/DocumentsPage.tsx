@@ -1,4 +1,11 @@
-import { useMemo, useState, type FormEvent, type MouseEvent } from "react";
+import {
+  useCallback,
+  useEffect,
+  useMemo,
+  useState,
+  type FormEvent,
+  type MouseEvent,
+} from "react";
 import {
   Box,
   Grid,
@@ -17,26 +24,32 @@ import {
   UploadFile,
 } from "@mui/icons-material";
 import { useToast } from "@/contexts/toastContext";
-import { ConfirmDialog, ResponsiveButton } from "@/common/components";
+import {
+  ConfirmDialog,
+  ResponsiveButton,
+  SkeletonLoader,
+} from "@/common/components";
 import type { ActionMenuItem } from "@/common/components";
 import { FolderTree } from "../components/FolderTree";
 import { FolderDrawerForm } from "../components/FolderDrawerForm";
 import { DocumentDrawerForm } from "../components/DocumentDrawerForm";
 import { DocumentCard } from "../components/DocumentCard";
 import type { DocumentItem, FolderItem, FolderOption } from "../types";
-import {
-  getStoredFolders,
-  persistFolders,
-  readFileAsDataUrl,
-} from "../utils/documentStorage";
+import { documentService } from "../services/documentService";
+
+const getErrorMessage = (err: unknown, fallback: string) =>
+  (err as { message?: string })?.message || fallback;
 
 const DocumentsPage = () => {
   const { showSuccess, showError } = useToast();
 
-  const [folders, setFolders] = useState<FolderItem[]>(getStoredFolders);
+  const [folders, setFolders] = useState<FolderItem[]>([]);
   const [selectedFolderId, setSelectedFolderId] = useState<string | null>(
-    getStoredFolders()[0]?._id ?? null,
+    null,
   );
+  const [loading, setLoading] = useState(true);
+  const [actionLoading, setActionLoading] = useState(false);
+  const [uploadProgress, setUploadProgress] = useState<number | undefined>();
   const [createMenuAnchor, setCreateMenuAnchor] = useState<null | HTMLElement>(
     null,
   );
@@ -90,10 +103,31 @@ const DocumentsPage = () => {
     [folders],
   );
 
-  const syncFolders = (nextFolders: FolderItem[]) => {
-    setFolders(nextFolders);
-    persistFolders(nextFolders);
-  };
+  // Folders come back with their documents embedded, so one request keeps the
+  // tree and the document grid in sync after any mutation.
+  const loadFolders = useCallback(
+    async (preferredFolderId?: string | null) => {
+      try {
+        const { folders: nextFolders } = await documentService.getFolders();
+        setFolders(nextFolders);
+        setSelectedFolderId((current) => {
+          const wanted = preferredFolderId ?? current;
+          return wanted && nextFolders.some((folder) => folder._id === wanted)
+            ? wanted
+            : (nextFolders[0]?._id ?? null);
+        });
+      } catch (err) {
+        showError(getErrorMessage(err, "Failed to load documents"));
+      } finally {
+        setLoading(false);
+      }
+    },
+    [showError],
+  );
+
+  useEffect(() => {
+    loadFolders();
+  }, [loadFolders]);
 
   const openCreateMenu = (event: MouseEvent<HTMLElement>) => {
     setCreateMenuAnchor(event.currentTarget);
@@ -141,7 +175,20 @@ const DocumentsPage = () => {
     setDocumentDrawerOpen(true);
   };
 
-  const handleFolderSubmit = (event?: FormEvent) => {
+  const closeFolderDrawer = () => {
+    setFolderDrawerOpen(false);
+    setEditingFolder(null);
+    setFolderDraft({ name: "", description: "", parentFolderId: "" });
+  };
+
+  const closeDocumentDrawer = () => {
+    setDocumentDrawerOpen(false);
+    setEditingDocument(null);
+    setDocumentDraft({ displayName: "", file: null, folderId: "" });
+    setUploadProgress(undefined);
+  };
+
+  const handleFolderSubmit = async (event?: FormEvent) => {
     event?.preventDefault();
 
     if (!folderDraft.name.trim()) {
@@ -149,37 +196,25 @@ const DocumentsPage = () => {
       return;
     }
 
-    const nextFolders = editingFolder
-      ? folders.map((folder) =>
-          folder._id === editingFolder._id
-            ? {
-                ...folder,
-                name: folderDraft.name.trim(),
-                description: folderDraft.description.trim(),
-                parentFolderId: folderDraft.parentFolderId || null,
-              }
-            : folder,
-        )
-      : [
-          {
-            _id: `folder-${Date.now()}`,
-            name: folderDraft.name.trim(),
-            description: folderDraft.description.trim(),
-            parentFolderId: folderDraft.parentFolderId || null,
-            createdAt: new Date().toISOString(),
-            documents: [],
-          },
-          ...folders,
-        ];
+    const payload = {
+      name: folderDraft.name.trim(),
+      description: folderDraft.description.trim(),
+      parentFolderId: folderDraft.parentFolderId || null,
+    };
 
-    syncFolders(nextFolders);
-    setSelectedFolderId(
-      editingFolder ? editingFolder._id : (nextFolders[0]?._id ?? null),
-    );
-    setFolderDrawerOpen(false);
-    setEditingFolder(null);
-    setFolderDraft({ name: "", description: "", parentFolderId: "" });
-    showSuccess(editingFolder ? "Folder updated" : "Folder created");
+    try {
+      setActionLoading(true);
+      const { folder } = editingFolder
+        ? await documentService.updateFolder(editingFolder._id, payload)
+        : await documentService.createFolder(payload);
+      await loadFolders(folder._id);
+      showSuccess(editingFolder ? "Folder updated" : "Folder created");
+      closeFolderDrawer();
+    } catch (err) {
+      showError(getErrorMessage(err, "Failed to save folder"));
+    } finally {
+      setActionLoading(false);
+    }
   };
 
   const handleDocumentSubmit = async (event?: FormEvent) => {
@@ -196,98 +231,91 @@ const DocumentsPage = () => {
       return;
     }
 
-    const folder = folders.find((item) => item._id === targetFolderId);
-    if (!folder) {
-      showError("Folder not found");
+    if (!editingDocument && !documentDraft.file) {
+      showError("Choose a file to upload");
       return;
     }
 
-    let nextFileData = editingDocument?.fileData;
-    let nextFileName = editingDocument?.fileName ?? "";
-    let nextFileType = editingDocument?.fileType ?? "";
+    const payload = {
+      displayName: documentDraft.displayName.trim(),
+      folderId: targetFolderId,
+      file: documentDraft.file,
+    };
 
-    if (documentDraft.file) {
-      try {
-        nextFileData = await readFileAsDataUrl(documentDraft.file);
-        nextFileName = documentDraft.file.name;
-        nextFileType = documentDraft.file.type || "application/octet-stream";
-      } catch {
-        showError("Unable to read the selected file");
-        return;
+    try {
+      setActionLoading(true);
+      if (documentDraft.file) setUploadProgress(0);
+      if (editingDocument) {
+        await documentService.updateDocument(
+          editingDocument._id,
+          payload,
+          setUploadProgress,
+        );
+      } else {
+        await documentService.uploadDocument(payload, setUploadProgress);
       }
+      await loadFolders(targetFolderId);
+      showSuccess(editingDocument ? "Document updated" : "Document uploaded");
+      closeDocumentDrawer();
+    } catch (err) {
+      showError(getErrorMessage(err, "Failed to save document"));
+    } finally {
+      setActionLoading(false);
     }
-
-    const nextDocuments = editingDocument
-      ? folder.documents.map((document) =>
-          document._id === editingDocument._id
-            ? {
-                ...document,
-                displayName: documentDraft.displayName.trim(),
-                fileName: nextFileName || document.fileName,
-                fileType: nextFileType || document.fileType,
-                fileData: nextFileData || document.fileData,
-              }
-            : document,
-        )
-      : [
-          {
-            _id: `doc-${Date.now()}`,
-            displayName: documentDraft.displayName.trim(),
-            fileName:
-              nextFileName || documentDraft.file?.name || "Untitled file",
-            fileType:
-              nextFileType ||
-              documentDraft.file?.type ||
-              "application/octet-stream",
-            fileData: nextFileData,
-            uploadedAt: new Date().toISOString(),
-          },
-          ...folder.documents,
-        ];
-
-    syncFolders(
-      folders.map((item) =>
-        item._id === targetFolderId
-          ? { ...item, documents: nextDocuments }
-          : item,
-      ),
-    );
-    setSelectedFolderId(targetFolderId);
-    setDocumentDrawerOpen(false);
-    setEditingDocument(null);
-    setDocumentDraft({ displayName: "", file: null, folderId: "" });
-    showSuccess(editingDocument ? "Document updated" : "Document uploaded");
   };
 
-  const handleDeleteFolder = () => {
+  const handleDeleteFolder = async () => {
     if (!deleteFolderTarget) return;
-    const nextFolders = folders.filter(
-      (folder) => folder._id !== deleteFolderTarget._id,
-    );
-    syncFolders(nextFolders);
-    if (selectedFolderId === deleteFolderTarget._id) {
-      setSelectedFolderId(nextFolders[0]?._id ?? null);
+
+    try {
+      setActionLoading(true);
+      await documentService.deleteFolder(deleteFolderTarget._id);
+      // Fall back to the parent folder when the selected one was removed.
+      await loadFolders(
+        selectedFolderId === deleteFolderTarget._id
+          ? deleteFolderTarget.parentFolderId
+          : selectedFolderId,
+      );
+      setDeleteFolderTarget(null);
+      showSuccess("Folder deleted");
+    } catch (err) {
+      showError(getErrorMessage(err, "Failed to delete folder"));
+    } finally {
+      setActionLoading(false);
     }
-    setDeleteFolderTarget(null);
-    showSuccess("Folder deleted");
   };
 
-  const handleDeleteDocument = () => {
+  const handleDeleteDocument = async () => {
     if (!deleteDocumentTarget) return;
-    const nextFolders = folders.map((folder) =>
-      folder._id !== deleteDocumentTarget.folderId
-        ? folder
-        : {
-            ...folder,
-            documents: folder.documents.filter(
-              (document) => document._id !== deleteDocumentTarget.document._id,
-            ),
-          },
-    );
-    syncFolders(nextFolders);
-    setDeleteDocumentTarget(null);
-    showSuccess("Document deleted");
+
+    try {
+      setActionLoading(true);
+      await documentService.deleteDocument(deleteDocumentTarget.document._id);
+      setFolders((current) =>
+        current.map((folder) =>
+          folder._id !== deleteDocumentTarget.folderId
+            ? folder
+            : {
+                ...folder,
+                documents: folder.documents.filter(
+                  (document) =>
+                    document._id !== deleteDocumentTarget.document._id,
+                ),
+              },
+        ),
+      );
+      setDeleteDocumentTarget(null);
+      showSuccess("Document deleted");
+    } catch (err) {
+      showError(getErrorMessage(err, "Failed to delete document"));
+    } finally {
+      setActionLoading(false);
+    }
   };
+
+  if (loading) {
+    return <SkeletonLoader count={3} minItemWidth={320} gap={3} lines={2} />;
+  }
 
   return (
     <Box>
@@ -553,12 +581,9 @@ const DocumentsPage = () => {
         open={folderDrawerOpen}
         title={editingFolder ? "Edit Folder" : "Create Folder"}
         footerActionName={editingFolder ? "Save" : "Create"}
-        onClose={() => {
-          setFolderDrawerOpen(false);
-          setEditingFolder(null);
-          setFolderDraft({ name: "", description: "", parentFolderId: "" });
-        }}
+        onClose={closeFolderDrawer}
         onSubmit={handleFolderSubmit}
+        loading={actionLoading}
         draft={folderDraft}
         onDraftChange={(field, value) =>
           setFolderDraft((prev) => ({
@@ -578,12 +603,10 @@ const DocumentsPage = () => {
         open={documentDrawerOpen}
         title={editingDocument ? "Edit Document" : "Upload Document"}
         footerActionName={editingDocument ? "Save" : "Upload"}
-        onClose={() => {
-          setDocumentDrawerOpen(false);
-          setEditingDocument(null);
-          setDocumentDraft({ displayName: "", file: null, folderId: "" });
-        }}
+        onClose={closeDocumentDrawer}
         onSubmit={handleDocumentSubmit}
+        loading={actionLoading}
+        progress={uploadProgress}
         draft={documentDraft}
         onDraftChange={(field, value) =>
           setDocumentDraft((prev) => ({
@@ -597,12 +620,13 @@ const DocumentsPage = () => {
       <ConfirmDialog
         open={Boolean(deleteFolderTarget)}
         title="Delete Folder"
-        message={`Are you sure you want to delete "${deleteFolderTarget?.name}"?`}
+        message={`Are you sure you want to delete "${deleteFolderTarget?.name}"? All of its subfolders and documents will be deleted too.`}
         confirmText="Delete"
         cancelText="Cancel"
         confirmColor="error"
         onConfirm={handleDeleteFolder}
         onCancel={() => setDeleteFolderTarget(null)}
+        loading={actionLoading}
       />
 
       <ConfirmDialog
@@ -614,6 +638,7 @@ const DocumentsPage = () => {
         confirmColor="error"
         onConfirm={handleDeleteDocument}
         onCancel={() => setDeleteDocumentTarget(null)}
+        loading={actionLoading}
       />
     </Box>
   );

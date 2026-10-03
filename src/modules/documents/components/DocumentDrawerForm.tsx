@@ -1,4 +1,10 @@
-import { Box, InputAdornment, TextField, Typography } from "@mui/material";
+import {
+  Box,
+  InputAdornment,
+  LinearProgress,
+  TextField,
+  Typography,
+} from "@mui/material";
 import { UploadFile } from "@mui/icons-material";
 import { SideDrawer } from "@/common/components/SideDrawer";
 import { Input, Select } from "@/common/components";
@@ -20,7 +26,14 @@ interface DocumentDrawerFormProps {
     value: string | File | null,
   ) => void;
   folderOptions: FolderOption[];
+  loading?: boolean;
+  /** Upload progress (0-100) while a file is being sent. */
+  progress?: number;
 }
+
+// Mirrors the backend's "files" upload rule (src/middlewares/upload.js).
+const ACCEPTED_FILE_TYPES =
+  ".pdf,.doc,.docx,.xls,.xlsx,.ppt,.pptx,.txt,.csv,.jpg,.jpeg,.png,.webp,.gif";
 
 export const DocumentDrawerForm = ({
   open,
@@ -31,11 +44,14 @@ export const DocumentDrawerForm = ({
   draft,
   onDraftChange,
   folderOptions,
+  loading = false,
+  progress,
 }: DocumentDrawerFormProps) => {
   return (
     <SideDrawer
       open={open}
-      onClose={onClose}
+      onClose={loading ? undefined : onClose}
+      loading={loading}
       title={title}
       footerActionClick={onSubmit}
       footerActionName={footerActionName}
@@ -62,7 +78,7 @@ export const DocumentDrawerForm = ({
           type="file"
           InputLabelProps={{ shrink: true }}
           InputProps={{
-            inputProps: { accept: "*/*" },
+            inputProps: { accept: ACCEPTED_FILE_TYPES },
             startAdornment: (
               <InputAdornment position="start">
                 <UploadFile />
@@ -73,12 +89,23 @@ export const DocumentDrawerForm = ({
             const target = event.target as HTMLInputElement;
             onDraftChange("file", target.files?.[0] ?? null);
           }}
+          helperText="PDF, Office, text or image files up to 5MB"
+          disabled={loading}
         />
 
         {draft.file ? (
           <Typography variant="body2" color="text.secondary">
             Selected: {draft.file.name}
           </Typography>
+        ) : null}
+
+        {loading && typeof progress === "number" ? (
+          <Box>
+            <LinearProgress variant="determinate" value={progress} />
+            <Typography variant="caption" color="text.secondary">
+              Uploading… {progress}%
+            </Typography>
+          </Box>
         ) : null}
       </Box>
     </SideDrawer>
